@@ -47,8 +47,12 @@ namespace Components
                 GenerateAndEnqueueSection();
             }
 
-            ActivateNextSection();
-            
+            while (!ActivateNextSection())
+            {
+                _currentSectionIndex++;
+                GenerateAndEnqueueSection();
+            }
+
             _cameraRig.SetTargetSection(_currentSectionIndex);
             _cameraRig.TeleportToTarget();
 
@@ -73,7 +77,11 @@ namespace Components
                     _currentSectionIndex++;
 
                     GenerateAndEnqueueSection();
-                    ActivateNextSection();
+                    while (!ActivateNextSection())
+                    {
+                        _currentSectionIndex++;
+                        GenerateAndEnqueueSection();
+                    }
                     ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
 
                     _cameraRig.SetTargetSection(_currentSectionIndex);
@@ -82,17 +90,25 @@ namespace Components
             }
         }
 
-        private void ActivateNextSection()
+        private bool ActivateNextSection()
         {
             string letters;
             (letters, _currentSectionWords) = _generatedFutureSections.Dequeue();
+
+            if (!letters.Any())
+            {
+                return false;
+            }
+            
             _letterRing.SetLetters(letters);
 
             foreach (var word in _currentSectionWords.Keys)
             {
-                (Vector2Int position, WordDirection direction) placement = _currentSectionWords[word]; 
-                _wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, alsoSetBlockerTiles: false);
+                (Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
+                _wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
             }
+
+            return true;
         }
 
         private void ClearTilesBelowSection(int sectionIndex)
