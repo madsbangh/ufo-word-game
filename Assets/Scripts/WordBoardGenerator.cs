@@ -59,23 +59,6 @@ public class WordBoardGenerator
         return result;
     }
 
-    private bool TryPlaceWordInSection(string word,
-        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
-        int sectionStartCoordinate, int sectionEndCoordinate,
-        out (Vector2Int, WordDirection) placement)
-    {
-        return TryPlaceWordOnPivotInSection(word,
-                   tilesInSectionByLetter,
-                   sectionStartCoordinate,
-                   sectionEndCoordinate,
-                   out placement) ||
-               TryPlaceWordFreelyInSection(word,
-                   tilesInSectionByLetter,
-                   sectionStartCoordinate,
-                   sectionEndCoordinate,
-                   out placement);
-    }
-
     private Dictionary<char, HashSet<Vector2Int>> GetExistingTilesInSectionByLetter(
         string sortedUppercaseLetters,
         int sectionStartCoordinate)
@@ -122,6 +105,23 @@ public class WordBoardGenerator
             .Reverse());
 
         return sortedUppercaseLetters;
+    }
+
+    private bool TryPlaceWordInSection(string word,
+        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
+        int sectionStartCoordinate, int sectionEndCoordinate,
+        out (Vector2Int, WordDirection) placement)
+    {
+        return TryPlaceWordOnPivotInSection(word,
+                   tilesInSectionByLetter,
+                   sectionStartCoordinate,
+                   sectionEndCoordinate,
+                   out placement) ||
+               TryPlaceWordFreelyInSection(word,
+                   tilesInSectionByLetter,
+                   sectionStartCoordinate,
+                   sectionEndCoordinate,
+                   out placement);
     }
 
     private bool TryPlaceWordOnPivotInSection(string word,
