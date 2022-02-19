@@ -82,7 +82,7 @@ public class WordBoardGenerator
             {
                 sectionWordsAndPlacements.Add(word, (position, direction));
                 var spectrum = WordUtility.GetSpectrum(word, _anagramFinder.AlphabetLetterCount);
-                for (int i = 0; i < spectrum.Length; i++)
+                for (var i = 0; i < spectrum.Length; i++)
                 {
                     spectrumEnvelope[i] = Mathf.Max(spectrumEnvelope[i], spectrum[i]);
                 }
