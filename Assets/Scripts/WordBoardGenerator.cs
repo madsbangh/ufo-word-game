@@ -8,6 +8,7 @@ public class WordBoardGenerator
     public const int SectionStride = 8;
 
     private const int MinimumWordsPerSection = 4;
+    private const int MaximumWordsPerSection = 8;
     private const int MaximumFreeWordPlacementAttempts = 100;
 
     private readonly PossibleWordsFinder _anagramFinder;
@@ -85,6 +86,11 @@ public class WordBoardGenerator
                 for (var i = 0; i < spectrum.Length; i++)
                 {
                     spectrumEnvelope[i] = Mathf.Max(spectrumEnvelope[i], spectrum[i]);
+                }
+
+                if (sectionWordsAndPlacements.Count == MaximumWordsPerSection)
+                {
+                    done = true;
                 }
             }
             else
