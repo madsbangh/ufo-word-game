@@ -395,8 +395,8 @@ MonoBehaviour:
   _wordListAsset: {fileID: 4900000, guid: 52035587f443e2044b82ee0e7c5556e5, type: 3}
   _cameraRig: {fileID: 153164437}
   _letterRing: {fileID: 27734312}
-  _futureGeneratedSectionCount: 2
-  _pastSectionCount: 2
+  _futureSectionCount: 3
+  _pastSectionCount: 3
   _ufo: {fileID: 831032582}
 --- !u!1 &433271873
 GameObject:
