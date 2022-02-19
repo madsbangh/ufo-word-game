@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SectionWords = System.Collections.Generic.Dictionary<string, (UnityEngine.Vector2Int, WordDirection)>;
 
 namespace Components
@@ -20,7 +21,7 @@ namespace Components
         private UfoLetterRing _letterRing;
 
         [SerializeField]
-        private int _futureGeneratedSectionCount;
+        private int _futureSectionCount;
 
         [SerializeField]
         private int _pastSectionCount;
@@ -42,7 +43,7 @@ namespace Components
             _worldSpawner.Initialize(_wordBoard);
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
-            for (var i = 0; i < _futureGeneratedSectionCount + 1; i++)
+            for (var i = 0; i < _futureSectionCount + 1; i++)
             {
                 GenerateAndEnqueueSection();
             }
