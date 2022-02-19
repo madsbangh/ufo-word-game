@@ -7,12 +7,9 @@ public class PossibleWordsFinder
 
 	private readonly PossibleWordsTrie _possibleWordsStructure;
 
-	public int AlphabetLetterCount { get; private set; }
-
 	public PossibleWordsFinder(string[] uppercaseWords)
 	{
-		_possibleWordsStructure = GeneratePossibleWordsStructure(uppercaseWords, out var alphabetLetterCount);
-		AlphabetLetterCount = alphabetLetterCount;
+		_possibleWordsStructure = GeneratePossibleWordsStructure(uppercaseWords);
 
 		var allLetterSets = new HashSet<string>();
 		foreach (var word in uppercaseWords)
@@ -28,12 +25,8 @@ public class PossibleWordsFinder
 		_possibleWordsStructure.GetPossibleWords(sortedUppercaseLetters, result);
 	}
 
-	private static PossibleWordsTrie GeneratePossibleWordsStructure(string[] uppercaseWords, out int alphabetLetterCount)
+	private static PossibleWordsTrie GeneratePossibleWordsStructure(string[] uppercaseWords)
 	{
-		alphabetLetterCount = uppercaseWords
-			.SelectMany(word => word)
-			.Max() - 'A' + 1;
-
-		return new PossibleWordsTrie(uppercaseWords, alphabetLetterCount);
+		return new PossibleWordsTrie(uppercaseWords);
 	}
 }

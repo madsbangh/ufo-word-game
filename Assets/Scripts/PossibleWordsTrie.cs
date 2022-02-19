@@ -3,16 +3,14 @@ using System.Collections.Generic;
 public class PossibleWordsTrie
 {
 	private readonly Node _root;
-	private readonly int _alphabetLetterCount;
 
-	public PossibleWordsTrie(IEnumerable<string> uppercaseWords, int alphabetLetterCount)
+	public PossibleWordsTrie(IEnumerable<string> uppercaseWords)
 	{
 		_root = new Node();
-		_alphabetLetterCount = alphabetLetterCount;
 
 		foreach (var uppercaseWord in uppercaseWords)
 		{
-			var keySpectrum = WordUtility.GetSpectrum(uppercaseWord, alphabetLetterCount);
+			var keySpectrum = WordUtility.GetSpectrum(uppercaseWord);
 
 			var node = _root;
 			foreach (var childKey in keySpectrum)
@@ -39,7 +37,7 @@ public class PossibleWordsTrie
 
 	public void GetPossibleWords(string sortedUppercaseLetters, HashSet<string> result)
 	{
-		var keySpectrum = WordUtility.GetSpectrum(sortedUppercaseLetters, _alphabetLetterCount);
+		var keySpectrum = WordUtility.GetSpectrum(sortedUppercaseLetters);
 
 		GetPossibleWordsFromSpectrumRecursive(keySpectrum, 0, _root, result);
 	}

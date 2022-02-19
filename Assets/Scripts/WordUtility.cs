@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public static class WordUtility
 {
+    public const int EnglishAlphabetLetterCount = 'Z' - 'A' + 1;
+    
     private const int MinimumWordLength = 3;
     private const int MaximumWordLength = 7;
 
@@ -28,9 +30,9 @@ public static class WordUtility
         return new string(characters);
     }
 
-    public static int[] GetSpectrum(string uppercaseWord, int alphabetLetterCount)
+    public static int[] GetSpectrum(string uppercaseWord)
     {
-        var spectrum = new int[alphabetLetterCount];
+        var spectrum = new int[EnglishAlphabetLetterCount];
         foreach (int c in uppercaseWord)
         {
             spectrum[c - 'A']++;

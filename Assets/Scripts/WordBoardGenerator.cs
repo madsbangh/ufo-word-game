@@ -82,7 +82,7 @@ public class WordBoardGenerator
 
         var done = false;
         var sectionWordsAndPlacements = new Dictionary<string, (Vector2Int, WordDirection)>();
-        var spectrumEnvelope = WordUtility.GetSpectrum(string.Empty, _anagramFinder.AlphabetLetterCount);
+        var spectrumEnvelope = WordUtility.GetSpectrum(string.Empty);
         var firstDirection = WordDirection.Horizontal;
         var secondDirection = WordDirection.Vertical;
         while (done == false)
@@ -115,7 +115,7 @@ public class WordBoardGenerator
                     sectionEndCoordinate, secondDirection, out placement))
             {
                 sectionWordsAndPlacements.Add(word, (placement.position, placement.direction));
-                var spectrum = WordUtility.GetSpectrum(word, _anagramFinder.AlphabetLetterCount);
+                var spectrum = WordUtility.GetSpectrum(word);
                 for (var i = 0; i < spectrum.Length; i++)
                 {
                     spectrumEnvelope[i] = Mathf.Max(spectrumEnvelope[i], spectrum[i]);
