@@ -7,7 +7,7 @@ public class WordBoardGenerator
     public const int SectionSize = 12;
     public const int SectionStride = 8;
 
-    private const int MinimumCandidateWordsPerSection = 4;
+    private const int MinimumWordsPerSection = 4;
     private const int MaximumFreeWordPlacementAttempts = 100;
 
     private readonly PossibleWordsFinder _anagramFinder;
@@ -32,7 +32,7 @@ public class WordBoardGenerator
             sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
             candidateWords.Clear();
             _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, candidateWords);
-        } while (candidateWords.Count < MinimumCandidateWordsPerSection);
+        } while (candidateWords.Count < MinimumWordsPerSection);
 
         // Find start and end coordinates (both X and Y) of current board section
         var sectionStartCoordinate = sectionIndex * SectionStride;
