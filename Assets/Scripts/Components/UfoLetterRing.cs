@@ -103,6 +103,7 @@ namespace Components
             letter.Selected = true;
             _currentlyChosenLetters.Push(letter);
             _activeLetterToDrawLineFrom = letter.transform;
+            UpdatePreviewWord();
         }
 
         private void UfoLetter_Released(UfoLetter letter)
