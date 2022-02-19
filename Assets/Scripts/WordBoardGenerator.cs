@@ -1,13 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using SectionWords =
+    System.Collections.Generic.Dictionary<string, (UnityEngine.Vector2Int position, WordDirection direction)>;
 
 public class WordBoardGenerator
 {
     public const int SectionSize = 9;
-    public const int SectionStride = 3;
+    public const int SectionStride = 5;
 
     private const int MinimumWordsPerSection = 4;
     private const int MaximumWordsPerSection = 6;
@@ -24,131 +24,156 @@ public class WordBoardGenerator
         _wordBoard = wordBoard;
     }
 
-    public Dictionary<string, (Vector2Int, WordDirection)> GenerateSection(int sectionIndex, out string letters)
+    public SectionWords GenerateSection(int sectionIndex, out string letters)
     {
-        // Get a set of all possible words that can be written with the given letters
-        // Note: this can potentially loop forever in case there are no letter sets with at least the minimum required amount of containing words
-        string sortedUppercaseLetters;
+        var result = new SectionWords();
 
-        IEnumerable<string> candidateWords = new HashSet<string>();
-        {
-            var candidateWordsTyped = (HashSet<string>) candidateWords;
-            do
-            {
-                do
-                {
-                    var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
-                    sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
-                } while (sortedUppercaseLetters.Length < MinimumSectionLargestWordLetterCount);
-
-                candidateWordsTyped.Clear();
-
-                _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters,
-                    (HashSet<string>) candidateWords);
-            } while (candidateWordsTyped.Count < MinimumWordsPerSection);
-        }
-
-        candidateWords = candidateWords
-            .OrderBy(w => w.Length)
-            .ToList();
-
-        // Find start and end coordinates (both X and Y) of current board section
         var sectionStartCoordinate = sectionIndex * SectionStride;
         var sectionEndCoordinate = sectionStartCoordinate + SectionSize;
 
-        // Get only the letter tiles that come after the start of this section
-        var tilesInSection
-            = new HashSet<Vector2Int>(
-                _wordBoard.AllLetterTilePositions
-                    .Where(p =>
-                        p.x >= sectionStartCoordinate &&
-                        p.y >= sectionStartCoordinate));
+        var sortedUppercaseLetters = ChooseCandidateWordsAndLetters(out var candidateWords);
 
-        // Create a dictionary of existing letter tile positions grouped by which letter they have
-        var tilesInSectionByLetter = new Dictionary<char, HashSet<Vector2Int>>();
+        var tilesInSectionByLetter = GetExistingTilesInSectionByLetter(sortedUppercaseLetters, sectionStartCoordinate);
 
-        foreach (var letter in sortedUppercaseLetters.Distinct())
-            tilesInSectionByLetter[letter] = new HashSet<Vector2Int>();
-
-        // Populate the above mentioned grouping
-        foreach (var position in tilesInSection)
-        {
-            var letter = _wordBoard.GetLetterTile(position).Letter;
-            if (sortedUppercaseLetters.Contains(letter))
-            {
-                tilesInSectionByLetter[letter].Add(position);
-            }
-        }
-
-        var done = false;
-        var sectionWordsAndPlacements = new Dictionary<string, (Vector2Int, WordDirection)>();
         var spectrumEnvelope = WordUtility.GetSpectrum(string.Empty);
-        var firstDirection = WordDirection.Horizontal;
-        var secondDirection = WordDirection.Vertical;
-        while (done == false)
+        while (candidateWords.Any())
         {
-            if (candidateWords.Any() == false)
-            {
-                done = true;
-                continue;
-            }
+            var word = candidateWords.Dequeue();
 
-            string word;
+            if (TryPlaceWordInSection(word, tilesInSectionByLetter, sectionStartCoordinate, sectionEndCoordinate,
+                    out (Vector2Int position, WordDirection direction) placement))
             {
-                var candidateWordsTyped = (List<string>) candidateWords;
-                word = candidateWordsTyped.Last();
-                candidateWordsTyped.RemoveAt(candidateWordsTyped.Count - 1);
-            }
+                result.Add(word, (placement.position, placement.direction));
 
-            // Swap the first and second direction, so we start with the opposite as last every time
-            (firstDirection, secondDirection) = (secondDirection, firstDirection);
-            
-            // Try to place word first on existing pivots, then freely, first in the wanted direction, then the other
-            (Vector2Int position, WordDirection direction) placement;
-            if (TryPlaceWordOnPivotInSection(word, tilesInSectionByLetter, sectionStartCoordinate,
-                    sectionEndCoordinate, firstDirection, out placement)
-                || TryPlaceWordOnPivotInSection(word, tilesInSectionByLetter, sectionStartCoordinate,
-                    sectionEndCoordinate, secondDirection, out placement)
-                || TryPlaceWordFreelyInSection(word, tilesInSectionByLetter, sectionStartCoordinate,
-                    sectionEndCoordinate, firstDirection, out placement)
-                || TryPlaceWordFreelyInSection(word, tilesInSectionByLetter, sectionStartCoordinate,
-                    sectionEndCoordinate, secondDirection, out placement))
-            {
-                sectionWordsAndPlacements.Add(word, (placement.position, placement.direction));
                 var spectrum = WordUtility.GetSpectrum(word);
                 for (var i = 0; i < spectrum.Length; i++)
                 {
                     spectrumEnvelope[i] = Mathf.Max(spectrumEnvelope[i], spectrum[i]);
                 }
 
-                if (sectionWordsAndPlacements.Count == MaximumWordsPerSection)
-                {
-                    done = true;
-                }
-            }
-            else
-            {
-                done = true;
+                if (result.Count == MaximumWordsPerSection) break;
             }
         }
 
         letters = WordUtility.GetSortedUppercaseLetters(spectrumEnvelope);
-        return sectionWordsAndPlacements;
+        return result;
     }
 
-    private bool TryPlaceWordOnPivotInSection(string word, Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
-        int sectionStartCoordinate, int sectionEndCoordinate, WordDirection direction,
+    private bool TryPlaceWordInSection(string word,
+        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
+        int sectionStartCoordinate, int sectionEndCoordinate,
+        out (Vector2Int, WordDirection) placement)
+    {
+        return TryPlaceWordOnPivotInSection(word,
+                   tilesInSectionByLetter,
+                   sectionStartCoordinate,
+                   sectionEndCoordinate,
+                   out placement) ||
+               TryPlaceWordFreelyInSection(word,
+                   tilesInSectionByLetter,
+                   sectionStartCoordinate,
+                   sectionEndCoordinate,
+                   out placement);
+    }
+
+    private Dictionary<char, HashSet<Vector2Int>> GetExistingTilesInSectionByLetter(
+        string sortedUppercaseLetters,
+        int sectionStartCoordinate)
+    {
+        var tilesInSectionByLetter = new Dictionary<char, HashSet<Vector2Int>>();
+
+        foreach (var letter in sortedUppercaseLetters.Distinct())
+            tilesInSectionByLetter[letter] = new HashSet<Vector2Int>();
+
+        foreach (var position in _wordBoard.AllLetterTilePositions.Where(IsAfterSectionStart))
+        {
+            var letter = _wordBoard.GetLetterTile(position).Letter;
+            if (sortedUppercaseLetters.Contains(letter)) tilesInSectionByLetter[letter].Add(position);
+        }
+
+        return tilesInSectionByLetter;
+
+        bool IsAfterSectionStart(Vector2Int position)
+        {
+            return position.x >= sectionStartCoordinate &&
+                   position.y >= sectionStartCoordinate;
+        }
+    }
+
+    private string ChooseCandidateWordsAndLetters(out Queue<string> resultSortedCandidateWords)
+    {
+        var resultCandidateWordsSet = new HashSet<string>();
+        string sortedUppercaseLetters;
+        do
+        {
+            do
+            {
+                var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
+                sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
+            } while (sortedUppercaseLetters.Length < MinimumSectionLargestWordLetterCount);
+
+            resultCandidateWordsSet.Clear();
+
+            _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, resultCandidateWordsSet);
+        } while (resultCandidateWordsSet.Count < MinimumWordsPerSection);
+
+        resultSortedCandidateWords = new Queue<string>(resultCandidateWordsSet
+            .OrderBy(w => w.Length)
+            .Reverse());
+
+        return sortedUppercaseLetters;
+    }
+
+    private bool TryPlaceWordOnPivotInSection(string word,
+        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
+        int sectionStartCoordinate, int sectionEndCoordinate,
         out (Vector2Int, WordDirection) placement)
     {
         // First, try to place the word on the board so it overlaps with an existing word
-        for (var letterIndex = 0; letterIndex < word.Length; letterIndex++)
+        foreach (var direction in new[] { WordDirection.Horizontal, WordDirection.Vertical })
         {
-            var letter = word[letterIndex];
-            var stride = direction.ToStride();
-            foreach (var pivot in tilesInSectionByLetter[letter])
+            for (var letterIndex = 0; letterIndex < word.Length; letterIndex++)
             {
-                var positionCandidate = pivot - letterIndex * stride;
-                if (TryPlaceWord(word, positionCandidate, direction, sectionStartCoordinate,
+                var letter = word[letterIndex];
+                var stride = direction.ToStride();
+                foreach (var positionCandidate in tilesInSectionByLetter[letter]
+                             .Select(pivot => pivot - letterIndex * stride)
+                             .Where(positionCandidate =>
+                                 TryPlaceWordAtPosition(word, tilesInSectionByLetter, positionCandidate, direction,
+                                     sectionStartCoordinate, sectionEndCoordinate)))
+                {
+                    placement = (positionCandidate, direction);
+                    return true;
+                }
+            }
+        }
+
+        placement = default;
+        return false;
+    }
+
+    private bool TryPlaceWordFreelyInSection(string word,
+        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
+        int sectionStartCoordinate, int sectionEndCoordinate,
+        out (Vector2Int, WordDirection) placement)
+    {
+        var (firstDirection, secondDirection) = Random.value < 0.5f
+            ? (WordDirection.Horizontal, WordDirection.Vertical)
+            : (WordDirection.Vertical, WordDirection.Horizontal);
+
+        foreach (var direction in new[] { firstDirection, secondDirection })
+        {
+            for (var i = 0; i < MaximumFreeWordPlacementAttempts; i++)
+            {
+                var range = Vector2Int.one * (sectionEndCoordinate - sectionStartCoordinate);
+                range -= direction.ToStride() * word.Length;
+                var positionCandidate = new Vector2Int(
+                    Random.Range(sectionStartCoordinate, sectionStartCoordinate + range.x),
+                    Random.Range(sectionStartCoordinate, sectionStartCoordinate + range.y)
+                );
+
+                if (TryPlaceWordAtPosition(word, tilesInSectionByLetter, positionCandidate, direction,
+                        sectionStartCoordinate,
                         sectionEndCoordinate))
                 {
                     placement = (positionCandidate, direction);
@@ -161,33 +186,11 @@ public class WordBoardGenerator
         return false;
     }
 
-    private bool TryPlaceWordFreelyInSection(string word, Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
-        int sectionStartCoordinate, int sectionEndCoordinate, WordDirection direction,
-        out (Vector2Int, WordDirection) placement)
-    {
-        // No overlapping word placement possible, try to place it freely
-        for (var i = 0; i < MaximumFreeWordPlacementAttempts; i++)
-        {
-            var range = Vector2Int.one * (sectionEndCoordinate - sectionStartCoordinate);
-            range -= direction.ToStride() * word.Length;
-            var positionCandidate = new Vector2Int(
-                Random.Range(sectionStartCoordinate, sectionStartCoordinate + range.x),
-                Random.Range(sectionStartCoordinate, sectionStartCoordinate + range.y)
-            );
-
-            if (TryPlaceWord(word, positionCandidate, direction, sectionStartCoordinate,
-                    sectionEndCoordinate))
-            {
-                placement = (positionCandidate, direction);
-                return true;
-            }
-        }
-
-        placement = default;
-        return false;
-    }
-
-    private bool TryPlaceWord(string word, Vector2Int position, WordDirection direction, int sectionStartCoordinate,
+    private bool TryPlaceWordAtPosition(string word,
+        Dictionary<char, HashSet<Vector2Int>> tilesInSectionByLetter,
+        Vector2Int position,
+        WordDirection direction,
+        int sectionStartCoordinate,
         int sectionEndCoordinate)
     {
         var stride = direction.ToStride();
@@ -200,16 +203,10 @@ public class WordBoardGenerator
             return false;
 
         // Check for letter tiles before beginning of word
-        if (_wordBoard.HasLetterTile(position - stride))
-        {
-            return false;
-        }
+        if (_wordBoard.HasLetterTile(position - stride)) return false;
 
         // Check for letter tiles after end of word
-        if (_wordBoard.HasLetterTile(position + word.Length * stride))
-        {
-            return false;
-        }
+        if (_wordBoard.HasLetterTile(position + word.Length * stride)) return false;
 
         // Check along word itself for:
         // - blocker hints
@@ -218,14 +215,14 @@ public class WordBoardGenerator
         {
             var letterPosition = position + i * stride;
 
-            if (_wordBoard.IsTileBlocked(letterPosition, direction))
-            {
-                return false;
-            }
+            if (_wordBoard.IsTileBlocked(letterPosition, direction)) return false;
 
             if (_wordBoard.HasLetterTile(letterPosition)
                 && _wordBoard.GetLetterTile(letterPosition).Letter != word[i])
                 return false;
+
+            // All checks passed.  Mark letter as a pivot.
+            tilesInSectionByLetter[word[i]].Add(letterPosition);
         }
 
         // All checks passed.  Place word and return true.
