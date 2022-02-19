@@ -125,13 +125,14 @@ namespace Components
             }
         }
         
-        [ContextMenu("Clear Board")]
-        private void DebugClearBoard()
+        [ContextMenu("Cheat: Almost Complete Section")]
+        private void DebugCompleteSection()
         {
-            foreach (var position in _wordBoard.AllLetterAndBlockerTilePositions.ToArray())
+            foreach (var word in _currentSectionWords.Keys.Skip(1).ToArray())
             {
-                _wordBoard.FullyClearTile(position);
+                LetterRing_WordSubmitted(word);
             }
+            DebugLogWords();
         }
     }
 }
