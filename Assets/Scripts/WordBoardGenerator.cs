@@ -66,10 +66,9 @@ public class WordBoardGenerator
 
         // Create a dictionary of existing letter tile positions grouped by which letter they have
         var tilesInSectionByLetter = new Dictionary<char, HashSet<Vector2Int>>();
+
         foreach (var letter in sortedUppercaseLetters.Distinct())
-        {
             tilesInSectionByLetter[letter] = new HashSet<Vector2Int>();
-        }
 
         // Populate the above mentioned grouping
         foreach (var position in tilesInSection)
@@ -198,9 +197,7 @@ public class WordBoardGenerator
             || position.y < sectionStartCoordinate
             || position.x + word.Length * stride.x > sectionEndCoordinate
             || position.y + word.Length * stride.y > sectionEndCoordinate)
-        {
             return false;
-        }
 
         // Check for letter tiles before beginning of word
         if (_wordBoard.HasLetterTile(position - stride))
@@ -228,9 +225,7 @@ public class WordBoardGenerator
 
             if (_wordBoard.HasLetterTile(letterPosition)
                 && _wordBoard.GetLetterTile(letterPosition).Letter != word[i])
-            {
                 return false;
-            }
         }
 
         // All checks passed.  Place word and return true.

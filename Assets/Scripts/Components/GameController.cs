@@ -18,10 +18,10 @@ namespace Components
 
         [SerializeField]
         private UfoLetterRing _letterRing;
-        
+
         [SerializeField]
         private int _futureGeneratedSectionCount;
-        
+
         [SerializeField]
         private int _pastSectionCount;
 
@@ -29,7 +29,7 @@ namespace Components
         private Ufo _ufo;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
-        
+
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
         private int _currentSectionIndex;
@@ -75,7 +75,7 @@ namespace Components
                     GenerateAndEnqueueSection();
                     ActivateNextSection();
                     ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
-                    
+
                     _cameraRig.SetTargetSection(_currentSectionIndex);
                     _ufo.SetTargetSection(_currentSectionIndex);
                 }
@@ -94,7 +94,7 @@ namespace Components
                 _wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, alsoSetBlockerTiles: false);
             }
         }
-        
+
         private void ClearTilesBelowSection(int sectionIndex)
         {
             foreach (var position in _wordBoard.AllLetterAndBlockerTilePositions.ToArray())
@@ -124,7 +124,7 @@ namespace Components
                 UnityEngine.Debug.Log(word);
             }
         }
-        
+
         [ContextMenu("Cheat: Almost Complete Section")]
         private void DebugCompleteSection()
         {
@@ -132,6 +132,7 @@ namespace Components
             {
                 LetterRing_WordSubmitted(word);
             }
+
             DebugLogWords();
         }
     }
