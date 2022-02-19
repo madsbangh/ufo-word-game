@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public class WordBoardGenerator
 {
-    public const int SectionSize = 12;
-    public const int SectionStride = 8;
+    public const int SectionSize = 8;
+    public const int SectionStride = 4;
 
     private const int MinimumWordsPerSection = 4;
     private const int MaximumWordsPerSection = 8;
