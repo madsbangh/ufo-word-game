@@ -12,6 +12,7 @@ public class WordBoardGenerator
     private const int MinimumWordsPerSection = 4;
     private const int MaximumWordsPerSection = 8;
     private const int MaximumFreeWordPlacementAttempts = 100;
+    private const int MinimumSectionLargestWordLetterCount = 5;
 
     private readonly PossibleWordsFinder _anagramFinder;
     private readonly WordBoard _wordBoard;
@@ -28,15 +29,20 @@ public class WordBoardGenerator
         // Get a set of all possible words that can be written with the given letters
         // Note: this can potentially loop forever in case there are no letter sets with at least the minimum required amount of containing words
         string sortedUppercaseLetters;
-        
+
         IEnumerable<string> candidateWords = new HashSet<string>();
         {
             var candidateWordsTyped = (HashSet<string>) candidateWords;
             do
             {
-                var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
-                sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
+                do
+                {
+                    var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
+                    sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
+                } while (sortedUppercaseLetters.Length < MinimumSectionLargestWordLetterCount);
+
                 candidateWordsTyped.Clear();
+
                 _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters,
                     (HashSet<string>) candidateWords);
             } while (candidateWordsTyped.Count < MinimumWordsPerSection);
