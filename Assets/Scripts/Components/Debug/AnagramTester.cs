@@ -40,8 +40,6 @@ namespace Components.Debug
 
 		private void Test()
 		{
-			_testInputField.text = _testInputField.text.Substring(0, Mathf.Min(_testInputField.text.Length, WordUtility.MaximumWordLength));
-
 			var sortedUppercaseLetters = WordUtility.SortLetters(_testInputField.text.ToUpper());
 
 			var possibleWords = new HashSet<string>();

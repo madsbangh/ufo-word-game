@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public static class WordUtility
 {
-    public const int MinimumWordLength = 3;
-    public const int MaximumWordLength = 7;
+    private const int MinimumWordLength = 3;
+    private const int MaximumWordLength = 7;
 
     public static string SortLetters(string input)
     {
