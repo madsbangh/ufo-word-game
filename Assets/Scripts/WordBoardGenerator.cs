@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class WordBoardGenerator
 {
@@ -26,14 +28,23 @@ public class WordBoardGenerator
         // Get a set of all possible words that can be written with the given letters
         // Note: this can potentially loop forever in case there are no letter sets with at least the minimum required amount of containing words
         string sortedUppercaseLetters;
-        var candidateWords = new HashSet<string>();
-        do
+        
+        IEnumerable<string> candidateWords = new HashSet<string>();
         {
-            var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
-            sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
-            candidateWords.Clear();
-            _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, candidateWords);
-        } while (candidateWords.Count < MinimumWordsPerSection);
+            var candidateWordsTyped = (HashSet<string>) candidateWords;
+            do
+            {
+                var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
+                sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
+                candidateWordsTyped.Clear();
+                _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters,
+                    (HashSet<string>) candidateWords);
+            } while (candidateWordsTyped.Count < MinimumWordsPerSection);
+        }
+
+        candidateWords = candidateWords
+            .OrderBy(w => w.Length)
+            .ToList();
 
         // Find start and end coordinates (both X and Y) of current board section
         var sectionStartCoordinate = sectionIndex * SectionStride;
@@ -75,8 +86,12 @@ public class WordBoardGenerator
                 continue;
             }
 
-            var word = candidateWords.First();
-            candidateWords.Remove(word);
+            string word;
+            {
+                var candidateWordsTyped = (List<string>) candidateWords;
+                word = candidateWordsTyped.Last();
+                candidateWordsTyped.RemoveAt(candidateWordsTyped.Count - 1);
+            }
 
             if (TryPlaceWordInSection(word, tilesInSectionByLetter, sectionStartCoordinate, sectionEndCoordinate,
                     out var position, out var direction))
