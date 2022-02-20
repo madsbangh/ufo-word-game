@@ -137,6 +137,7 @@ public class WordBoardGenerator
                 var letter = word[letterIndex];
                 var stride = direction.ToStride();
                 foreach (var positionCandidate in tilesInSectionByLetter[letter]
+                             .ToArray()
                              .Select(pivot => pivot - letterIndex * stride)
                              .Where(positionCandidate =>
                                  TryPlaceWordAtPosition(word, tilesInSectionByLetter, positionCandidate, direction,
