@@ -22,7 +22,7 @@ namespace Components
             wordBoard.LetterTileChanged += WordBoard_TileChanged;
 
             // Clean up previous world (if any)
-            DestroySpawnedWorld();
+            DestroySpawnedBoard();
 
             // Spawn associated prefabs for all items on the word board
             foreach (var positionToSpawnTileOn in wordBoard.AllLetterTilePositions)
@@ -64,10 +64,10 @@ namespace Components
         {
             _wordBoard.LetterTileChanged -= WordBoard_TileChanged;
 
-            DestroySpawnedWorld();
+            DestroySpawnedBoard();
         }
 
-        private void DestroySpawnedWorld()
+        private void DestroySpawnedBoard()
         {
             foreach (var spawnedLetterTile in _spawnedLetterTiles.Values)
             {
