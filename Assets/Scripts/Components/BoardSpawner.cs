@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Components
 {
-    public class WorldSpawner : MonoBehaviour
+    public class BoardSpawner : MonoBehaviour
     {
         [SerializeField]
         private Transform _boardParent;

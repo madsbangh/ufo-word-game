@@ -9,7 +9,7 @@ namespace Components
     public class GameController : MonoBehaviour
     {
         [SerializeField]
-        private WorldSpawner _worldSpawner;
+        private BoardSpawner _worldSpawner;
 
         [SerializeField]
         private TextAsset _wordListAsset;
