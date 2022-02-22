@@ -1266,5 +1266,10 @@ MonoBehaviour:
   - Name: Trees
     Prefabs:
     - {fileID: 4773909055734062426, guid: 9a80daf2c816200468ba2e9071206e66, type: 3}
+    - {fileID: 4773909055734062426, guid: 9b8506b6ba2cf34479721259b367ccec, type: 3}
+    - {fileID: 4773909055734062426, guid: 7db06a680ca08e24daa15482bfdc5fac, type: 3}
+    - {fileID: 4773909055734062426, guid: 68e11ed03230b904da8336d4c8df6b92, type: 3}
+    - {fileID: 4773909055734062426, guid: 731d4a7c5089c024a9430be59eade479, type: 3}
+    - {fileID: 4773909055734062426, guid: 67a14d67e64fcd74fbf7f316a5c6ca35, type: 3}
     Chance: 0.075
     MustBeNextToLetterTile: 0
