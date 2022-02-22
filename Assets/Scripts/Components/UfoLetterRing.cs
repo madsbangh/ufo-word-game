@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Components
 {
@@ -77,7 +78,6 @@ namespace Components
                 var spawnedLetter = Instantiate(_letterPrefab, transform);
                 _letterPool.Add(spawnedLetter);
                 spawnedLetter.Entered += UfoLetter_Entered;
-                // spawnedLetter.Exited += UfoLetter_Exited;
                 spawnedLetter.Pressed += UfoLetter_Pressed;
                 spawnedLetter.Released += UfoLetter_Released;
             }
@@ -98,52 +98,61 @@ namespace Components
             }
         }
 
-        private void UfoLetter_Pressed(UfoLetter letter)
+        private void UfoLetter_Pressed(UfoLetter letter, PointerEventData eventData)
         {
-            letter.Selected = true;
-            _currentlyChosenLetters.Push(letter);
-            _activeLetterToDrawLineFrom = letter.transform;
-            UpdatePreviewWord();
-        }
-
-        private void UfoLetter_Released(UfoLetter letter)
-        {
-            WordSubmitted?.Invoke(_previewWord.text);
-
-            // Deselect all letters
-            while (_currentlyChosenLetters.Count > 0)
+            if (eventData.pointerId == -1 || eventData.pointerId == 0)
             {
-                _currentlyChosenLetters.Pop().Selected = false;
-            }
-
-            // Unset active letter for line drawing
-            _activeLetterToDrawLineFrom = null;
-
-            UpdateLineBetweenLetters();
-            UpdatePreviewWord();
-        }
-
-        private void UfoLetter_Entered(UfoLetter letter)
-        {
-            // Don't do anything if nothing is selected
-            if (_currentlyChosenLetters.Count == 0) return;
-
-            if (!_currentlyChosenLetters.Contains(letter))
-            {
-                // Select current letter if it was not in the stack
                 letter.Selected = true;
                 _currentlyChosenLetters.Push(letter);
                 _activeLetterToDrawLineFrom = letter.transform;
+                UpdatePreviewWord();
             }
-            else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
-            {
-                // Deselect top letter if current was second in the stack
-                _currentlyChosenLetters.Pop().Selected = false;
-                _activeLetterToDrawLineFrom = letter.transform;
-            }
+        }
 
-            UpdateLineBetweenLetters();
-            UpdatePreviewWord();
+        private void UfoLetter_Released(UfoLetter letter, PointerEventData eventData)
+        {
+            if (eventData.pointerId == -1 || eventData.pointerId == 0)
+            {
+                WordSubmitted?.Invoke(_previewWord.text);
+
+                // Deselect all letters
+                while (_currentlyChosenLetters.Count > 0)
+                {
+                    _currentlyChosenLetters.Pop().Selected = false;
+                }
+
+                // Unset active letter for line drawing
+                _activeLetterToDrawLineFrom = null;
+
+                UpdateLineBetweenLetters();
+                UpdatePreviewWord();
+            }
+        }
+
+        private void UfoLetter_Entered(UfoLetter letter, PointerEventData eventData)
+        {
+            if (eventData.pointerId == -1 || eventData.pointerId == 0)
+            {
+                // Don't do anything if nothing is selected
+                if (_currentlyChosenLetters.Count == 0) return;
+
+                if (!_currentlyChosenLetters.Contains(letter))
+                {
+                    // Select current letter if it was not in the stack
+                    letter.Selected = true;
+                    _currentlyChosenLetters.Push(letter);
+                    _activeLetterToDrawLineFrom = letter.transform;
+                }
+                else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
+                {
+                    // Deselect top letter if current was second in the stack
+                    _currentlyChosenLetters.Pop().Selected = false;
+                    _activeLetterToDrawLineFrom = letter.transform;
+                }
+
+                UpdateLineBetweenLetters();
+                UpdatePreviewWord();
+            }
         }
 
         private void UpdateLineBetweenLetters()

@@ -6,13 +6,12 @@ using UnityEngine.EventSystems;
 
 namespace Components
 {
-    public class UfoLetter : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler,
+    public class UfoLetter : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler,
         IPointerUpHandler
     {
-        public event Action<UfoLetter> Pressed;
-        public event Action<UfoLetter> Released;
-        public event Action<UfoLetter> Entered;
-        public event Action<UfoLetter> Exited;
+        public event Action<UfoLetter, PointerEventData> Pressed;
+        public event Action<UfoLetter, PointerEventData> Released;
+        public event Action<UfoLetter, PointerEventData> Entered;
 
         [SerializeField]
         private TMP_Text _letter;
@@ -37,12 +36,10 @@ namespace Components
             Selected = false;
         }
 
-        public void OnPointerEnter(PointerEventData eventData) => Entered?.Invoke(this);
+        public void OnPointerEnter(PointerEventData eventData) => Entered?.Invoke(this, eventData);
 
-        public void OnPointerExit(PointerEventData eventData) => Exited?.Invoke(this);
+		public void OnPointerDown(PointerEventData eventData) => Pressed?.Invoke(this, eventData);
 
-        public void OnPointerDown(PointerEventData eventData) => Pressed?.Invoke(this);
-
-        public void OnPointerUp(PointerEventData eventData) => Released?.Invoke(this);
+		public void OnPointerUp(PointerEventData eventData) => Released?.Invoke(this, eventData);
     }
 }
