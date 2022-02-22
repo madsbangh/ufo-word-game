@@ -7,14 +7,10 @@ public class ScenerySpawner : MonoBehaviour
 	[SerializeField]
 	private Transform _sceneryParent;
 
-	[Range(0f, 1f)]
-	[SerializeField]
-	private float _houseDensity;
-
 	[Header("Scenery Prefabs")]
 
 	[SerializeField]
-	private GameObject[] _housePrefabs = new GameObject[0];
+	private PrefabCategory[] _orderedPefabCategories = new PrefabCategory[0];
 
 	private int _minimumActiveCoordinate, _maximumActiveCoordinate;
 
@@ -107,27 +103,28 @@ public class ScenerySpawner : MonoBehaviour
 			return;
 		}
 
-		if (Random.value < _houseDensity)
+		foreach (var category in _orderedPefabCategories)
 		{
-			if (IsNextToLetterTile(position, _wordBoard))
+			if (Random.value < category.Chance)
 			{
-				SpawnHouse(position);
-				return;
+				if (!category.MustBeNextToLetterTile || IsNextToLetterTile(position, _wordBoard))
+				{
+					SpawnPrefab(position, category.Prefabs);
+					break;
+				}
 			}
 		}
-
-		// TODO: Spawn trees etc.
 	}
 
-	private void SpawnHouse(Vector2Int position)
+	private void SpawnPrefab(Vector2Int position, GameObject[] prefabsToChooseFrom)
 	{
-		var randomIndex = Random.Range(0, _housePrefabs.Length);
-		var house = Instantiate(_housePrefabs[randomIndex],
+		var randomIndex = Random.Range(0, prefabsToChooseFrom.Length);
+		var spawnedObject = Instantiate(prefabsToChooseFrom[randomIndex],
 			position.ToWorldPosition(),
 			Quaternion.identity,
 			_sceneryParent);
 
-		_spawnedObjects.Add(position, house);
+		_spawnedObjects.Add(position, spawnedObject);
 	}
 
 	private static bool IsNextToLetterTile(Vector2Int position, WordBoard wordBoard) =>
@@ -135,4 +132,14 @@ public class ScenerySpawner : MonoBehaviour
 		wordBoard.HasLetterTile(position + Vector2Int.left) ||
 		wordBoard.HasLetterTile(position + Vector2Int.right) ||
 		wordBoard.HasLetterTile(position + Vector2Int.down);
+
+	[System.Serializable]
+	private class PrefabCategory
+	{
+		public string Name = string.Empty;
+		public GameObject[] Prefabs = new GameObject[0];
+		[Range(0f, 1f)]
+		public float Chance;
+		public bool MustBeNextToLetterTile;
+	}
 }
