@@ -9,7 +9,10 @@ namespace Components
     public class GameController : MonoBehaviour
     {
         [SerializeField]
-        private BoardSpawner _worldSpawner;
+        private BoardSpawner _boardSpawner;
+
+        [SerializeField]
+        private ScenerySpawner _scenerySpawner;
 
         [SerializeField]
         private TextAsset _wordListAsset;
@@ -21,10 +24,7 @@ namespace Components
         private UfoLetterRing _letterRing;
 
         [SerializeField]
-        private int _futureSectionCount;
-
-        [SerializeField]
-        private int _pastSectionCount;
+        private int _pastSectionCount, _futureSectionCount;
 
         [SerializeField]
         private Ufo _ufo;
@@ -40,7 +40,8 @@ namespace Components
         {
             _wordBoard = new WordBoard();
             _wordBoardGenerator = new WordBoardGenerator(_wordListAsset, _wordBoard);
-            _worldSpawner.Initialize(_wordBoard);
+            _boardSpawner.Initialize(_wordBoard);
+            _scenerySpawner.Initialize(_wordBoard, _pastSectionCount, _futureSectionCount);
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
             for (var i = 0; i < _futureSectionCount + 1; i++)
@@ -53,6 +54,8 @@ namespace Components
                 _currentSectionIndex++;
                 GenerateAndEnqueueSection();
             }
+
+            _scenerySpawner.ExpandToSection(_currentSectionIndex);
 
             _cameraRig.SetTargetSection(_currentSectionIndex);
             _cameraRig.TeleportToTarget();
@@ -84,6 +87,10 @@ namespace Components
                         GenerateAndEnqueueSection();
                     }
                     ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
+
+                    _scenerySpawner.ExpandToSection(_currentSectionIndex);
+                    // TODO: Do this as the new poisition is reached, and also clear all the way up to current
+                    _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount);
 
                     _cameraRig.SetTargetSection(_currentSectionIndex);
                     _ufo.SetTargetSection(_currentSectionIndex);

@@ -391,7 +391,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe0a5de0eba96741a996a8406767420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _worldSpawner: {fileID: 1558826992}
+  _boardSpawner: {fileID: 1558826992}
+  _scenerySpawner: {fileID: 1808018134}
   _wordListAsset: {fileID: 4900000, guid: 52035587f443e2044b82ee0e7c5556e5, type: 3}
   _cameraRig: {fileID: 153164437}
   _letterRing: {fileID: 27734312}
@@ -1255,5 +1256,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b44d24a6f11d7a46bc27b97954b0bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sceneryParent: {fileID: 1808018133}
+  _margin: 10
+  _houseDensity: 0.25
   _housePrefabs:
   - {fileID: 3958445278624042115, guid: db8e4fa6c0fba80468eda7f06e926b66, type: 3}
