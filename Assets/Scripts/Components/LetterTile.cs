@@ -10,7 +10,7 @@ namespace Components
 
 		[SerializeField]
 		private GameObject _lockedIndicator;
-		
+
 		[SerializeField]
 		private GameObject _hiddenIndicator;
 
@@ -39,10 +39,7 @@ namespace Components
 			set
 			{
 				var t = transform;
-				t.position = new Vector3(
-					value.x,
-					t.position.y,
-					-value.y);
+				t.position = value.ToWorldPosition();
 			}
 		}
 	}
