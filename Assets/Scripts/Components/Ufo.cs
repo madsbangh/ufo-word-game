@@ -31,7 +31,7 @@ namespace Components
                  + WordBoardGenerator.SectionSize / 2) +
                 _offsetWhenBelowSection;
 
-            _target = new Vector3(boardSpaceTargetPosition.x, _target.y, -boardSpaceTargetPosition.y);
+            _target = new Vector3(boardSpaceTargetPosition.x, transform.position.y, -boardSpaceTargetPosition.y);
         }
     }
 }
