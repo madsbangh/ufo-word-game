@@ -58,12 +58,12 @@ namespace Components
 
                 if (plane.Raycast(ray, out var distance))
                 {
-                    var cursorPosition = ray.GetPoint(distance);
+                    var hitLocalPosition = transform.InverseTransformPoint(ray.GetPoint(distance));
                     _lineBetweenActiveLetterAndPointer.positionCount = 2;
                     _lineBetweenActiveLetterAndPointer.SetPositions(new[]
                     {
-                        _activeLetterToDrawLineFrom.position,
-                        cursorPosition
+                        _activeLetterToDrawLineFrom.localPosition,
+                        hitLocalPosition
                     });
                 }
             }
@@ -161,7 +161,7 @@ namespace Components
         private void UpdateLineBetweenLetters()
         {
             var positions = _currentlyChosenLetters
-                .Select(l => l.transform.position)
+                .Select(l => l.transform.localPosition)
                 .ToArray();
 
             _lineBetweenLetters.positionCount = positions.Length;
