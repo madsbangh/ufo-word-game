@@ -52,7 +52,7 @@ public class ScenerySpawner : MonoBehaviour
 		_maximumActiveCoordinate =
 			WordBoardGenerator.SectionStride *
 			(sectionIndex + _futureSections) +
-			WordBoardGenerator.SectionSize;
+			WordBoardGenerator.SectionSize - 1;
 
 		// Expand area below previous active erea
 		for (int x = _minimumActiveCoordinate; x < previousMaximumActiveCoordinate; x++)
