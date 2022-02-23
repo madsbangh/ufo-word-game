@@ -8,29 +8,14 @@ namespace Components
 {
     public class GameController : MonoBehaviour
     {
-        [SerializeField]
-        private BoardSpawner _boardSpawner;
-
-        [SerializeField]
-        private ScenerySpawner _scenerySpawner;
-
-        [SerializeField]
-        private NpcSpawner _npcSpawner;
-
-        [SerializeField]
-        private TextAsset _wordListAsset;
-
-        [SerializeField]
-        private CameraRig _cameraRig;
-
-        [SerializeField]
-        private UfoLetterRing _letterRing;
-
-        [SerializeField]
-        private int _pastSectionCount, _futureSectionCount;
-
-        [SerializeField]
-        private UfoRig _ufoRig;
+        [SerializeField] private TextAsset _wordListAsset;
+        [SerializeField] private BoardSpawner _boardSpawner;
+        [SerializeField] private ScenerySpawner _scenerySpawner;
+        [SerializeField] private NpcSpawner _npcSpawner;
+        [SerializeField] private CameraRig _cameraRig;
+        [SerializeField] private UfoRig _ufoRig;
+        [SerializeField] private UfoLetterRing _letterRing;
+        [SerializeField] private int _pastSectionCount, _futureSectionCount;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
 
