@@ -1,4 +1,5 @@
 using EasyButtons;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -61,15 +62,24 @@ namespace Components
 
                 if (_currentSectionWords.Count == 0)
                 {
-                    ProgressToNextSection();
-
-                    _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
-                    _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount + 1);
-
-                    _cameraRig.SetTargetSection(_currentSectionIndex);
-                    _ufoRig.SetTargetSection(_currentSectionIndex);
+                    StartCoroutine(BoardCompletedCoroutine());
                 }
             }
+        }
+
+        private IEnumerator BoardCompletedCoroutine()
+		{
+            _ufoRig.SetUfoTargetOverBoard();
+            yield return new WaitForSeconds(2f);
+            _ufoRig.SetUfoTargetBelowBoard();
+
+            ProgressToNextSection();
+
+            _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
+            _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount + 1);
+
+            _cameraRig.SetTargetSection(_currentSectionIndex);
+            _ufoRig.SetTargetSection(_currentSectionIndex);
         }
 
         private void ProgressToNextSection()
