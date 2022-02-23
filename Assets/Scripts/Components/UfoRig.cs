@@ -2,7 +2,7 @@
 
 namespace Components
 {
-    public class Ufo : MonoBehaviour
+    public class UfoRig : MonoBehaviour
     {
         [SerializeField]
         private float _smoothTime;

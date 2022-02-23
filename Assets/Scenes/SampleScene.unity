@@ -348,6 +348,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _smoothTime: 0.5
   _offset: {x: 0, y: 8}
+--- !u!1 &173895518
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173895519}
+  - component: {fileID: 173895520}
+  m_Layer: 0
+  m_Name: UFO Rig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &173895519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173895518}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 831032581}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &173895520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173895518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e713ca06fa41946a36a06cc3c46c3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _smoothTime: 0.35
+  _offsetWhenBelowSection: {x: 0, y: 13}
 --- !u!1 &225341497
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,7 +491,7 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _pastSectionCount: 3
   _futureSectionCount: 3
-  _ufo: {fileID: 831032582}
+  _ufo: {fileID: 0}
 --- !u!1 &433271873
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,7 +675,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 831032581}
-  - component: {fileID: 831032582}
   m_Layer: 0
   m_Name: UFO
   m_TagString: Untagged
@@ -644,31 +689,17 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831032580}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: -5.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 433271874}
   - {fileID: 1720926714}
   - {fileID: 27734311}
   - {fileID: 1451661649}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 173895519}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &831032582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 831032580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32e713ca06fa41946a36a06cc3c46c3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _smoothTime: 0.35
-  _offsetWhenBelowSection: {x: 0, y: 13}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

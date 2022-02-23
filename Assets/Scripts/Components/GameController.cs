@@ -30,7 +30,7 @@ namespace Components
         private int _pastSectionCount, _futureSectionCount;
 
         [SerializeField]
-        private Ufo _ufo;
+        private UfoRig _ufo;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
 
