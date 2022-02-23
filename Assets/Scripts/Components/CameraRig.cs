@@ -5,7 +5,6 @@ namespace Components
     public class CameraRig : MonoBehaviour
     {
         [SerializeField] private float _smoothTime;
-        [SerializeField] private Vector2Int _offset;
 
         private Vector2 _boardSpaceTargetPosition;
         private Vector2 _boardSpaceVelocity;
@@ -23,8 +22,7 @@ namespace Components
             _boardSpaceTargetPosition =
                 Vector2Int.one *
                 (WordBoardGenerator.SectionStride * section
-                 + WordBoardGenerator.SectionSize / 2) +
-                _offset;
+                 + WordBoardGenerator.SectionSize / 2);
 
         public void TeleportToTarget()
         {

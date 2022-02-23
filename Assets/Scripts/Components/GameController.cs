@@ -64,6 +64,7 @@ namespace Components
             _cameraRig.TeleportToTarget();
 
             _ufoRig.SetTargetSection(_currentSectionIndex);
+            _ufoRig.SetUfoTargetBelowBoard();
             _ufoRig.TeleportToTarget();
         }
 

@@ -5,22 +5,35 @@ namespace Components
     public class UfoRig : MonoBehaviour
     {
         [SerializeField]
-        private float _smoothTime;
-        [SerializeField]
-        private Vector2Int _offsetWhenBelowSection;
+        private float _rigSmoothTime, _ufoSmoothTime;
 
-        private Vector3 _target;
-        private Vector3 _velocity;
+        [SerializeField]
+        private Transform _ufo;
+
+        [SerializeField]
+        private Transform _positionBelowBoard;
+
+        [SerializeField]
+        private Transform _positionOverBoard;
+
+        private Vector3 _rigWorldTarget;
+        private Vector3 _rigWorldVelocity;
+
+        private Vector3 _ufoLocalTarget;
+        private Vector3 _ufoLocalVelocity;
 
         private void Update()
         {
-            transform.position = Vector3.SmoothDamp(transform.position, _target, ref _velocity, _smoothTime);
+            transform.position = Vector3.SmoothDamp(transform.position, _rigWorldTarget, ref _rigWorldVelocity, _rigSmoothTime);
+            _ufo.transform.localPosition = Vector3.SmoothDamp(_ufo.transform.localPosition, _ufoLocalTarget, ref _ufoLocalVelocity, _rigSmoothTime);
         }
 
         public void TeleportToTarget()
         {
-            transform.position = _target;
-            _velocity = Vector3.zero;
+            transform.position = _rigWorldTarget;
+            _rigWorldVelocity = Vector3.zero;
+            _ufo.transform.localPosition = _ufoLocalTarget;
+            _ufoLocalVelocity = Vector3.zero;
         }
 
         public void SetTargetSection(int section)
@@ -28,10 +41,19 @@ namespace Components
             var boardSpaceTargetPosition =
                 Vector2Int.one *
                 (WordBoardGenerator.SectionStride * section
-                 + WordBoardGenerator.SectionSize / 2) +
-                _offsetWhenBelowSection;
+                 + WordBoardGenerator.SectionSize / 2);
 
-            _target = new Vector3(boardSpaceTargetPosition.x, transform.position.y, -boardSpaceTargetPosition.y);
+            _rigWorldTarget = new Vector3(boardSpaceTargetPosition.x, 0f, -boardSpaceTargetPosition.y);
+        }
+
+        public void SetUfoTargetOverBoard()
+        {
+            _ufoLocalTarget = _positionOverBoard.localPosition;
+        }
+
+        public void SetUfoTargetBelowBoard()
+        {
+            _ufoLocalTarget = _positionBelowBoard.localPosition;
         }
     }
 }
