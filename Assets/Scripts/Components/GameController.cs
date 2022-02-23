@@ -37,6 +37,7 @@ namespace Components
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
         private int _currentSectionIndex;
+        private int _newestGeneratedSectionIndex;
         private SectionWords _currentSectionWords;
 
         private void Start()
@@ -47,16 +48,9 @@ namespace Components
             _scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
-            for (var i = 0; i < _futureSectionCount + 1; i++)
-            {
-                GenerateAndEnqueueSection();
-            }
-
-            while (!ActivateNextSection())
-            {
-                _currentSectionIndex++;
-                GenerateAndEnqueueSection();
-            }
+            _currentSectionIndex = -1;
+            _newestGeneratedSectionIndex = -1;
+            ProgressToNextSection();
 
             _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
 
@@ -82,15 +76,7 @@ namespace Components
 
                 if (_currentSectionWords.Count == 0)
                 {
-                    _currentSectionIndex++;
-
-                    GenerateAndEnqueueSection();
-                    while (!ActivateNextSection())
-                    {
-                        _currentSectionIndex++;
-                        GenerateAndEnqueueSection();
-                    }
-                    ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
+                    ProgressToNextSection();
 
                     _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
                     _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount + 1);
@@ -101,28 +87,38 @@ namespace Components
             }
         }
 
-        private bool ActivateNextSection()
-        {
-            string letters;
-            (letters, _currentSectionWords) = _generatedFutureSections.Dequeue();
+        private void ProgressToNextSection()
+		{
+			// Dequeue and generate sections
+			string letters;
+			do
+			{
+				_currentSectionIndex++;
+				while (_newestGeneratedSectionIndex < _currentSectionIndex + _futureSectionCount)
+				{
+					GenerateAndEnqueueSection();
+				}
+				(letters, _currentSectionWords) = _generatedFutureSections.Dequeue();
 
-            if (!letters.Any())
-            {
-                return false;
-            }
+			} while (!letters.Any());
 
-            _letterRing.SetLetters(letters);
+			_letterRing.SetLetters(letters);
 
-            foreach (var word in _currentSectionWords.Keys)
-            {
-                (Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
-                _wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
-            }
+			UnlockCurrentSectionWords();
 
-            return true;
-        }
+			ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
+		}
 
-        private void ClearTilesBelowSection(int sectionIndex)
+		private void UnlockCurrentSectionWords()
+		{
+			foreach (var word in _currentSectionWords.Keys)
+			{
+				(Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
+				_wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
+			}
+		}
+
+		private void ClearTilesBelowSection(int sectionIndex)
         {
             foreach (var position in _wordBoard.AllLetterAndBlockerTilePositions.ToArray())
             {
@@ -136,13 +132,13 @@ namespace Components
 
         private void GenerateAndEnqueueSection()
         {
-            int sectionIndex = _currentSectionIndex + _generatedFutureSections.Count;
+            _newestGeneratedSectionIndex++;
 
-            var generatedSectionWords = _wordBoardGenerator.GenerateSection(sectionIndex, out var letters);
+            var generatedSectionWords = _wordBoardGenerator.GenerateSection(_newestGeneratedSectionIndex, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
             _generatedFutureSections.Enqueue((letters, generatedSectionWords));
 
-            _npcSpawner.SpawnNpcsForSection(sectionIndex, _wordBoard);
+            _npcSpawner.SpawnNpcsForSection(_newestGeneratedSectionIndex, _wordBoard);
         }
 
         [Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
