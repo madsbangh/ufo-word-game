@@ -136,15 +136,13 @@ namespace Components
 
         private void GenerateAndEnqueueSection()
         {
-            var generatedSectionWords =
-                _wordBoardGenerator.GenerateSection(_currentSectionIndex + _generatedFutureSections.Count,
-                    out var letters);
+            int sectionIndex = _currentSectionIndex + _generatedFutureSections.Count;
 
+            var generatedSectionWords = _wordBoardGenerator.GenerateSection(sectionIndex, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
-
-            _npcSpawner.SpawnNpcsForSection(_currentSectionIndex + _generatedFutureSections.Count, _wordBoard);
-
             _generatedFutureSections.Enqueue((letters, generatedSectionWords));
+
+            _npcSpawner.SpawnNpcsForSection(sectionIndex, _wordBoard);
         }
 
         [Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
