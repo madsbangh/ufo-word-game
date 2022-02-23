@@ -49,7 +49,10 @@ namespace Components
         {
             if (_activeLetterToDrawLineFrom != null)
             {
-                var ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
+                var ray = Camera.main!.ScreenPointToRay(
+                    Input.touchCount > 0
+                    ? (Vector3)Input.GetTouch(0).position
+                    : Input.mousePosition);
                 var t = transform;
                 var plane = new Plane(t.up, t.position);
 
