@@ -28,7 +28,7 @@ public class ScenerySpawner : MonoBehaviour
 
 		DestroySpawnedScenery();
 
-		_minimumActiveCoordinate = -WordBoardGenerator.SectionStride * pastSections;
+		_minimumActiveCoordinate = -WordBoardGenerator.SectionStride * (pastSections - 1);
 		_maximumActiveCoordinate = _minimumActiveCoordinate;
 	}
 
@@ -51,8 +51,8 @@ public class ScenerySpawner : MonoBehaviour
 
 		_maximumActiveCoordinate =
 			WordBoardGenerator.SectionStride *
-			(sectionIndex + _futureSections) +
-			WordBoardGenerator.SectionSize - 1;
+			(sectionIndex + _futureSections - 1) +
+			WordBoardGenerator.SectionSize;
 
 		// Expand area below previous active erea
 		for (int x = _minimumActiveCoordinate; x < previousMaximumActiveCoordinate; x++)
@@ -77,7 +77,7 @@ public class ScenerySpawner : MonoBehaviour
 	{
 		_minimumActiveCoordinate =
 			WordBoardGenerator.SectionStride *
-			(sectionIndex - _pastSections);
+			(sectionIndex - _pastSections + 1);
 
 		foreach (var position in _spawnedObjects.Keys.ToArray())
 		{
