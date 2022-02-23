@@ -15,7 +15,7 @@ namespace Components
         private ScenerySpawner _scenerySpawner;
 
         [SerializeField]
-		private NpcSpawner _npcSpawner;
+        private NpcSpawner _npcSpawner;
 
         [SerializeField]
         private TextAsset _wordListAsset;
@@ -39,7 +39,7 @@ namespace Components
         private int _currentSectionIndex;
         private SectionWords _currentSectionWords;
 
-		private void Start()
+        private void Start()
         {
             _wordBoard = new WordBoard();
             _wordBoardGenerator = new WordBoardGenerator(_wordListAsset, _wordBoard);
@@ -110,7 +110,7 @@ namespace Components
             {
                 return false;
             }
-            
+
             _letterRing.SetLetters(letters);
 
             foreach (var word in _currentSectionWords.Keys)
