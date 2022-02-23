@@ -491,7 +491,7 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _pastSectionCount: 3
   _futureSectionCount: 3
-  _ufo: {fileID: 0}
+  _ufoRig: {fileID: 173895520}
 --- !u!1 &433271873
 GameObject:
   m_ObjectHideFlags: 0

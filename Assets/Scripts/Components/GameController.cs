@@ -30,7 +30,7 @@ namespace Components
         private int _pastSectionCount, _futureSectionCount;
 
         [SerializeField]
-        private UfoRig _ufo;
+        private UfoRig _ufoRig;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
 
@@ -63,8 +63,8 @@ namespace Components
             _cameraRig.SetTargetSection(_currentSectionIndex);
             _cameraRig.TeleportToTarget();
 
-            _ufo.SetTargetSection(_currentSectionIndex);
-            _ufo.TeleportToTarget();
+            _ufoRig.SetTargetSection(_currentSectionIndex);
+            _ufoRig.TeleportToTarget();
         }
 
         private void OnDestroy()
@@ -96,7 +96,7 @@ namespace Components
                     _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount);
 
                     _cameraRig.SetTargetSection(_currentSectionIndex);
-                    _ufo.SetTargetSection(_currentSectionIndex);
+                    _ufoRig.SetTargetSection(_currentSectionIndex);
                 }
             }
         }
