@@ -348,6 +348,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _smoothTime: 0.5
   _offset: {x: 0, y: 8}
+--- !u!1 &225341497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 225341499}
+  - component: {fileID: 225341498}
+  m_Layer: 0
+  m_Name: NPC Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &225341498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225341497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78d600f1975e1e04b8f9798ca17054be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _npcPrefab: {fileID: 6700864009441572364, guid: 808752d17c651de4397f2aa3c05a4ffe, type: 3}
+  _chance: 0.25
+  _npcsParent: {fileID: 225341499}
+--- !u!4 &225341499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225341497}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &265197042
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _boardSpawner: {fileID: 1558826992}
   _scenerySpawner: {fileID: 1808018134}
+  _npcSpawner: {fileID: 225341498}
   _wordListAsset: {fileID: 4900000, guid: 52035587f443e2044b82ee0e7c5556e5, type: 3}
   _cameraRig: {fileID: 153164437}
   _letterRing: {fileID: 27734312}

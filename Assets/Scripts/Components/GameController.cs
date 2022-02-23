@@ -15,6 +15,9 @@ namespace Components
         private ScenerySpawner _scenerySpawner;
 
         [SerializeField]
+		private NpcSpawner _npcSpawner;
+
+        [SerializeField]
         private TextAsset _wordListAsset;
 
         [SerializeField]
@@ -36,7 +39,7 @@ namespace Components
         private int _currentSectionIndex;
         private SectionWords _currentSectionWords;
 
-        private void Start()
+		private void Start()
         {
             _wordBoard = new WordBoard();
             _wordBoardGenerator = new WordBoardGenerator(_wordListAsset, _wordBoard);
@@ -136,7 +139,11 @@ namespace Components
             var generatedSectionWords =
                 _wordBoardGenerator.GenerateSection(_currentSectionIndex + _generatedFutureSections.Count,
                     out var letters);
+
             letters = WordUtility.ShuffleLetters(letters);
+
+            _npcSpawner.SpawnNpcsForSection(_currentSectionIndex + _generatedFutureSections.Count, _wordBoard);
+
             _generatedFutureSections.Enqueue((letters, generatedSectionWords));
         }
 
