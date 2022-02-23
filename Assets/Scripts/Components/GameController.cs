@@ -44,7 +44,7 @@ namespace Components
             _wordBoard = new WordBoard();
             _wordBoardGenerator = new WordBoardGenerator(_wordListAsset, _wordBoard);
             _boardSpawner.Initialize(_wordBoard);
-            _scenerySpawner.Initialize(_wordBoard, _pastSectionCount, _futureSectionCount);
+            _scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
             for (var i = 0; i < _futureSectionCount + 1; i++)
@@ -58,7 +58,7 @@ namespace Components
                 GenerateAndEnqueueSection();
             }
 
-            _scenerySpawner.ExpandToSection(_currentSectionIndex);
+            _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
 
             _cameraRig.SetTargetSection(_currentSectionIndex);
             _cameraRig.TeleportToTarget();
@@ -91,9 +91,8 @@ namespace Components
                     }
                     ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
 
-                    _scenerySpawner.ExpandToSection(_currentSectionIndex);
-                    // TODO: Do this as the new poisition is reached, and also clear all the way up to current
-                    _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount);
+                    _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
+                    _scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount + 1);
 
                     _cameraRig.SetTargetSection(_currentSectionIndex);
                     _ufoRig.SetTargetSection(_currentSectionIndex);
