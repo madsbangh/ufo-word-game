@@ -149,7 +149,7 @@ namespace Components
         }
 
         [ContextMenu("Cheat: Almost Complete Section")]
-        private void DebugCompleteSection()
+        private void DebugAlmostCompleteSection()
         {
             foreach (var word in _currentSectionWords.Keys.Skip(1).ToArray())
             {
@@ -157,6 +157,15 @@ namespace Components
             }
 
             DebugLogWords();
+        }
+
+        [ContextMenu("Cheat: Complete Section")]
+        private void DebugCompleteSection()
+        {
+            foreach (var word in _currentSectionWords.Keys.ToArray())
+            {
+                LetterRing_WordSubmitted(word);
+            }
         }
     }
 }
