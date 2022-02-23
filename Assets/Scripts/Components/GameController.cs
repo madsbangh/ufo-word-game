@@ -1,3 +1,4 @@
+using EasyButtons;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -139,7 +140,7 @@ namespace Components
             _generatedFutureSections.Enqueue((letters, generatedSectionWords));
         }
 
-        [ContextMenu("Cheat: Log Words")]
+        [Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
         private void DebugLogWords()
         {
             foreach (var word in _currentSectionWords.Keys)
@@ -148,7 +149,7 @@ namespace Components
             }
         }
 
-        [ContextMenu("Cheat: Almost Complete Section")]
+        [Button("Cheat: Almost Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
         private void DebugAlmostCompleteSection()
         {
             foreach (var word in _currentSectionWords.Keys.Skip(1).ToArray())
@@ -159,7 +160,7 @@ namespace Components
             DebugLogWords();
         }
 
-        [ContextMenu("Cheat: Complete Section")]
+        [Button("Cheat: Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
         private void DebugCompleteSection()
         {
             foreach (var word in _currentSectionWords.Keys.ToArray())
