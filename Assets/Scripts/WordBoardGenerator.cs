@@ -14,13 +14,13 @@ public class WordBoardGenerator
     private const int MaximumFreeWordPlacementAttempts = 100;
     private const int MinimumSectionLargestWordLetterCount = 5;
 
-    private readonly PossibleWordsFinder _anagramFinder;
+    private readonly PossibleWordsFinder _possibleWordsFinder;
     private readonly WordBoard _wordBoard;
 
     public WordBoardGenerator(TextAsset wordListAsset, WordBoard wordBoard)
     {
         var words = WordUtility.ParseFilterAndProcessWordList(wordListAsset.text);
-        _anagramFinder = new PossibleWordsFinder(words);
+        _possibleWordsFinder = new PossibleWordsFinder(words);
         _wordBoard = wordBoard;
     }
 
@@ -91,13 +91,13 @@ public class WordBoardGenerator
         {
             do
             {
-                var index = Random.Range(0, _anagramFinder.AllLetterSets.Count());
-                sortedUppercaseLetters = _anagramFinder.AllLetterSets.ElementAt(index);
+                var index = Random.Range(0, _possibleWordsFinder.AllLetterSets.Count());
+                sortedUppercaseLetters = _possibleWordsFinder.AllLetterSets.ElementAt(index);
             } while (sortedUppercaseLetters.Length < MinimumSectionLargestWordLetterCount);
 
             resultCandidateWordsSet.Clear();
 
-            _anagramFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, resultCandidateWordsSet);
+            _possibleWordsFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, resultCandidateWordsSet);
         } while (resultCandidateWordsSet.Count < MinimumWordsPerSection);
 
         resultSortedCandidateWords = new Queue<string>(resultCandidateWordsSet
