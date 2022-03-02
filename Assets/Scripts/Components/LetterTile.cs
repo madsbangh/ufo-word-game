@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ namespace Components
 		private TMP_Text _letter;
 
 		[SerializeField]
-		private GameObject _lockedIndicator;
+		private SpriteRenderer _sprite;
 
 		[SerializeField]
-		private GameObject _hiddenIndicator;
+		private Color _lockedColor, _hiddenColor, _revealedColor;
 
 		public char Letter
 		{
@@ -28,9 +29,23 @@ namespace Components
 		{
 			set
 			{
-				_letter.gameObject.SetActive(value == TileState.Revealed);
-				_lockedIndicator.SetActive(value == TileState.Locked);
-				_hiddenIndicator.SetActive(value == TileState.Hidden);
+				switch (value)
+				{
+					case TileState.Locked:
+						_sprite.color = _lockedColor;
+						_letter.gameObject.SetActive(false);
+						break;
+					case TileState.Hidden:
+						_sprite.color = _hiddenColor;
+						_letter.gameObject.SetActive(false);
+						break;
+					case TileState.Revealed:
+						_sprite.color = _revealedColor;
+						_letter.gameObject.SetActive(true);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(value));
+				}
 			}
 		}
 

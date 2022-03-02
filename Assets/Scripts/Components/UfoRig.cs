@@ -46,14 +46,9 @@ namespace Components
             _rigWorldTarget = new Vector3(boardSpaceTargetPosition.x, 0f, -boardSpaceTargetPosition.y);
         }
 
-        public void SetUfoTargetOverBoard()
+        public void SetUfoTargetOverBoard(bool ufoIsOverBoard)
         {
-            _ufoLocalTarget = _positionOverBoard.localPosition;
-        }
-
-        public void SetUfoTargetBelowBoard()
-        {
-            _ufoLocalTarget = _positionBelowBoard.localPosition;
+            _ufoLocalTarget = ufoIsOverBoard ? _positionOverBoard.localPosition :  _positionBelowBoard.localPosition;
         }
     }
 }

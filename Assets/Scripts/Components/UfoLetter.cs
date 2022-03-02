@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,11 +12,10 @@ namespace Components
         public event Action<UfoLetter, PointerEventData> Released;
         public event Action<UfoLetter, PointerEventData> Entered;
 
-        [SerializeField]
-        private TMP_Text _letter;
-
-        [SerializeField]
-        private GameObject _selectedIndicator;
+        [SerializeField] private TMP_Text _letter;
+        [SerializeField] private SpriteRenderer _sprite;
+        [SerializeField] private Color _selectedColor;
+        [SerializeField] private Color _normalColor;
 
         public char Letter
         {
@@ -27,8 +25,7 @@ namespace Components
 
         public bool Selected
         {
-            get => _selectedIndicator.activeSelf;
-            set => _selectedIndicator.SetActive(value);
+            set => _sprite.color = value ? _selectedColor : _normalColor;
         }
 
         private void Start()

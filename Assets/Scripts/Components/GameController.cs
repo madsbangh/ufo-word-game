@@ -15,8 +15,10 @@ namespace Components
         [SerializeField] private NpcSpawner _npcSpawner;
         [SerializeField] private CameraRig _cameraRig;
         [SerializeField] private UfoRig _ufoRig;
+        [SerializeField] private UFOAnimator _ufoAnimator;
         [SerializeField] private UfoLetterRing _letterRing;
         [SerializeField] private int _pastSectionCount, _futureSectionCount;
+        [SerializeField] float _timeOverBoardDuringWinSeconds;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
 
@@ -41,10 +43,11 @@ namespace Components
             _scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
 
             _cameraRig.SetTargetSection(_currentSectionIndex);
+            _cameraRig.SetCameraOverBoard(false);
             _cameraRig.TeleportToTarget();
 
             _ufoRig.SetTargetSection(_currentSectionIndex);
-            _ufoRig.SetUfoTargetBelowBoard();
+            _ufoRig.SetUfoTargetOverBoard(false);
             _ufoRig.TeleportToTarget();
         }
 
@@ -64,14 +67,25 @@ namespace Components
                 {
                     StartCoroutine(BoardCompletedCoroutine());
                 }
+
+                _ufoAnimator.PlayHappy();
+            }
+            else if (word.Length > 1)
+            {
+                _ufoAnimator.PlaySad();
             }
         }
 
         private IEnumerator BoardCompletedCoroutine()
-		{
-            _ufoRig.SetUfoTargetOverBoard();
-            yield return new WaitForSeconds(2f);
-            _ufoRig.SetUfoTargetBelowBoard();
+        {
+            _ufoAnimator.PlayWin();
+            _cameraRig.SetCameraOverBoard(true);
+            _ufoRig.SetUfoTargetOverBoard(true);
+
+            yield return new WaitForSeconds(_timeOverBoardDuringWinSeconds);
+
+            _cameraRig.SetCameraOverBoard(false);
+            _ufoRig.SetUfoTargetOverBoard(false);
 
             ProgressToNextSection();
 
@@ -83,37 +97,37 @@ namespace Components
         }
 
         private void ProgressToNextSection()
-		{
-			// Dequeue and generate sections
-			string letters;
-			do
-			{
-				_currentSectionIndex++;
-				while (_newestGeneratedSectionIndex < _currentSectionIndex + _futureSectionCount)
-				{
-					GenerateAndEnqueueSection();
-				}
-				(letters, _currentSectionWords) = _generatedFutureSections.Dequeue();
+        {
+            // Dequeue and generate sections
+            string letters;
+            do
+            {
+                _currentSectionIndex++;
+                while (_newestGeneratedSectionIndex < _currentSectionIndex + _futureSectionCount)
+                {
+                    GenerateAndEnqueueSection();
+                }
 
-			} while (!letters.Any());
+                (letters, _currentSectionWords) = _generatedFutureSections.Dequeue();
+            } while (!letters.Any());
 
-			_letterRing.SetLetters(letters);
+            _letterRing.SetLetters(letters);
 
-			UnlockCurrentSectionWords();
+            UnlockCurrentSectionWords();
 
-			ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
-		}
+            ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
+        }
 
-		private void UnlockCurrentSectionWords()
-		{
-			foreach (var word in _currentSectionWords.Keys)
-			{
-				(Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
-				_wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
-			}
-		}
+        private void UnlockCurrentSectionWords()
+        {
+            foreach (var word in _currentSectionWords.Keys)
+            {
+                (Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
+                _wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
+            }
+        }
 
-		private void ClearTilesBelowSection(int sectionIndex)
+        private void ClearTilesBelowSection(int sectionIndex)
         {
             foreach (var position in _wordBoard.AllLetterAndBlockerTilePositions.ToArray())
             {
@@ -129,7 +143,8 @@ namespace Components
         {
             _newestGeneratedSectionIndex++;
 
-            var generatedSectionWords = _wordBoardGenerator.GenerateSection(_newestGeneratedSectionIndex, out var letters);
+            var generatedSectionWords =
+                _wordBoardGenerator.GenerateSection(_newestGeneratedSectionIndex, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
             _generatedFutureSections.Enqueue((letters, generatedSectionWords));
 
