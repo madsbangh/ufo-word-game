@@ -1,142 +1,147 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class ScenerySpawner : MonoBehaviour
+namespace Components
 {
-	[SerializeField]
-	private Transform _sceneryParent;
+	public class ScenerySpawner : MonoBehaviour
+	{
+		[SerializeField]
+		private Transform _sceneryParent;
 
-	[Header("Scenery Prefabs")]
+		[Header("Scenery Prefabs")]
 
-	[SerializeField]
-	private PrefabCategory[] _orderedPefabCategories = new PrefabCategory[0];
+		[SerializeField]
+		private PrefabCategory[] _orderedPrefabCategories = Array.Empty<PrefabCategory>();
 
-	private int _minimumActiveCoordinate, _maximumActiveCoordinate;
+		private int _minimumActiveCoordinate, _maximumActiveCoordinate;
 
-	private readonly Dictionary<Vector2Int, GameObject> _spawnedObjects
+		private readonly Dictionary<Vector2Int, GameObject> _spawnedObjects
 			= new Dictionary<Vector2Int, GameObject>();
 
-	private WordBoard _wordBoard;
+		private WordBoard _wordBoard;
 
-	public void Initialize(WordBoard wordBoard, int initialMinimumCoordinate)
-	{
-		_wordBoard = wordBoard;
-
-		DestroySpawnedScenery();
-
-		_minimumActiveCoordinate = initialMinimumCoordinate;
-		_maximumActiveCoordinate = initialMinimumCoordinate;
-	}
-
-	private void DestroySpawnedScenery()
-	{
-		foreach (var spawnedObject in _spawnedObjects.Values)
+		public void Initialize(WordBoard wordBoard, int initialMinimumCoordinate)
 		{
-			if (spawnedObject)
-			{
-				Destroy(spawnedObject.gameObject);
-			}
+			_wordBoard = wordBoard;
+
+			DestroySpawnedScenery();
+
+			_minimumActiveCoordinate = initialMinimumCoordinate;
+			_maximumActiveCoordinate = initialMinimumCoordinate;
 		}
 
-		_spawnedObjects.Clear();
-	}
-
-	public void ExpandToSection(int sectionIndex)
-	{
-		var previousMaximumActiveCoordinate = _maximumActiveCoordinate;
-
-		_maximumActiveCoordinate =
-			WordBoardGenerator.SectionStride *
-			(sectionIndex) +
-			WordBoardGenerator.SectionSize;
-
-		// Expand area below previous active erea
-		for (int x = _minimumActiveCoordinate; x < previousMaximumActiveCoordinate; x++)
+		private void DestroySpawnedScenery()
 		{
-			for (int y = previousMaximumActiveCoordinate; y < _maximumActiveCoordinate; y++)
+			foreach (var spawnedObject in _spawnedObjects.Values)
 			{
-				GenerateTile(new Vector2Int(x, y));
-			}
-		}
-
-		// Expand area to the right of previous and new active area
-		for (int x = previousMaximumActiveCoordinate; x < _maximumActiveCoordinate; x++)
-		{
-			for (int y = _minimumActiveCoordinate; y < _maximumActiveCoordinate; y++)
-			{
-				GenerateTile(new Vector2Int(x, y));
-			}
-		}
-	}
-
-	public void CleanupBeforeSection(int sectionIndex)
-	{
-		_minimumActiveCoordinate =
-			WordBoardGenerator.SectionStride *
-			(sectionIndex);
-
-		foreach (var position in _spawnedObjects.Keys.ToArray())
-		{
-			if (position.x < _minimumActiveCoordinate ||
-				position.y < _minimumActiveCoordinate)
-			{
-				var objectToDestroy = _spawnedObjects[position];
-
-				if (objectToDestroy)
+				if (spawnedObject)
 				{
-					Destroy(objectToDestroy);
+					Destroy(spawnedObject.gameObject);
 				}
-
-				_spawnedObjects.Remove(position);
 			}
-		}
-	}
 
-	private void GenerateTile(Vector2Int position)
-	{
-		if (_wordBoard.HasLetterTile(position))
-		{
-			return;
+			_spawnedObjects.Clear();
 		}
 
-		foreach (var category in _orderedPefabCategories)
+		public void ExpandToSection(int sectionIndex)
 		{
-			if (Random.value < category.Chance)
+			var previousMaximumActiveCoordinate = _maximumActiveCoordinate;
+
+			_maximumActiveCoordinate =
+				WordBoardGenerator.SectionStride *
+				(sectionIndex) +
+				WordBoardGenerator.SectionSize;
+
+			// Expand area below previous active erea
+			for (int x = _minimumActiveCoordinate; x < previousMaximumActiveCoordinate; x++)
 			{
-				if (!category.MustBeNextToLetterTile || IsNextToLetterTile(position, _wordBoard))
+				for (int y = previousMaximumActiveCoordinate; y < _maximumActiveCoordinate; y++)
 				{
-					SpawnPrefab(position, category.Prefabs);
-					break;
+					GenerateTile(new Vector2Int(x, y));
+				}
+			}
+
+			// Expand area to the right of previous and new active area
+			for (int x = previousMaximumActiveCoordinate; x < _maximumActiveCoordinate; x++)
+			{
+				for (int y = _minimumActiveCoordinate; y < _maximumActiveCoordinate; y++)
+				{
+					GenerateTile(new Vector2Int(x, y));
 				}
 			}
 		}
-	}
 
-	private void SpawnPrefab(Vector2Int position, GameObject[] prefabsToChooseFrom)
-	{
-		var randomIndex = Random.Range(0, prefabsToChooseFrom.Length);
-		var spawnedObject = Instantiate(prefabsToChooseFrom[randomIndex],
-			position.ToWorldPosition(),
-			Quaternion.identity,
-			_sceneryParent);
+		public void CleanupBeforeSection(int sectionIndex)
+		{
+			_minimumActiveCoordinate =
+				WordBoardGenerator.SectionStride *
+				(sectionIndex);
 
-		_spawnedObjects.Add(position, spawnedObject);
-	}
+			foreach (var position in _spawnedObjects.Keys.ToArray())
+			{
+				if (position.x < _minimumActiveCoordinate ||
+				    position.y < _minimumActiveCoordinate)
+				{
+					var objectToDestroy = _spawnedObjects[position];
 
-	private static bool IsNextToLetterTile(Vector2Int position, WordBoard wordBoard) =>
-		wordBoard.HasLetterTile(position + Vector2Int.up) ||
-		wordBoard.HasLetterTile(position + Vector2Int.left) ||
-		wordBoard.HasLetterTile(position + Vector2Int.right) ||
-		wordBoard.HasLetterTile(position + Vector2Int.down);
+					if (objectToDestroy)
+					{
+						Destroy(objectToDestroy);
+					}
 
-	[System.Serializable]
-	private class PrefabCategory
-	{
-		public string Name = string.Empty;
-		public GameObject[] Prefabs = new GameObject[0];
-		[Range(0f, 1f)]
-		public float Chance;
-		public bool MustBeNextToLetterTile;
+					_spawnedObjects.Remove(position);
+				}
+			}
+		}
+
+		private void GenerateTile(Vector2Int position)
+		{
+			if (_wordBoard.HasLetterTile(position))
+			{
+				return;
+			}
+
+			foreach (var category in _orderedPrefabCategories)
+			{
+				if (Random.value < category.Chance)
+				{
+					if (!category.MustBeNextToLetterTile || IsNextToLetterTile(position, _wordBoard))
+					{
+						SpawnPrefab(position, category.Prefabs);
+						break;
+					}
+				}
+			}
+		}
+
+		private void SpawnPrefab(Vector2Int position, GameObject[] prefabsToChooseFrom)
+		{
+			var randomIndex = Random.Range(0, prefabsToChooseFrom.Length);
+			var spawnedObject = Instantiate(prefabsToChooseFrom[randomIndex],
+				position.ToWorldPosition(),
+				Quaternion.identity,
+				_sceneryParent);
+
+			_spawnedObjects.Add(position, spawnedObject);
+		}
+
+		private static bool IsNextToLetterTile(Vector2Int position, WordBoard wordBoard) =>
+			wordBoard.HasLetterTile(position + Vector2Int.up) ||
+			wordBoard.HasLetterTile(position + Vector2Int.left) ||
+			wordBoard.HasLetterTile(position + Vector2Int.right) ||
+			wordBoard.HasLetterTile(position + Vector2Int.down);
+
+		[System.Serializable]
+		private class PrefabCategory
+		{
+			public string Name = string.Empty;
+			public GameObject[] Prefabs = new GameObject[0];
+			[Range(0f, 1f)]
+			public float Chance;
+			public bool MustBeNextToLetterTile;
+		}
 	}
 }

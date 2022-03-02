@@ -1399,7 +1399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sceneryParent: {fileID: 1808018133}
-  _orderedPefabCategories:
+  _orderedPrefabCategories:
   - Name: Houses
     Prefabs:
     - {fileID: 3958445278624042115, guid: db8e4fa6c0fba80468eda7f06e926b66, type: 3}
