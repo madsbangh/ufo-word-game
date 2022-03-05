@@ -262,6 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1622214116809113684}
   - component: {fileID: 4004514230679885594}
+  - component: {fileID: 8987848373262915827}
   m_Layer: 0
   m_Name: Basic Letter Tile
   m_TagString: Untagged
@@ -302,3 +303,14 @@ MonoBehaviour:
   _lockedColor: {r: 0.047058824, g: 0.3372549, b: 0.5882353, a: 1}
   _hiddenColor: {r: 0.9882353, g: 0.8666667, b: 0.9254902, a: 1}
   _revealedColor: {r: 0.105882354, g: 0.4745098, b: 0.7254902, a: 1}
+--- !u!210 &8987848373262915827
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397560653059388198}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -1

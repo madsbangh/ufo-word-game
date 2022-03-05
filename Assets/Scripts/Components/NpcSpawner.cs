@@ -36,7 +36,7 @@ namespace Components
                         Instantiate(_npcPrefab,
                         tilePosition.ToWorldPosition() +
                             new Vector3(Random.value - 0.5f, 0f, Random.value - 0.5f),
-                        Quaternion.Euler(0f, Random.Range(0f, 360f), 0f),
+                        Quaternion.identity,
                         _npcsParent));
 				}
             }
@@ -51,7 +51,7 @@ namespace Components
             return npcs;
 		}
 
-        private bool TileIsInSection(Vector2Int position, int sectionIndex)
+        private static bool TileIsInSection(Vector2Int position, int sectionIndex)
         {
             var minimumCoordinate = WordBoardGenerator.SectionStride * sectionIndex;
             var maximumCoordinate = minimumCoordinate + WordBoardGenerator.SectionSize;

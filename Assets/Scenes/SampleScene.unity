@@ -594,7 +594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b3ab0fae21843439d72db7d070135a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rigSmoothTime: 1
+  _rigSmoothTime: 0.76
   _cameraSmoothTime: 0.5
   _overBoardTarget: {fileID: 930698537}
   _belowBoardTarget: {fileID: 1378655211}
@@ -650,6 +650,7 @@ MonoBehaviour:
   _ufo: {fileID: 180318902}
   _positionBelowBoard: {fileID: 538495064}
   _positionOverBoard: {fileID: 558309373}
+  _tractorBeamOrigin: {fileID: 1493444905}
 --- !u!1 &180318901
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,7 +944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &225341498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -957,7 +958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcPrefab: {fileID: 6700864009441572364, guid: 808752d17c651de4397f2aa3c05a4ffe, type: 3}
-  _chance: 0.25
+  _chance: 0.15
   _npcsParent: {fileID: 225341499}
 --- !u!4 &225341499
 Transform:
@@ -1026,7 +1027,8 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _pastSectionCount: 3
   _futureSectionCount: 3
-  _timeOverBoardDuringWinSeconds: 2.4
+  _beforeHoistSeconds: 0.4
+  _afterHoistSeconds: 2
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0

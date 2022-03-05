@@ -16,11 +16,16 @@ namespace Components
         [SerializeField]
         private Transform _positionOverBoard;
 
+        [SerializeField]
+        private Transform _tractorBeamOrigin;
+        
         private Vector3 _rigWorldTarget;
         private Vector3 _rigWorldVelocity;
 
         private Vector3 _ufoLocalTarget;
         private Vector3 _ufoLocalVelocity;
+
+        public Transform TractorBeamOrigin => _tractorBeamOrigin;
 
         private void Update()
         {

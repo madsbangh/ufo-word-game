@@ -18,7 +18,8 @@ namespace Components
         [SerializeField] private UFOAnimator _ufoAnimator;
         [SerializeField] private UfoLetterRing _letterRing;
         [SerializeField] private int _pastSectionCount, _futureSectionCount;
-        [SerializeField] float _timeOverBoardDuringWinSeconds;
+        [SerializeField] float _beforeHoistSeconds;
+        [SerializeField] float _afterHoistSeconds;
 
         private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
 
@@ -67,8 +68,10 @@ namespace Components
                 {
                     StartCoroutine(BoardCompletedCoroutine());
                 }
-
-                _ufoAnimator.PlayHappy();
+                else
+                {
+                    _ufoAnimator.PlayHappy();
+                }
             }
             else if (word.Length > 1)
             {
@@ -81,8 +84,15 @@ namespace Components
             _ufoAnimator.PlayWin();
             _cameraRig.SetCameraOverBoard(true);
             _ufoRig.SetUfoTargetOverBoard(true);
+            
+            yield return new WaitForSeconds(_beforeHoistSeconds);
 
-            yield return new WaitForSeconds(_timeOverBoardDuringWinSeconds);
+            foreach (var npc in _npcSpawner.PopNpcsInSection(_currentSectionIndex))
+            {
+                npc.Hoist(_ufoRig.TractorBeamOrigin);
+            }
+
+            yield return new WaitForSeconds(_afterHoistSeconds);
 
             _cameraRig.SetCameraOverBoard(false);
             _ufoRig.SetUfoTargetOverBoard(false);
