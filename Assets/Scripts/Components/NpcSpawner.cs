@@ -53,8 +53,8 @@ namespace Components
 
         private static bool TileIsInSection(Vector2Int position, int sectionIndex)
         {
-            var minimumCoordinate = WordBoardGenerator.SectionStride * sectionIndex;
-            var maximumCoordinate = minimumCoordinate + WordBoardGenerator.SectionSize;
+            var minimumCoordinate = WordBoardGenerator.SectionStride * sectionIndex + WordBoardGenerator.SectionSize / 4;
+            var maximumCoordinate = minimumCoordinate + WordBoardGenerator.SectionSize * 3 / 4;
 
             return position.x >= minimumCoordinate
                 && position.y >= minimumCoordinate
