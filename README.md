@@ -1,6 +1,8 @@
 # Word Invader
 A cute word search game where a little alien must find words to abduct villagers
 
+![Banner](Screenshots/banner.png)
+
 This game is an open source game. It is completely free, and contains no ads or in-app purchases.
 
 The premise is simple: Search for words by dragging a line between the available letters.
