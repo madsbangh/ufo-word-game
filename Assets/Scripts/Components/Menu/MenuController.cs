@@ -6,7 +6,6 @@ namespace Components.Menu
 {
     public class MenuController : MonoBehaviour
     {
-        private const string PrivacyURL = "https://madsbangh.dk/word-invader/privacy";
         private const string GitHubURL = "https://github.com/madsbangh/ufo-word-game";
         private const string AppNameTemplate = "{app-name}";
         private const string AppVersionTemplate = "{app-version}";
@@ -25,15 +24,18 @@ namespace Components.Menu
         [SerializeField] private GameObject _aboutMenu;
         [SerializeField] private Button _gitHubButton;
         [SerializeField] private TMP_Text _aboutText;
-        
-        private State _state;
 
+        [Header("Privacy Menu")]
+        [SerializeField] private GameObject _privacyMenu;
+
+        private State _state;
 
         private enum State
         {
             NoMenu,
             MainMenu,
             About,
+            Privacy,
         }
 
         private void Awake()
@@ -50,6 +52,7 @@ namespace Components.Menu
             _menuButton.IsX = false;
             _mainMenu.SetActive(true);
             _aboutMenu.SetActive(false);
+            _privacyMenu.SetActive(false);
             _menuButton.OnClick.AddListener(MenuButton_Clicked);
             _aboutButton.onClick.AddListener(AboutButton_Clicked);
             _privacyButton.onClick.AddListener(PrivacyButton_Clicked);
@@ -78,6 +81,11 @@ namespace Components.Menu
                     _aboutMenu.SetActive(false);
                     _mainMenu.SetActive(true);
                     break;
+                case State.Privacy:
+                    _state = State.MainMenu;
+                    _privacyMenu.SetActive(false);
+                    _mainMenu.SetActive(true);
+                    break;
                 case State.MainMenu:
                 default:
                     _state = State.NoMenu;
@@ -94,9 +102,11 @@ namespace Components.Menu
             _aboutMenu.SetActive(true);
         }
 
-        private static void PrivacyButton_Clicked()
+        private void PrivacyButton_Clicked()
         {
-            Application.OpenURL(PrivacyURL);
+            _state = State.Privacy;
+            _mainMenu.SetActive(false);
+            _privacyMenu.SetActive(true);
         }
         
         private static void GitHubButton_Clicked()
