@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SaveGame;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WordBoard
+public class WordBoard : ISerializable
 {
 	public event Action<Vector2Int> LetterTileChanged;
 
@@ -102,7 +103,59 @@ public class WordBoard
 
 		_blockerTiles[postition] = blockedInfo;
 	}
-	
+
+	public void Serialize(ReadOrWriteFileStream stream)
+	{
+		if (stream.IsWriteMode)
+		{
+			stream.Write(_blockerTiles.Count);
+			foreach (var pair in _blockerTiles)
+			{
+				stream.Write(pair.Key);
+				stream.Write(pair.Value.HorizontallyBlocked);
+				stream.Write(pair.Value.VerticallyBlocked);
+			}
+			stream.Write(_letterTiles.Count);
+			foreach (var pair in _letterTiles)
+			{
+				stream.Write(pair.Key);
+				stream.Write(pair.Value.Letter);
+				stream.Write((int)pair.Value.Progress);
+			}
+		}
+		else
+		{
+			_blockerTiles.Clear();
+			{
+				var count = stream.ReadInt32();
+				for (int i = 0; i < count; i++)
+				{
+					_blockerTiles.Add(
+						stream.ReadVector2Int(),
+						new TileBlockedInfo
+						{
+							HorizontallyBlocked = stream.ReadBoolean(),
+							VerticallyBlocked = stream.ReadBoolean(),
+						});
+				} 
+			}
+			_letterTiles.Clear();
+			{
+				var count = stream.ReadInt32();
+				for (int i = 0; i < count; i++)
+				{
+					_letterTiles.Add(
+						stream.ReadVector2Int(),
+						new LetterTile
+						{
+							Letter = stream.ReadChar(),
+							Progress = (TileState)stream.ReadInt32(),
+						});
+				}
+			}
+		}
+	}
+
 	public struct LetterTile
 	{
 		public char Letter;
