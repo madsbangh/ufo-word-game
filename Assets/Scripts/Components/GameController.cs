@@ -38,11 +38,11 @@ namespace Components
 
 			if (SaveGameUtility.SaveFileExists)
 			{
-				SaveGameUtility.Load(this, _wordBoard);
+				LoadGame();
 				_letterRing.SetLetters(_currentSectionLetters);
 				for (int i = _currentSectionIndex; i < _newestGeneratedSectionIndex; i++)
 				{
-					_npcSpawner.SpawnNpcsForSection(i, _wordBoard); 
+					_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
 				}
 			}
 			else
@@ -88,7 +88,7 @@ namespace Components
 					_ufoAnimator.PlayHappy();
 				}
 
-				SaveGameUtility.Save(this, _wordBoard);
+				SaveGame();
 			}
 			else if (word.Length > 1)
 			{
@@ -121,6 +121,18 @@ namespace Components
 
 			_cameraRig.SetTargetSection(_currentSectionIndex);
 			_ufoRig.SetTargetSection(_currentSectionIndex);
+
+			SaveGame();
+		}
+
+		private void SaveGame()
+		{
+			SaveGameUtility.Save(this, _wordBoard);
+		}
+
+		private void LoadGame()
+		{
+			SaveGameUtility.Load(this, _wordBoard);
 		}
 
 		private void ProgressToNextSection()
