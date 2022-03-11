@@ -40,7 +40,7 @@ namespace Components
 			{
 				LoadGame();
 				_letterRing.SetLetters(_currentSectionLetters);
-				for (int i = _currentSectionIndex; i < _newestGeneratedSectionIndex; i++)
+				for (int i = _currentSectionIndex; i <= _newestGeneratedSectionIndex; i++)
 				{
 					_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
 				}
