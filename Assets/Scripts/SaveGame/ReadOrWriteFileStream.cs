@@ -38,74 +38,38 @@ namespace SaveGame
 
 		public void Serialize(ref bool value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadBoolean();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadBoolean();
 		}
 
 		public void Serialize(ref byte value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadByte();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadByte();
 		}
 
 		public void Serialize(ref char value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadChar();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadChar();
 		}
 
 		public void Serialize(ref int value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadInt32();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadInt32();
 		}
 
 		public void Serialize(ref Vector2Int value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadVector2Int();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadVector2Int();
 		}
 
 		public void Serialize(ref string value)
 		{
-			if (_isWriteMode)
-			{
-				Write(value);
-			}
-			else
-			{
-				value = ReadString();
-			}
+			if (_isWriteMode) Write(value);
+			else value = ReadString();
 		}
 
 		public void Write(bool value) => _writer.Write(value);
