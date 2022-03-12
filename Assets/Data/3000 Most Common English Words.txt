@@ -923,7 +923,6 @@ establish
 establishment
 estate
 estimate
-etc
 ethics
 ethnic
 European
