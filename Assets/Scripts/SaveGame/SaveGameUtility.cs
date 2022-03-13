@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using UnityEngine;
 
@@ -6,7 +5,7 @@ namespace SaveGame
 {
 	public static class SaveGameUtility
 	{
-		private static readonly string SaveFilePath = Path.Combine(Application.persistentDataPath, "savegame");
+		private static readonly string SaveFilePath = Path.Combine(Application.persistentDataPath, "savegame_v0");
 
 		public static bool SaveFileExists => File.Exists(SaveFilePath);
 
