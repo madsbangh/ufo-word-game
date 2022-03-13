@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -9,25 +10,14 @@ namespace SaveGame
 
 		public static bool SaveFileExists => File.Exists(SaveFilePath);
 
-		public static void Save(params ISerializable[] serializedObjects)
+		public static ReadOrWriteFileStream MakeSaveContext()
 		{
-			ReadFromOrWriteToSaveFile(serializedObjects, true);
+			return new ReadOrWriteFileStream(SaveFilePath, true);
 		}
 
-		public static void Load(params ISerializable[] serializedObjects)
+		public static ReadOrWriteFileStream MakeLoadContext()
 		{
-			ReadFromOrWriteToSaveFile(serializedObjects, false);
-		}
-
-		private static void ReadFromOrWriteToSaveFile(ISerializable[] serializedObjects, bool write)
-		{
-			using (var stream = new ReadOrWriteFileStream(SaveFilePath, write))
-			{
-				foreach (var serialized in serializedObjects)
-				{
-					serialized.Serialize(stream);
-				}
-			}
+			return new ReadOrWriteFileStream(SaveFilePath, false);
 		}
 
 		public static void DeleteSaveFile()

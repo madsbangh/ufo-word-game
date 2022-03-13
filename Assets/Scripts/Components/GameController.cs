@@ -8,7 +8,7 @@ using SectionWords = System.Collections.Generic.Dictionary<string, WordPlacement
 
 namespace Components
 {
-	public class GameController : MonoBehaviour, ISerializable
+	public class GameController : MonoBehaviour
 	{
 		[SerializeField] private TextAsset _wordListAsset;
 		[SerializeField] private BoardSpawner _boardSpawner;
@@ -24,11 +24,7 @@ namespace Components
 
 		private WordBoard _wordBoard;
 		private WordBoardGenerator _wordBoardGenerator;
-		private Queue<Section> _generatedFutureSections = new Queue<Section>();
-		private SectionWords _currentSectionWords = new SectionWords();
-		private int _currentSectionIndex;
-		private int _newestGeneratedSectionIndex;
-		private string _currentSectionLetters;
+		private GameState _gameState;
 
 		private void Start()
 		{
@@ -38,16 +34,18 @@ namespace Components
 			if (SaveGameUtility.SaveFileExists)
 			{
 				LoadGame();
-				_letterRing.SetLetters(_currentSectionLetters);
-				for (int i = _currentSectionIndex; i <= _newestGeneratedSectionIndex; i++)
+				_letterRing.SetLetters(_gameState.CurrentSectionLetters);
+				for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
 				{
 					_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
 				}
 			}
 			else
 			{
-				_currentSectionIndex = -1;
-				_newestGeneratedSectionIndex = -1;
+				_gameState.GeneratedFutureSections = new Queue<Section>();
+				_gameState.CurrentSectionWords = new SectionWords();
+				_gameState.CurrentSectionIndex = -1;
+				_gameState.NewestGeneratedSectionIndex = -1;
 				ProgressToNextSection();
 			}
 
@@ -55,13 +53,13 @@ namespace Components
 			_scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
 			_letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
-			_scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
+			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
 
-			_cameraRig.SetTargetSection(_currentSectionIndex);
+			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_cameraRig.SetCameraOverBoard(false);
 			_cameraRig.TeleportToTarget();
 
-			_ufoRig.SetTargetSection(_currentSectionIndex);
+			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_ufoRig.SetUfoTargetOverBoard(false);
 			_ufoRig.TeleportToTarget();
 		}
@@ -73,12 +71,12 @@ namespace Components
 
 		private void LetterRing_WordSubmitted(string word)
 		{
-			if (_currentSectionWords.TryGetValue(word, out WordPlacement boardWordPlacement))
+			if (_gameState.CurrentSectionWords.TryGetValue(word, out WordPlacement boardWordPlacement))
 			{
 				_wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
-				_currentSectionWords.Remove(word);
+				_gameState.CurrentSectionWords.Remove(word);
 
-				if (_currentSectionWords.Count == 0)
+				if (_gameState.CurrentSectionWords.Count == 0)
 				{
 					StartCoroutine(BoardCompletedCoroutine());
 				}
@@ -103,7 +101,7 @@ namespace Components
 
 			yield return new WaitForSeconds(_beforeHoistSeconds);
 
-			foreach (var npc in _npcSpawner.PopNpcsInSection(_currentSectionIndex))
+			foreach (var npc in _npcSpawner.PopNpcsInSection(_gameState.CurrentSectionIndex))
 			{
 				npc.Hoist(_ufoRig.TractorBeamOrigin);
 			}
@@ -115,23 +113,27 @@ namespace Components
 
 			ProgressToNextSection();
 
-			_scenerySpawner.ExpandToSection(_currentSectionIndex + _futureSectionCount - 1);
-			_scenerySpawner.CleanupBeforeSection(_currentSectionIndex - _pastSectionCount + 1);
+			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
+			_scenerySpawner.CleanupBeforeSection(_gameState.CurrentSectionIndex - _pastSectionCount + 1);
 
-			_cameraRig.SetTargetSection(_currentSectionIndex);
-			_ufoRig.SetTargetSection(_currentSectionIndex);
+			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
+			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
 
 			SaveGame();
 		}
 
 		private void SaveGame()
 		{
-			SaveGameUtility.Save(this, _wordBoard);
+			using var context = SaveGameUtility.MakeSaveContext();
+			_gameState.Serialize(context);
+			_wordBoard.Serialize(context);
 		}
 
 		private void LoadGame()
 		{
-			SaveGameUtility.Load(this, _wordBoard);
+			using var context = SaveGameUtility.MakeLoadContext();
+			_gameState.Serialize(context);
+			_wordBoard.Serialize(context);
 		}
 
 		private void ProgressToNextSection()
@@ -139,28 +141,28 @@ namespace Components
 			// Dequeue and generate sections
 			do
 			{
-				_currentSectionIndex++;
-				while (_newestGeneratedSectionIndex < _currentSectionIndex + _futureSectionCount)
+				_gameState.CurrentSectionIndex++;
+				while (_gameState.NewestGeneratedSectionIndex < _gameState.CurrentSectionIndex + _futureSectionCount)
 				{
 					GenerateAndEnqueueSection();
 				}
 
-				Section section = _generatedFutureSections.Dequeue();
-				(_currentSectionLetters, _currentSectionWords) = (section.Letters, section.Words);
-			} while (!_currentSectionLetters.Any());
+				Section section = _gameState.GeneratedFutureSections.Dequeue();
+				(_gameState.CurrentSectionLetters, _gameState.CurrentSectionWords) = (section.Letters, section.Words);
+			} while (!_gameState.CurrentSectionLetters.Any());
 
-			_letterRing.SetLetters(_currentSectionLetters);
+			_letterRing.SetLetters(_gameState.CurrentSectionLetters);
 
 			UnlockCurrentSectionWords();
 
-			ClearTilesBelowSection(_currentSectionIndex - _pastSectionCount);
+			ClearTilesBelowSection(_gameState.CurrentSectionIndex - _pastSectionCount);
 		}
 
 		private void UnlockCurrentSectionWords()
 		{
-			foreach (var word in _currentSectionWords.Keys)
+			foreach (var word in _gameState.CurrentSectionWords.Keys)
 			{
-				_wordBoard.SetWord(_currentSectionWords[word], word, TileState.Hidden, false);
+				_wordBoard.SetWord(_gameState.CurrentSectionWords[word], word, TileState.Hidden, false);
 			}
 		}
 
@@ -178,29 +180,20 @@ namespace Components
 
 		private void GenerateAndEnqueueSection()
 		{
-			_newestGeneratedSectionIndex++;
+			_gameState.NewestGeneratedSectionIndex++;
 
 			var generatedSectionWords =
-				_wordBoardGenerator.GenerateSection(_newestGeneratedSectionIndex, out var letters);
+				_wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex, out var letters);
 			letters = WordUtility.ShuffleLetters(letters);
-			_generatedFutureSections.Enqueue(new Section { Letters = letters, Words = generatedSectionWords });
+			_gameState.GeneratedFutureSections.Enqueue(new Section { Letters = letters, Words = generatedSectionWords });
 
-			_npcSpawner.SpawnNpcsForSection(_newestGeneratedSectionIndex, _wordBoard);
-		}
-
-		public void Serialize(ReadOrWriteFileStream stream)
-		{
-			stream.Serialize(ref _currentSectionIndex);
-			stream.Serialize(ref _newestGeneratedSectionIndex);
-			stream.Serialize(ref _currentSectionLetters);
-			stream.Serialize(ref _currentSectionWords);
-			stream.Serialize(ref _generatedFutureSections);
+			_npcSpawner.SpawnNpcsForSection(_gameState.NewestGeneratedSectionIndex, _wordBoard);
 		}
 
 		[Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
 		private void DebugLogWords()
 		{
-			foreach (var word in _currentSectionWords.Keys)
+			foreach (var word in _gameState.CurrentSectionWords.Keys)
 			{
 				UnityEngine.Debug.Log(word);
 			}
@@ -209,7 +202,7 @@ namespace Components
 		[Button("Cheat: Almost Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
 		private void DebugAlmostCompleteSection()
 		{
-			foreach (var word in _currentSectionWords.Keys.Skip(1).ToArray())
+			foreach (var word in _gameState.CurrentSectionWords.Keys.Skip(1).ToArray())
 			{
 				LetterRing_WordSubmitted(word);
 			}
@@ -220,7 +213,7 @@ namespace Components
 		[Button("Cheat: Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
 		private void DebugCompleteSection()
 		{
-			foreach (var word in _currentSectionWords.Keys.ToArray())
+			foreach (var word in _gameState.CurrentSectionWords.Keys.ToArray())
 			{
 				LetterRing_WordSubmitted(word);
 			}
@@ -241,6 +234,24 @@ namespace Components
 			{
 				stream.Serialize(ref Letters);
 				stream.Serialize(ref Words);
+			}
+		}
+
+		private struct GameState : ISerializable
+		{
+			public Queue<Section> GeneratedFutureSections;
+			public SectionWords CurrentSectionWords;
+			public int CurrentSectionIndex;
+			public int NewestGeneratedSectionIndex;
+			public string CurrentSectionLetters;
+
+			public void Serialize(ReadOrWriteFileStream stream)
+			{
+				stream.Serialize(ref CurrentSectionIndex);
+				stream.Serialize(ref NewestGeneratedSectionIndex);
+				stream.Serialize(ref CurrentSectionLetters);
+				stream.Serialize(ref CurrentSectionWords);
+				stream.Serialize(ref GeneratedFutureSections);
 			}
 		}
 	}

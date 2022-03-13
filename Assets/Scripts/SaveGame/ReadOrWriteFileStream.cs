@@ -69,7 +69,7 @@ namespace SaveGame
 
 		public void Serialize(ref string value)
 		{
-			if (_isWriteMode) _writer.Write(value);
+			if (_isWriteMode) _writer.Write(value ?? string.Empty);
 			else value = _reader.ReadString();
 		}
 
@@ -324,7 +324,7 @@ namespace SaveGame
 		private void WriteString(string value)
 		{
 			Debug.Assert(_isWriteMode, "The stream is not in write mode.");
-			_writer?.Write(value);
+			_writer?.Write(value ?? string.Empty);
 		}
 
 		private T ReadSerializable<T>() where T : ISerializable, new()
