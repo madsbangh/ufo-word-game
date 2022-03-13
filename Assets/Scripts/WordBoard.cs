@@ -8,8 +8,8 @@ public class WordBoard : ISerializable
 {
 	public event Action<Vector2Int> LetterTileChanged;
 
-	private readonly Dictionary<Vector2Int, LetterTile> _letterTiles = new Dictionary<Vector2Int, LetterTile>();
-	private readonly Dictionary<Vector2Int, TileBlockedInfo> _blockerTiles = new Dictionary<Vector2Int, TileBlockedInfo>();
+	private Dictionary<Vector2Int, LetterTile> _letterTiles = new Dictionary<Vector2Int, LetterTile>();
+	private Dictionary<Vector2Int, TileBlockedInfo> _blockerTiles = new Dictionary<Vector2Int, TileBlockedInfo>();
 
 	public IEnumerable<Vector2Int> AllLetterTilePositions => _letterTiles.Keys;
 	
@@ -31,20 +31,20 @@ public class WordBoard : ISerializable
 		return false;
 	}
 
-	public void SetWord(Vector2Int position, WordDirection direction, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
+	public void SetWord(WordPlacement placement, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
 	{
-		var stride = direction.ToStride();
+		var stride = placement.Direction.ToStride();
 		var sideOffset = new Vector2Int(stride.y, stride.x);
 		for (int i = 0; i < uppercaseLetters.Length; i++)
 		{
-			var tilePosition = position + i * stride;
+			var tilePosition = placement.Position + i * stride;
 			char letter = uppercaseLetters[i];
 			SetLetterTile(tilePosition, letter, state);
 			if (alsoSetBlockerTiles)
 			{
 				// Block same-direction words along this word and next to it
-				bool horizontal = direction == WordDirection.Horizontal;
-				bool vertical = direction == WordDirection.Vertical;
+				bool horizontal = placement.Direction == WordDirection.Horizontal;
+				bool vertical = placement.Direction == WordDirection.Vertical;
 				SetBlockerTile(tilePosition, horizontal, vertical);
 				SetBlockerTile(tilePosition - sideOffset, horizontal, vertical);
 				SetBlockerTile(tilePosition + sideOffset, horizontal, vertical);
@@ -54,8 +54,8 @@ public class WordBoard : ISerializable
 		if (alsoSetBlockerTiles)
 		{
 			// Block in both directions on the end-caps
-			SetBlockerTile(position - stride, true, true);
-			SetBlockerTile(position + stride * uppercaseLetters.Length, true, true);
+			SetBlockerTile(placement.Position - stride, true, true);
+			SetBlockerTile(placement.Position + stride * uppercaseLetters.Length, true, true);
 		}
 	}
 
@@ -106,65 +106,38 @@ public class WordBoard : ISerializable
 
 	public void Serialize(ReadOrWriteFileStream stream)
 	{
-		if (stream.IsWriteMode)
-		{
-			stream.Write(_blockerTiles.Count);
-			foreach (var pair in _blockerTiles)
-			{
-				stream.Write(pair.Key);
-				stream.Write(pair.Value.HorizontallyBlocked);
-				stream.Write(pair.Value.VerticallyBlocked);
-			}
-			stream.Write(_letterTiles.Count);
-			foreach (var pair in _letterTiles)
-			{
-				stream.Write(pair.Key);
-				stream.Write(pair.Value.Letter);
-				stream.Write((int)pair.Value.Progress);
-			}
-		}
-		else
-		{
-			_blockerTiles.Clear();
-			{
-				var count = stream.ReadInt32();
-				for (int i = 0; i < count; i++)
-				{
-					_blockerTiles.Add(
-						stream.ReadVector2Int(),
-						new TileBlockedInfo
-						{
-							HorizontallyBlocked = stream.ReadBoolean(),
-							VerticallyBlocked = stream.ReadBoolean(),
-						});
-				} 
-			}
-			_letterTiles.Clear();
-			{
-				var count = stream.ReadInt32();
-				for (int i = 0; i < count; i++)
-				{
-					_letterTiles.Add(
-						stream.ReadVector2Int(),
-						new LetterTile
-						{
-							Letter = stream.ReadChar(),
-							Progress = (TileState)stream.ReadInt32(),
-						});
-				}
-			}
-		}
+		stream.Serialize(ref _blockerTiles);
+		stream.Serialize(ref _letterTiles);
 	}
 
-	public struct LetterTile
+	public struct LetterTile : ISerializable
 	{
 		public char Letter;
-		public TileState Progress;
+
+		private int _progress;
+
+		public TileState Progress
+		{
+			get => (TileState)_progress;
+			set => _progress = (int)value;
+		}
+
+		public void Serialize(ReadOrWriteFileStream stream)
+		{
+			stream.Serialize(ref Letter);
+			stream.Serialize(ref _progress);
+		}
 	}
 
-	private struct TileBlockedInfo
+	private struct TileBlockedInfo : ISerializable
 	{
 		public bool HorizontallyBlocked;
 		public bool VerticallyBlocked;
+
+		public void Serialize(ReadOrWriteFileStream stream)
+		{
+			stream.Serialize(ref HorizontallyBlocked);
+			stream.Serialize(ref VerticallyBlocked);
+		}
 	}
 }

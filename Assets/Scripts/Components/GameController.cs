@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using SectionWords = System.Collections.Generic.Dictionary<string, (UnityEngine.Vector2Int, WordDirection)>;
+using SectionWords = System.Collections.Generic.Dictionary<string, WordPlacement>;
 
 namespace Components
 {
@@ -22,13 +22,12 @@ namespace Components
 		[SerializeField] float _beforeHoistSeconds;
 		[SerializeField] float _afterHoistSeconds;
 
-		private readonly Queue<(string, SectionWords)> _generatedFutureSections = new Queue<(string, SectionWords)>();
-
 		private WordBoard _wordBoard;
 		private WordBoardGenerator _wordBoardGenerator;
+		private Queue<Section> _generatedFutureSections = new Queue<Section>();
+		private SectionWords _currentSectionWords = new SectionWords();
 		private int _currentSectionIndex;
 		private int _newestGeneratedSectionIndex;
-		private SectionWords _currentSectionWords;
 		private string _currentSectionLetters;
 
 		private void Start()
@@ -74,9 +73,9 @@ namespace Components
 
 		private void LetterRing_WordSubmitted(string word)
 		{
-			if (_currentSectionWords.TryGetValue(word, out (Vector2Int position, WordDirection direction) boardWord))
+			if (_currentSectionWords.TryGetValue(word, out WordPlacement boardWordPlacement))
 			{
-				_wordBoard.SetWord(boardWord.position, boardWord.direction, word, TileState.Revealed, false);
+				_wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
 				_currentSectionWords.Remove(word);
 
 				if (_currentSectionWords.Count == 0)
@@ -146,7 +145,8 @@ namespace Components
 					GenerateAndEnqueueSection();
 				}
 
-				(_currentSectionLetters, _currentSectionWords) = _generatedFutureSections.Dequeue();
+				Section section = _generatedFutureSections.Dequeue();
+				(_currentSectionLetters, _currentSectionWords) = (section.Letters, section.Words);
 			} while (!_currentSectionLetters.Any());
 
 			_letterRing.SetLetters(_currentSectionLetters);
@@ -160,8 +160,7 @@ namespace Components
 		{
 			foreach (var word in _currentSectionWords.Keys)
 			{
-				(Vector2Int position, WordDirection direction) placement = _currentSectionWords[word];
-				_wordBoard.SetWord(placement.position, placement.direction, word, TileState.Hidden, false);
+				_wordBoard.SetWord(_currentSectionWords[word], word, TileState.Hidden, false);
 			}
 		}
 
@@ -184,7 +183,7 @@ namespace Components
 			var generatedSectionWords =
 				_wordBoardGenerator.GenerateSection(_newestGeneratedSectionIndex, out var letters);
 			letters = WordUtility.ShuffleLetters(letters);
-			_generatedFutureSections.Enqueue((letters, generatedSectionWords));
+			_generatedFutureSections.Enqueue(new Section { Letters = letters, Words = generatedSectionWords });
 
 			_npcSpawner.SpawnNpcsForSection(_newestGeneratedSectionIndex, _wordBoard);
 		}
@@ -194,54 +193,8 @@ namespace Components
 			stream.Serialize(ref _currentSectionIndex);
 			stream.Serialize(ref _newestGeneratedSectionIndex);
 			stream.Serialize(ref _currentSectionLetters);
-
-			if (stream.IsWriteMode)
-			{
-				WriteSectionWords(stream, _currentSectionWords);
-				stream.Write(_generatedFutureSections.Count);
-				foreach (var (letters, sectionWords) in _generatedFutureSections)
-				{
-					stream.Write(letters);
-					WriteSectionWords(stream, sectionWords);
-				}
-			}
-			else
-			{
-				_currentSectionWords = ReadSectionWords(stream);
-				var count = stream.ReadInt32();
-				_generatedFutureSections.Clear();
-				for (int i = 0; i < count; i++)
-				{
-					_generatedFutureSections.Enqueue(
-						(stream.ReadString(),
-						ReadSectionWords(stream)));
-				}
-			}
-		}
-
-		private static void WriteSectionWords(ReadOrWriteFileStream stream, SectionWords sectionWords)
-		{
-			stream.Write(sectionWords.Count);
-			foreach (var pair in sectionWords)
-			{
-				stream.Write(pair.Key);
-				stream.Write(pair.Value.Item1);
-				stream.Write((int)pair.Value.Item2);
-			}
-		}
-
-		private static SectionWords ReadSectionWords(ReadOrWriteFileStream stream)
-		{
-			var count = stream.ReadInt32();
-			var sectionWords = new SectionWords(count);
-			for (int i = 0; i < count; i++)
-			{
-				sectionWords.Add(
-					stream.ReadString(),
-					(stream.ReadVector2Int(),
-					(WordDirection)stream.ReadInt32()));
-			}
-			return sectionWords;
+			stream.Serialize(ref _currentSectionWords);
+			stream.Serialize(ref _generatedFutureSections);
 		}
 
 		[Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
@@ -277,6 +230,18 @@ namespace Components
 		private void DebugDeleteSaveFile()
 		{
 			SaveGameUtility.DeleteSaveFile();
+		}
+
+		private struct Section : ISerializable
+		{
+			public string Letters;
+			public SectionWords Words;
+
+			public void Serialize(ReadOrWriteFileStream stream)
+			{
+				stream.Serialize(ref Letters);
+				stream.Serialize(ref Words);
+			}
 		}
 	}
 }
