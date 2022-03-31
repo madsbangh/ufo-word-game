@@ -39,6 +39,15 @@ namespace Components
 				{
 					_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
 				}
+				
+				// If we loaded into a completed board
+				if (_gameState.CurrentSectionWords.Count == 0)
+				{
+					// Immediately progress to next section
+					ProgressToNextSection();
+					_ufoRig.TeleportToTarget();
+					_cameraRig.TeleportToTarget();
+				}
 			}
 			else
 			{
