@@ -15,7 +15,7 @@ public struct WordPlacement : ISerializable
 
 	public void Serialize(ReadOrWriteFileStream stream)
 	{
-		stream.Serialize(ref Position);
-		stream.Serialize(ref _direction);
+		stream.Visit(ref Position);
+		stream.Visit(ref _direction);
 	}
 }

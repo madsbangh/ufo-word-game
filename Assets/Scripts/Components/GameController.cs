@@ -261,8 +261,8 @@ namespace Components
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
-				stream.Serialize(ref Letters);
-				stream.Serialize(ref Words);
+				stream.Visit(ref Letters);
+				stream.Visit(ref Words);
 			}
 		}
 
@@ -276,11 +276,11 @@ namespace Components
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
-				stream.Serialize(ref CurrentSectionIndex);
-				stream.Serialize(ref NewestGeneratedSectionIndex);
-				stream.Serialize(ref CurrentSectionLetters);
-				stream.Serialize(ref CurrentSectionWords);
-				stream.Serialize(ref GeneratedFutureSections);
+				stream.Visit(ref CurrentSectionIndex);
+				stream.Visit(ref NewestGeneratedSectionIndex);
+				stream.Visit(ref CurrentSectionLetters);
+				stream.Visit(ref CurrentSectionWords);
+				stream.Visit(ref GeneratedFutureSections);
 			}
 		}
 	}

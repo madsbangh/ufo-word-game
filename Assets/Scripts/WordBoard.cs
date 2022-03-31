@@ -106,8 +106,8 @@ public class WordBoard : ISerializable
 
 	public void Serialize(ReadOrWriteFileStream stream)
 	{
-		stream.Serialize(ref _blockerTiles);
-		stream.Serialize(ref _letterTiles);
+		stream.Visit(ref _blockerTiles);
+		stream.Visit(ref _letterTiles);
 	}
 
 	public struct LetterTile : ISerializable
@@ -124,8 +124,8 @@ public class WordBoard : ISerializable
 
 		public void Serialize(ReadOrWriteFileStream stream)
 		{
-			stream.Serialize(ref Letter);
-			stream.Serialize(ref _progress);
+			stream.Visit(ref Letter);
+			stream.Visit(ref _progress);
 		}
 	}
 
@@ -136,8 +136,8 @@ public class WordBoard : ISerializable
 
 		public void Serialize(ReadOrWriteFileStream stream)
 		{
-			stream.Serialize(ref HorizontallyBlocked);
-			stream.Serialize(ref VerticallyBlocked);
+			stream.Visit(ref HorizontallyBlocked);
+			stream.Visit(ref VerticallyBlocked);
 		}
 	}
 }
