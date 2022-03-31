@@ -8,12 +8,10 @@ namespace SaveGame
 {
 	public class ReadOrWriteFileStream : IDisposable
 	{
-		private FileStream _stream;
-		private BinaryReader _reader;
-		private BinaryWriter _writer;
-		private bool _isWriteMode;
-
-		public bool IsWriteMode => _isWriteMode;
+		private readonly FileStream _stream;
+		private readonly BinaryReader _reader;
+		private readonly BinaryWriter _writer;
+		private readonly bool _isWriteMode;
 
 		public ReadOrWriteFileStream(string path, bool isWriteMode)
 		{
