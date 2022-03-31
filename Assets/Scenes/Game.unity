@@ -2999,10 +2999,14 @@ MonoBehaviour:
     Made by madsbangh.
 
 
-    The game is open
-    source.
+    Shaky Hand Some
+    Comic font by Manuel Viergutz.
 
-    Check out the source code on'
+
+    The game is open source.
+
+    Check out
+    the source code on'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ef0e60053d7fe46429631f405ecfadeb, type: 2}
   m_sharedMaterial: {fileID: -1374337521161066815, guid: ef0e60053d7fe46429631f405ecfadeb, type: 2}
@@ -12851,7 +12855,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 174}
+  m_AnchoredPosition: {x: 0, y: -110.53}
   m_SizeDelta: {x: -100, y: 109.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2140492180
