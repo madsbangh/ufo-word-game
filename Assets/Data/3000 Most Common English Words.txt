@@ -66,7 +66,6 @@ affect
 afford
 afraid
 African
-African-American
 after
 afternoon
 again
@@ -84,7 +83,6 @@ ah
 ahead
 aid
 aide
-AIDS
 aim
 air
 aircraft
@@ -106,7 +104,6 @@ alter
 alternative
 although
 always
-AM
 amazing
 American
 among
@@ -399,7 +396,6 @@ cast
 cat
 catch
 category
-Catholic
 cause
 ceiling
 celebrate
@@ -409,7 +405,6 @@ cell
 center
 central
 century
-CEO
 ceremony
 certain
 certainly
@@ -449,7 +444,6 @@ chocolate
 choice
 cholesterol
 choose
-Christian
 Christmas
 church
 cigarette
@@ -797,7 +791,6 @@ diversity
 divide
 division
 divorce
-DNA
 do
 doctor
 document
@@ -1309,7 +1302,6 @@ hunting
 hurt
 husband
 hypothesis
-I
 ice
 idea
 ideal
@@ -1426,7 +1418,6 @@ involvement
 Iraqi
 Irish
 iron
-Islamic
 island
 Israeli
 issue
@@ -1439,8 +1430,6 @@ jacket
 jail
 Japanese
 jet
-Jew
-Jewish
 job
 join
 joint
@@ -1698,9 +1687,6 @@ mouth
 move
 movement
 movie
-Mr
-Mrs
-Ms
 much
 multiple
 murder
@@ -1709,7 +1695,6 @@ museum
 music
 musical
 musician
-Muslim
 must
 mutual
 my
@@ -1903,7 +1888,6 @@ pattern
 pause
 pay
 payment
-PC
 peace
 peak
 peer
@@ -1969,7 +1953,6 @@ pleasure
 plenty
 plot
 plus
-PM
 pocket
 poem
 poet
@@ -2488,7 +2471,6 @@ soup
 source
 south
 southern
-Soviet
 space
 Spanish
 speak
@@ -2791,7 +2773,6 @@ try
 tube
 tunnel
 turn
-TV
 twelve
 twenty
 twice
