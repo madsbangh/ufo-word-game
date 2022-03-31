@@ -33,31 +33,46 @@ namespace Components
 
 			if (SaveGameUtility.SaveFileExists)
 			{
-				LoadGame();
-				_letterRing.SetLetters(_gameState.CurrentSectionLetters);
-				for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
-				{
-					_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
-				}
-				
-				// If we loaded into a completed board
-				if (_gameState.CurrentSectionWords.Count == 0)
-				{
-					// Immediately progress to next section
-					ProgressToNextSection();
-					_ufoRig.TeleportToTarget();
-					_cameraRig.TeleportToTarget();
-				}
+				StartGameFromSaveFile();
 			}
 			else
 			{
-				_gameState.GeneratedFutureSections = new Queue<Section>();
-				_gameState.CurrentSectionWords = new SectionWords();
-				_gameState.CurrentSectionIndex = -1;
-				_gameState.NewestGeneratedSectionIndex = -1;
-				ProgressToNextSection();
+				StartGameFromScratch();
 			}
 
+			SetupSceneObjects();
+		}
+
+		private void StartGameFromScratch()
+		{
+			_gameState.GeneratedFutureSections = new Queue<Section>();
+			_gameState.CurrentSectionWords = new SectionWords();
+			_gameState.CurrentSectionIndex = -1;
+			_gameState.NewestGeneratedSectionIndex = -1;
+			ProgressToNextSection();
+		}
+
+		private void StartGameFromSaveFile()
+		{
+			LoadGame();
+			_letterRing.SetLetters(_gameState.CurrentSectionLetters);
+			for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
+			{
+				_npcSpawner.SpawnNpcsForSection(i, _wordBoard);
+			}
+
+			// If we loaded into a completed board
+			if (_gameState.CurrentSectionWords.Count == 0)
+			{
+				// Immediately progress to next section
+				ProgressToNextSection();
+				_ufoRig.TeleportToTarget();
+				_cameraRig.TeleportToTarget();
+			}
+		}
+
+		private void SetupSceneObjects()
+		{
 			_boardSpawner.Initialize(_wordBoard);
 			_scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
 			_letterRing.WordSubmitted += LetterRing_WordSubmitted;
@@ -80,7 +95,7 @@ namespace Components
 
 		private void LetterRing_WordSubmitted(string word)
 		{
-			if (_gameState.CurrentSectionWords.TryGetValue(word, out WordPlacement boardWordPlacement))
+			if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
 			{
 				_wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
 				_gameState.CurrentSectionWords.Remove(word);
@@ -134,13 +149,17 @@ namespace Components
 		private void SaveGame()
 		{
 			using var context = SaveGameUtility.MakeSaveContext();
-			_gameState.Serialize(context);
-			_wordBoard.Serialize(context);
+			Serialize(context);
 		}
 
 		private void LoadGame()
 		{
 			using var context = SaveGameUtility.MakeLoadContext();
+			Serialize(context);
+		}
+
+		private void Serialize(ReadOrWriteFileStream context)
+		{
 			_gameState.Serialize(context);
 			_wordBoard.Serialize(context);
 		}
@@ -156,8 +175,9 @@ namespace Components
 					GenerateAndEnqueueSection();
 				}
 
-				Section section = _gameState.GeneratedFutureSections.Dequeue();
+				var section = _gameState.GeneratedFutureSections.Dequeue();
 				(_gameState.CurrentSectionLetters, _gameState.CurrentSectionWords) = (section.Letters, section.Words);
+				
 			} while (!_gameState.CurrentSectionLetters.Any());
 
 			_letterRing.SetLetters(_gameState.CurrentSectionLetters);
