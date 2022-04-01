@@ -10801,6 +10801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _boardParent: {fileID: 1558826993}
   _letterTilePrefab: {fileID: 4004514230679885594, guid: cfa7c9985dd25c34fa24c170dae89690, type: 3}
+  _tileUpdateInterval: 0.025
 --- !u!4 &1558826993
 Transform:
   m_ObjectHideFlags: 0
