@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 1622214116809113684}
   - component: {fileID: 4004514230679885594}
   - component: {fileID: 8987848373262915827}
+  - component: {fileID: 345530676297163031}
   m_Layer: 0
   m_Name: Basic Letter Tile
   m_TagString: Untagged
@@ -314,3 +315,22 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
+--- !u!95 &345530676297163031
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397560653059388198}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c8cb778cb3d68d1489185d642cbc6b34, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
