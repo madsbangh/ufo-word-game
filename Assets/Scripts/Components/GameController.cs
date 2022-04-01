@@ -228,15 +228,13 @@ namespace Components
 			}
 		}
 
-		[Button("Cheat: Almost Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
-		private void DebugAlmostCompleteSection()
+		[Button("Cheat: Complete One word", Mode = ButtonMode.EnabledInPlayMode)]
+		private void DebugCompleteOneWord()
 		{
-			foreach (var word in _gameState.CurrentSectionWords.Keys.Skip(1).ToArray())
+			if (_gameState.CurrentSectionWords.Any())
 			{
-				LetterRing_WordSubmitted(word);
+				LetterRing_WordSubmitted(_gameState.CurrentSectionWords.Keys.First());
 			}
-
-			DebugLogWords();
 		}
 
 		[Button("Cheat: Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
