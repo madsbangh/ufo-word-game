@@ -74,7 +74,7 @@ namespace Components
 		private void SetupSceneObjects()
 		{
 			_boardSpawner.Initialize(_wordBoard);
-			_scenerySpawner.Initialize(_wordBoard);
+			_scenerySpawner.Initialize(_wordBoard, CalculateScenerySpawnerWindowPadding());
 			_letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
 			_scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
@@ -86,6 +86,12 @@ namespace Components
 			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_ufoRig.SetUfoTargetOverBoard(false);
 			_ufoRig.TeleportToTarget();
+		}
+
+		private int CalculateScenerySpawnerWindowPadding()
+		{
+			var minPaddingSections = Mathf.Min(_pastSectionCount, _futureSectionCount);
+			return WordBoardGenerator.SectionStride * minPaddingSections - 1;
 		}
 
 		private void OnDestroy()

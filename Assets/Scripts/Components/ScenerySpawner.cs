@@ -10,9 +10,6 @@ namespace Components
 	{
 		[SerializeField]
 		private Transform _sceneryParent;
-		
-		[SerializeField]
-		private int _windowPadding;
 
 		[Header("Scenery Prefabs")]
 		[SerializeField]
@@ -21,14 +18,17 @@ namespace Components
 		private readonly Dictionary<Vector2Int, GameObject> _spawnedObjects
 			= new Dictionary<Vector2Int, GameObject>();
 
+
 		private WordBoard _wordBoard;
 		private int _previousWindowCoordinateMin;
 		private int _previousWindowCoordinateMax;
+		private int _windowPadding;
 
-		public void Initialize(WordBoard wordBoard)
+		public void Initialize(WordBoard wordBoard, int windowPadding)
 		{
 			_wordBoard = wordBoard;
-
+			_windowPadding = windowPadding;
+			
 			DestroySpawnedScenery();
 		}
 
