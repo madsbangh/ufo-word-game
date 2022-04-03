@@ -74,10 +74,10 @@ namespace Components
 		private void SetupSceneObjects()
 		{
 			_boardSpawner.Initialize(_wordBoard);
-			_scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
+			_scenerySpawner.Initialize(_wordBoard);
 			_letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
-			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
+			_scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
 
 			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_cameraRig.SetCameraOverBoard(false);
@@ -137,8 +137,7 @@ namespace Components
 
 			ProgressToNextSection();
 
-			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
-			_scenerySpawner.CleanupBeforeSection(_gameState.CurrentSectionIndex - _pastSectionCount + 1);
+			_scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
 
 			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
