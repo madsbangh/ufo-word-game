@@ -11523,6 +11523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sceneryParent: {fileID: 1808018133}
+  _windowPadding: 15
   _orderedPrefabCategories:
   - Name: Houses
     Prefabs:
