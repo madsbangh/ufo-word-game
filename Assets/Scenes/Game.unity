@@ -1535,8 +1535,8 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _pastSectionCount: 3
   _futureSectionCount: 3
-  _beforeHoistSeconds: 0.4
-  _afterHoistSeconds: 2
+  _beforeHoistSeconds: 1
+  _afterHoistSeconds: 1.4
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0
