@@ -668,9 +668,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97864035}
-  m_LocalRotation: {x: 0.3823192, y: 0.016692424, z: -0.040299077, w: 0.9230003}
+  m_LocalRotation: {x: 0.3823192, y: 0.01669242, z: -0.04029908, w: 0.9230003}
   m_LocalPosition: {x: 0, y: 0.55, z: 0.09}
-  m_LocalScale: {x: 3.7165976, y: 3.7165976, z: 3.7165976}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 1493444905}
   m_RootOrder: 1
@@ -716,7 +716,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 5cf56307fdb7e8a47adf504b48923cb2, type: 3}
-  m_Color: {r: 0.627451, g: 0.90588236, b: 0.90588236, a: 0.5019608}
+  m_Color: {r: 0.627451, g: 0.9058824, b: 0.9058824, a: 0.5019608}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3984,9 +3984,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939893318}
-  m_LocalRotation: {x: 0.3823192, y: -0.016692424, z: 0.040299077, w: 0.9230003}
+  m_LocalRotation: {x: 0.3823192, y: -0.01669242, z: 0.04029908, w: 0.9230003}
   m_LocalPosition: {x: 0, y: 0.54999995, z: 0.09000015}
-  m_LocalScale: {x: 3.7165976, y: 3.7165976, z: 3.7165976}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 1493444905}
   m_RootOrder: 2
@@ -4032,7 +4032,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 5cf56307fdb7e8a47adf504b48923cb2, type: 3}
-  m_Color: {r: 0.627451, g: 0.90588236, b: 0.90588236, a: 0.5019608}
+  m_Color: {r: 0.627451, g: 0.9058824, b: 0.9058824, a: 0.5019608}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5353,7 +5353,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.6
+      scalar: 0.4
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5406,7 +5406,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -7
+      scalar: -12
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5899,13 +5899,13 @@ ParticleSystem:
     enabled: 1
     type: 8
     angle: 30.81
-    length: 8.06
+    length: 0.54
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: 0, y: 0, z: 2.58}
+    m_Position: {x: 0, y: 0, z: 6.14}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 1, y: 1, z: 1}
+    m_Scale: {x: 3, y: 3, z: 3}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -6221,35 +6221,35 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0.025440216
           value: 0
-          inSlope: 13.070904
-          outSlope: 13.070904
+          inSlope: 2.0825958
+          outSlope: 2.0825958
           tangentMode: 34
           weightedMode: 0
           inWeight: 0
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.080234975
-          value: 0.71621704
-          inSlope: 0
-          outSlope: 0
+          time: 0.2720152
+          value: 0.51351607
+          inSlope: 1.5502279
+          outSlope: 1.5502279
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.4622628
           outWeight: 0.5125957
         - serializedVersion: 3
-          time: 0.93542415
-          value: 0.78378296
-          inSlope: 0
-          outSlope: 0
+          time: 0.70840764
+          value: 0.5000003
+          inSlope: -0.9296365
+          outSlope: -0.9296365
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.15852712
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 0.99609375
           value: 0
-          inSlope: -12.918875
-          outSlope: -12.918875
+          inSlope: -1.7380064
+          outSlope: -1.7380064
           tangentMode: 34
           weightedMode: 0
           inWeight: 0.33333334
@@ -6551,7 +6551,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 1
+    enabled: 0
     gradient:
       serializedVersion: 2
       minMaxState: 1
