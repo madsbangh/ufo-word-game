@@ -923,7 +923,6 @@ establish
 establishment
 estate
 estimate
-etc
 ethics
 ethnic
 European
@@ -2370,7 +2369,6 @@ shift
 shine
 ship
 shirt
-shit
 shock
 shoe
 shoot
