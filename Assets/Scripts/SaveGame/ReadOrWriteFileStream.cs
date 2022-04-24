@@ -102,7 +102,7 @@ namespace SaveGame
 			else
 			{
 				var count = _reader.ReadInt32();
-				set.Clear();
+				set = new HashSet<T>();
 				for (int i = 0; i < count; i++)
 				{
 					set.Add(readHandler());
@@ -198,7 +198,7 @@ namespace SaveGame
 			else
 			{
 				var count = _reader.ReadInt32();
-				queue.Clear();
+				queue = new Queue<T>(count);
 				for (int i = 0; i < count; i++)
 				{
 					queue.Enqueue(readHandler());

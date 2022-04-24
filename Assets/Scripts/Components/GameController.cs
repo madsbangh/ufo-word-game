@@ -11,6 +11,8 @@ namespace Components
 {
 	public class GameController : MonoBehaviour
 	{
+		public const int HintPointsRequiredPerHint = 5;
+		
 		[SerializeField] private TextAsset _wordListAsset;
 		[SerializeField] private BoardSpawner _boardSpawner;
 		[SerializeField] private ScenerySpawner _scenerySpawner;
@@ -20,6 +22,7 @@ namespace Components
 		[SerializeField] private UFOAnimator _ufoAnimator;
 		[SerializeField] private UfoLetterRing _letterRing;
 		[SerializeField] private ScoreDisplay _scoreDisplay;
+		[SerializeField] private HintDisplay _hintDisplay;
 		[SerializeField] private int _pastSectionCount, _futureSectionCount;
 		[SerializeField] private float _beforeHoistSeconds;
 		[SerializeField] private float _afterHoistSeconds;
@@ -28,11 +31,14 @@ namespace Components
 		private WordBoard _wordBoard;
 		private WordBoardGenerator _wordBoardGenerator;
 		private GameState _gameState;
+		private HashSet<string> _allAllowedWords;
 
 		private void Start()
 		{
 			_wordBoard = new WordBoard();
-			_wordBoardGenerator = new WordBoardGenerator(_wordListAsset, _wordBoard);
+			var words = WordUtility.ParseFilterAndProcessWordList(_wordListAsset.text);
+			_wordBoardGenerator = new WordBoardGenerator(words, _wordBoard);
+			_allAllowedWords = new HashSet<string>(words);
 
 			if (SaveGameUtility.SaveFileExists)
 			{
@@ -55,6 +61,8 @@ namespace Components
 
 		private void StartGameFromScratch()
 		{
+			_hintDisplay.SetHintPoints(0, false);
+			_scoreDisplay.SetScore(0, false);
 			_gameState.GeneratedFutureSections = new Queue<Section>();
 			_gameState.CurrentSectionWords = new SectionWords();
 			_gameState.RecentlyFoundWords = new Queue<string>();
@@ -67,6 +75,7 @@ namespace Components
 		{
 			LoadGame();
 			_scoreDisplay.SetScore(_gameState.Score, false);
+			_hintDisplay.SetHintPoints(_gameState.BonusHintPoints, false);
 			_letterRing.SetLetters(_gameState.CurrentSectionLetters);
 			for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
 			{
@@ -116,25 +125,40 @@ namespace Components
 		{
 			if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
 			{
-				_wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
-				_gameState.CurrentSectionWords.Remove(word);
-
-				if (_gameState.CurrentSectionWords.Count == 0)
-				{
-					StartCoroutine(BoardCompletedCoroutine());
-				}
-				else
-				{
-					_ufoAnimator.PlayHappy();
-				}
-
+				PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
 				MarkWordAsRecentlyFound(word);
-
 				SaveGame();
+			}
+			else if (_allAllowedWords.Contains(word))
+			{
+				if (!_gameState.RecentlyFoundWords.Contains(word))
+				{
+					_gameState.BonusHintPoints++;
+					MarkWordAsRecentlyFound(word);
+					SaveGame();
+				}
+				
+				_ufoAnimator.PlayHappy();
+				_hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
 			}
 			else if (word.Length > 1)
 			{
 				_ufoAnimator.PlaySad();
+			}
+		}
+
+		private void PlaceWordAndCompleteSectionIfNeeded(string word, WordPlacement boardWordPlacement)
+		{
+			_wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
+			_gameState.CurrentSectionWords.Remove(word);
+
+			if (_gameState.CurrentSectionWords.Count == 0)
+			{
+				StartCoroutine(BoardCompletedCoroutine());
+			}
+			else
+			{
+				_ufoAnimator.PlayHappy();
 			}
 		}
 
@@ -191,6 +215,7 @@ namespace Components
 			catch (EndOfStreamException)
 			{
 				// Incompatible save file. Just reset game for now...
+				UnityEngine.Debug.LogWarning("Recreated save file due to incompatibility!");
 				SaveGameUtility.DeleteSaveFile();
 				StartGameFromScratch();
 			}
@@ -311,6 +336,7 @@ namespace Components
 			public string CurrentSectionLetters;
 			public int Score;
 			public Queue<string> RecentlyFoundWords;
+			public int BonusHintPoints;
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
@@ -321,6 +347,7 @@ namespace Components
 				stream.Visit(ref GeneratedFutureSections);
 				stream.Visit(ref Score);
 				stream.Visit(ref RecentlyFoundWords);
+				stream.Visit(ref BonusHintPoints);
 			}
 		}
 	}
