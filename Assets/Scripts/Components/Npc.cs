@@ -6,8 +6,6 @@ namespace Components
     [RequireComponent(typeof(Animator))]
     public class Npc : MonoBehaviour
     {
-        private const int WalkPositionsCount = 4;
-
         private static readonly int SpeedParameterId = Animator.StringToHash("Speed");
         private static readonly int HoistTriggerId = Animator.StringToHash("Hoist");
         private static readonly int CycleOffsetParameterId = Animator.StringToHash("Cycle Offset");
