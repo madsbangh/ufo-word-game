@@ -56,6 +56,7 @@ namespace Components
 		{
 			_gameState.GeneratedFutureSections = new Queue<Section>();
 			_gameState.CurrentSectionWords = new SectionWords();
+			_gameState.RecentlyFoundWords = new Queue<string>();
 			_gameState.CurrentSectionIndex = -1;
 			_gameState.NewestGeneratedSectionIndex = -1;
 			ProgressToNextSection();
@@ -297,6 +298,7 @@ namespace Components
 			public int NewestGeneratedSectionIndex;
 			public string CurrentSectionLetters;
 			public int Score;
+			public Queue<string> RecentlyFoundWords;
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
@@ -306,6 +308,7 @@ namespace Components
 				stream.Visit(ref CurrentSectionWords);
 				stream.Visit(ref GeneratedFutureSections);
 				stream.Visit(ref Score);
+				stream.Visit(ref RecentlyFoundWords);
 			}
 		}
 	}

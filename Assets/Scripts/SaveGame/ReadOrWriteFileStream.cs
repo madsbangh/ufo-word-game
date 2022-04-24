@@ -167,6 +167,45 @@ namespace SaveGame
 		public void Visit<T>(ref Dictionary<string, T> dictionary) where T : ISerializable, new()
 			=> Visit(ref dictionary, ReadString, WriteString, ReadSerializable<T>, WriteSerializable);
 
+		public void Visit(ref Queue<bool> queue) =>
+			Visit(ref queue, ReadBoolean, WriteBoolean);
+
+		public void Visit(ref Queue<byte> queue) =>
+			Visit(ref queue, ReadByte, WriteByte);
+
+		public void Visit(ref Queue<char> queue) =>
+			Visit(ref queue, ReadChar, WriteChar);
+
+		public void Visit(ref Queue<int> queue) =>
+			Visit(ref queue, ReadInt, WriteInt);
+
+		public void Visit(ref Queue<Vector2Int> queue) =>
+			Visit(ref queue, ReadVector2Int, WriteVector2Int);
+
+		public void Visit(ref Queue<string> queue) =>
+			Visit(ref queue, ReadString, WriteString);
+		
+		private void Visit<T>(ref Queue<T> queue, Func<T> readHandler, Action<T> writeHandler)
+		{
+			if (_isWriteMode)
+			{
+				_writer.Write(queue.Count);
+				foreach (var item in queue)
+				{
+					writeHandler(item);
+				}
+			}
+			else
+			{
+				var count = _reader.ReadInt32();
+				queue.Clear();
+				for (int i = 0; i < count; i++)
+				{
+					queue.Enqueue(readHandler());
+				}
+			}
+		}
+		
 		private void Visit<TKey, TValue>(ref Dictionary<TKey, TValue> dictionary,
 			Func<TKey> keyReadHandler, Action<TKey> keyWriteHandler,
 			Func<TValue> valueReadHandler, Action<TValue> valueWriteHandler)
