@@ -18,6 +18,7 @@ namespace Components
 		[SerializeField] private UfoRig _ufoRig;
 		[SerializeField] private UFOAnimator _ufoAnimator;
 		[SerializeField] private UfoLetterRing _letterRing;
+		[SerializeField] private ScoreDisplay _scoreDisplay;
 		[SerializeField] private int _pastSectionCount, _futureSectionCount;
 		[SerializeField] float _beforeHoistSeconds;
 		[SerializeField] float _afterHoistSeconds;
@@ -41,6 +42,13 @@ namespace Components
 			}
 
 			SetupSceneObjects();
+			
+			GameEvents.NPCHoisted += GameEvents_NPCHoisted;
+		}
+
+		private void OnDestroy()
+		{
+			_letterRing.WordSubmitted -= LetterRing_WordSubmitted;
 		}
 
 		private void StartGameFromScratch()
@@ -55,6 +63,7 @@ namespace Components
 		private void StartGameFromSaveFile()
 		{
 			LoadGame();
+			_scoreDisplay.SetScore(_gameState.Score, false);
 			_letterRing.SetLetters(_gameState.CurrentSectionLetters);
 			for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
 			{
@@ -94,9 +103,10 @@ namespace Components
 			return WordBoardGenerator.SectionStride * minPaddingSections - 1;
 		}
 
-		private void OnDestroy()
+		private void GameEvents_NPCHoisted()
 		{
-			_letterRing.WordSubmitted -= LetterRing_WordSubmitted;
+			_gameState.Score++;
+			_scoreDisplay.SetScore(_gameState.Score, true);
 		}
 
 		private void LetterRing_WordSubmitted(string word)
@@ -276,6 +286,7 @@ namespace Components
 			public int CurrentSectionIndex;
 			public int NewestGeneratedSectionIndex;
 			public string CurrentSectionLetters;
+			public int Score;
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
@@ -284,6 +295,7 @@ namespace Components
 				stream.Visit(ref CurrentSectionLetters);
 				stream.Visit(ref CurrentSectionWords);
 				stream.Visit(ref GeneratedFutureSections);
+				stream.Visit(ref Score);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Components
 {
@@ -91,6 +92,8 @@ namespace Components
 
                 yield return null;
             }
+
+            GameEvents.NotifyNPCHoisted();
 
             Destroy(gameObject);
         }
