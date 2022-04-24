@@ -21,8 +21,9 @@ namespace Components
 		[SerializeField] private UfoLetterRing _letterRing;
 		[SerializeField] private ScoreDisplay _scoreDisplay;
 		[SerializeField] private int _pastSectionCount, _futureSectionCount;
-		[SerializeField] float _beforeHoistSeconds;
-		[SerializeField] float _afterHoistSeconds;
+		[SerializeField] private float _beforeHoistSeconds;
+		[SerializeField] private float _afterHoistSeconds;
+		[SerializeField] private int _recentlyFoundWordBufferLength;
 
 		private WordBoard _wordBoard;
 		private WordBoardGenerator _wordBoardGenerator;
@@ -127,11 +128,22 @@ namespace Components
 					_ufoAnimator.PlayHappy();
 				}
 
+				MarkWordAsRecentlyFound(word);
+
 				SaveGame();
 			}
 			else if (word.Length > 1)
 			{
 				_ufoAnimator.PlaySad();
+			}
+		}
+
+		private void MarkWordAsRecentlyFound(string word)
+		{
+			_gameState.RecentlyFoundWords.Enqueue(word);
+			if (_gameState.RecentlyFoundWords.Count > _recentlyFoundWordBufferLength)
+			{
+				_gameState.RecentlyFoundWords.Dequeue();
 			}
 		}
 
