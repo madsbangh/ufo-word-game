@@ -1,8 +1,9 @@
-using EasyButtons;
-using SaveGame;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using EasyButtons;
+using SaveGame;
 using UnityEngine;
 using SectionWords = System.Collections.Generic.Dictionary<string, WordPlacement>;
 
@@ -170,7 +171,16 @@ namespace Components
 		private void LoadGame()
 		{
 			using var context = SaveGameUtility.MakeLoadContext();
-			Serialize(context);
+			try
+			{
+				Serialize(context);
+			}
+			catch (EndOfStreamException)
+			{
+				// Incompatible save file. Just reset game for now...
+				SaveGameUtility.DeleteSaveFile();
+				StartGameFromScratch();
+			}
 		}
 
 		private void Serialize(ReadOrWriteFileStream context)
