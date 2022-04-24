@@ -16,9 +16,8 @@ public class WordBoardGenerator
 	private readonly PossibleWordsFinder _possibleWordsFinder;
 	private readonly WordBoard _wordBoard;
 
-	public WordBoardGenerator(TextAsset wordListAsset, WordBoard wordBoard)
+	public WordBoardGenerator(string[] words, WordBoard wordBoard)
 	{
-		var words = WordUtility.ParseFilterAndProcessWordList(wordListAsset.text);
 		_possibleWordsFinder = new PossibleWordsFinder(words);
 		_wordBoard = wordBoard;
 	}

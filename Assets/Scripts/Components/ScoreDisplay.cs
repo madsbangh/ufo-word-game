@@ -3,14 +3,9 @@ using UnityEngine;
 
 namespace Components
 {
-    public class ScoreDisplay : MonoBehaviour
+    public class ScoreDisplay : ScaleBumpableDisplayBase
     {
         [SerializeField] private TMP_Text _scoreText;
-        [SerializeField] private float _bumpStrength;
-        [SerializeField] private float _smoothTime;
-
-        private float _currentScale;
-        private float _currentScaleVelocity;
 
         public void SetScore(int score, bool playEffects)
         {
@@ -18,14 +13,14 @@ namespace Components
 
             if (playEffects)
             {
-                _currentScaleVelocity = _bumpStrength;
+                BumpScale();
             }
         }
-
-        private void Update()
+        
+        protected override void Update()
         {
-            _currentScale = Mathf.SmoothDamp(_currentScale, 1f, ref _currentScaleVelocity, _smoothTime);
-            _scoreText.transform.localScale = Vector3.one * _currentScale;
+            base.Update();
+            _scoreText.transform.localScale = Vector3.one * CurrentScale;
         }
     }
 }
