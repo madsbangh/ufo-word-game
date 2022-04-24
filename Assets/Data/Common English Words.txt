@@ -20,6 +20,7 @@ according
 account
 accurate
 accuse
+ace
 achieve
 achievement
 acid
@@ -820,6 +821,7 @@ drop
 drug
 dry
 due
+dug
 during
 dust
 duty
@@ -1300,6 +1302,7 @@ hunter
 hunting
 hurt
 husband
+hut
 hypothesis
 ice
 idea
@@ -1821,6 +1824,7 @@ or
 orange
 order
 ordinary
+ore
 organic
 organization
 organize
@@ -1972,6 +1976,7 @@ pop
 popular
 population
 porch
+pore
 port
 portion
 portrait
@@ -2769,6 +2774,7 @@ trust
 truth
 try
 tube
+tug
 tunnel
 turn
 twelve
@@ -2835,6 +2841,7 @@ very
 vessel
 veteran
 via
+vice
 victim
 victory
 video
@@ -2933,12 +2940,14 @@ wire
 wisdom
 wise
 wish
+wit
 with
 withdraw
 within
 without
 witness
 woman
+won
 wonder
 wonderful
 wood
