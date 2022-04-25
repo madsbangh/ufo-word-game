@@ -15,7 +15,8 @@ namespace Components
     {
         public const int HintPointsRequiredPerHint = 5;
 
-        [SerializeField] private TextAsset _wordListAsset;
+        [SerializeField] private TextAsset _commonWordListAsset;
+        [SerializeField] private TextAsset _bigWordListAsset;
         [SerializeField] private BoardSpawner _boardSpawner;
         [SerializeField] private ScenerySpawner _scenerySpawner;
         [SerializeField] private NpcSpawner _npcSpawner;
@@ -37,10 +38,12 @@ namespace Components
 
         private void Start()
         {
+            var allWords = WordUtility.ParseFilterAndProcessWordList(_bigWordListAsset.text);
+            _allAllowedWords = new HashSet<string>(allWords);
+
+            var commonWords = WordUtility.ParseFilterAndProcessWordList(_commonWordListAsset.text);
             _wordBoard = new WordBoard();
-            var words = WordUtility.ParseFilterAndProcessWordList(_wordListAsset.text);
-            _wordBoardGenerator = new WordBoardGenerator(words, _wordBoard);
-            _allAllowedWords = new HashSet<string>(words);
+            _wordBoardGenerator = new WordBoardGenerator(commonWords, _wordBoard);
 
             if (SaveGameUtility.SaveFileExists)
             {
