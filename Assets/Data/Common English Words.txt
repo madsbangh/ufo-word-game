@@ -758,6 +758,7 @@ digital
 dimension
 dine
 dined
+ding
 dining
 dinner
 direct
