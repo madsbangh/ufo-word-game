@@ -746,6 +746,7 @@ devote
 dialogue
 did
 die
+died
 diet
 differ
 difference
