@@ -756,6 +756,8 @@ difficulty
 dig
 digital
 dimension
+dine
+dined
 dining
 dinner
 direct
