@@ -74,10 +74,10 @@ namespace Components
 		private void SetupSceneObjects()
 		{
 			_boardSpawner.Initialize(_wordBoard);
-			_scenerySpawner.Initialize(_wordBoard, 1 - WordBoardGenerator.SectionStride * _pastSectionCount);
+			_scenerySpawner.Initialize(_wordBoard, CalculateScenerySpawnerWindowPadding());
 			_letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
-			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
+			_scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
 
 			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_cameraRig.SetCameraOverBoard(false);
@@ -86,6 +86,12 @@ namespace Components
 			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_ufoRig.SetUfoTargetOverBoard(false);
 			_ufoRig.TeleportToTarget();
+		}
+
+		private int CalculateScenerySpawnerWindowPadding()
+		{
+			var minPaddingSections = Mathf.Min(_pastSectionCount, _futureSectionCount);
+			return WordBoardGenerator.SectionStride * minPaddingSections - 1;
 		}
 
 		private void OnDestroy()
@@ -137,8 +143,7 @@ namespace Components
 
 			ProgressToNextSection();
 
-			_scenerySpawner.ExpandToSection(_gameState.CurrentSectionIndex + _futureSectionCount - 1);
-			_scenerySpawner.CleanupBeforeSection(_gameState.CurrentSectionIndex - _pastSectionCount + 1);
+			_scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
 
 			_cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
 			_ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
@@ -228,15 +233,13 @@ namespace Components
 			}
 		}
 
-		[Button("Cheat: Almost Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
-		private void DebugAlmostCompleteSection()
+		[Button("Cheat: Complete One word", Mode = ButtonMode.EnabledInPlayMode)]
+		private void DebugCompleteOneWord()
 		{
-			foreach (var word in _gameState.CurrentSectionWords.Keys.Skip(1).ToArray())
+			if (_gameState.CurrentSectionWords.Any())
 			{
-				LetterRing_WordSubmitted(word);
+				LetterRing_WordSubmitted(_gameState.CurrentSectionWords.Keys.First());
 			}
-
-			DebugLogWords();
 		}
 
 		[Button("Cheat: Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
@@ -261,8 +264,8 @@ namespace Components
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
-				stream.Serialize(ref Letters);
-				stream.Serialize(ref Words);
+				stream.Visit(ref Letters);
+				stream.Visit(ref Words);
 			}
 		}
 
@@ -276,11 +279,11 @@ namespace Components
 
 			public void Serialize(ReadOrWriteFileStream stream)
 			{
-				stream.Serialize(ref CurrentSectionIndex);
-				stream.Serialize(ref NewestGeneratedSectionIndex);
-				stream.Serialize(ref CurrentSectionLetters);
-				stream.Serialize(ref CurrentSectionWords);
-				stream.Serialize(ref GeneratedFutureSections);
+				stream.Visit(ref CurrentSectionIndex);
+				stream.Visit(ref NewestGeneratedSectionIndex);
+				stream.Visit(ref CurrentSectionLetters);
+				stream.Visit(ref CurrentSectionWords);
+				stream.Visit(ref GeneratedFutureSections);
 			}
 		}
 	}

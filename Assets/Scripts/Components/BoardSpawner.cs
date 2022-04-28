@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Components
@@ -11,10 +14,39 @@ namespace Components
         [SerializeField]
         private LetterTile _letterTilePrefab;
 
+        [SerializeField]
+        private float _tileUpdateInterval;
+        
         private readonly Dictionary<Vector2Int, LetterTile> _spawnedLetterTiles
             = new Dictionary<Vector2Int, LetterTile>();
 
         private WordBoard _wordBoard;
+
+        private readonly SortedSet<Vector2Int> _tilesToUpdate = new SortedSet<Vector2Int>(new DiagonalComparer());
+
+        private class DiagonalComparer : IComparer<Vector2Int>
+        {
+            public int Compare(Vector2Int first, Vector2Int second)
+            {
+                var xComparison = (first.x + first.y).CompareTo(second.x + second.y);
+                return xComparison != 0 ? xComparison : first.y.CompareTo(second.y);
+            }
+        }
+
+        private IEnumerator Start()
+        {
+            var waitForInterval = new WaitForSeconds(_tileUpdateInterval);
+            var waitForTile = new WaitUntil(_tilesToUpdate.Any);
+            while (true)
+            {
+                yield return waitForInterval;
+                yield return waitForTile;
+
+                var position = _tilesToUpdate.Min;
+                _tilesToUpdate.Remove(position);
+                UpdateOrSpawnLetterTile(_wordBoard, position);
+            }
+        }
 
         public void Initialize(WordBoard wordBoard)
         {
@@ -82,7 +114,7 @@ namespace Components
 
         private void WordBoard_TileChanged(Vector2Int position)
         {
-            UpdateOrSpawnLetterTile(_wordBoard, position);
+            _tilesToUpdate.Add(position);
         }
     }
 }

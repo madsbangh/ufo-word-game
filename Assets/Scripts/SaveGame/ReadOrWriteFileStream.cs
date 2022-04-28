@@ -35,61 +35,61 @@ namespace SaveGame
 			_stream.Dispose();
 		}
 
-		public void Serialize(ref bool value)
+		public void Visit(ref bool value)
 		{
 			if (_isWriteMode) _writer.Write(value);
 			else value = _reader.ReadBoolean();
 		}
 
-		public void Serialize(ref byte value)
+		public void Visit(ref byte value)
 		{
 			if (_isWriteMode) _writer.Write(value);
 			else value = _reader.ReadByte();
 		}
 
-		public void Serialize(ref char value)
+		public void Visit(ref char value)
 		{
 			if (_isWriteMode) _writer.Write(value);
 			else value = _reader.ReadChar();
 		}
 
-		public void Serialize(ref int value)
+		public void Visit(ref int value)
 		{
 			if (_isWriteMode) _writer.Write(value);
 			else value = _reader.ReadInt32();
 		}
 
-		public void Serialize(ref Vector2Int value)
+		public void Visit(ref Vector2Int value)
 		{
 			if (_isWriteMode) WriteVector2Int(value);
 			else value = ReadVector2Int();
 		}
 
-		public void Serialize(ref string value)
+		public void Visit(ref string value)
 		{
 			if (_isWriteMode) _writer.Write(value ?? string.Empty);
 			else value = _reader.ReadString();
 		}
 
-		public void Serialize(ref HashSet<bool> set) =>
-			Serialize(ref set, ReadBoolean, WriteBoolean);
+		public void Visit(ref HashSet<bool> set) =>
+			Visit(ref set, ReadBoolean, WriteBoolean);
 
-		public void Serialize(ref HashSet<byte> set) =>
-			Serialize(ref set, ReadByte, WriteByte);
+		public void Visit(ref HashSet<byte> set) =>
+			Visit(ref set, ReadByte, WriteByte);
 
-		public void Serialize(ref HashSet<char> set) =>
-			Serialize(ref set, ReadChar, WriteChar);
+		public void Visit(ref HashSet<char> set) =>
+			Visit(ref set, ReadChar, WriteChar);
 
-		public void Serialize(ref HashSet<int> set) =>
-			Serialize(ref set, ReadInt, WriteInt);
+		public void Visit(ref HashSet<int> set) =>
+			Visit(ref set, ReadInt, WriteInt);
 
-		public void Serialize(ref HashSet<Vector2Int> set) =>
-			Serialize(ref set, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref HashSet<Vector2Int> set) =>
+			Visit(ref set, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref HashSet<string> set) =>
-			Serialize(ref set, ReadString, WriteString);
+		public void Visit(ref HashSet<string> set) =>
+			Visit(ref set, ReadString, WriteString);
 
-		private void Serialize<T>(ref HashSet<T> set, Func<T> readHandler, Action<T> writeHandler)
+		private void Visit<T>(ref HashSet<T> set, Func<T> readHandler, Action<T> writeHandler)
 		{
 			if (_isWriteMode)
 			{
@@ -111,63 +111,63 @@ namespace SaveGame
 		}
 
 		// * to Vector2Int
-		public void Serialize(ref Dictionary<bool, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadBoolean, WriteBoolean, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<bool, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadBoolean, WriteBoolean, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref Dictionary<byte, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadByte, WriteByte, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<byte, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadByte, WriteByte, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref Dictionary<char, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadChar, WriteChar, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<char, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadChar, WriteChar, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref Dictionary<int, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadInt, WriteInt, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<int, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadInt, WriteInt, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref Dictionary<Vector2Int, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadVector2Int, WriteVector2Int, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<Vector2Int, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadVector2Int, WriteVector2Int, ReadVector2Int, WriteVector2Int);
 
-		public void Serialize(ref Dictionary<string, Vector2Int> dictionary)
-			=> Serialize(ref dictionary, ReadString, WriteString, ReadVector2Int, WriteVector2Int);
+		public void Visit(ref Dictionary<string, Vector2Int> dictionary)
+			=> Visit(ref dictionary, ReadString, WriteString, ReadVector2Int, WriteVector2Int);
 
 		// * to string
-		public void Serialize(ref Dictionary<bool, string> collection)
-			=> Serialize(ref collection, ReadBoolean, WriteBoolean, ReadString, WriteString);
+		public void Visit(ref Dictionary<bool, string> collection)
+			=> Visit(ref collection, ReadBoolean, WriteBoolean, ReadString, WriteString);
 
-		public void Serialize(ref Dictionary<byte, string> dictionary)
-			=> Serialize(ref dictionary, ReadByte, WriteByte, ReadString, WriteString);
+		public void Visit(ref Dictionary<byte, string> dictionary)
+			=> Visit(ref dictionary, ReadByte, WriteByte, ReadString, WriteString);
 
-		public void Serialize(ref Dictionary<char, string> dictionary)
-			=> Serialize(ref dictionary, ReadChar, WriteChar, ReadString, WriteString);
+		public void Visit(ref Dictionary<char, string> dictionary)
+			=> Visit(ref dictionary, ReadChar, WriteChar, ReadString, WriteString);
 
-		public void Serialize(ref Dictionary<int, string> dictionary)
-			=> Serialize(ref dictionary, ReadInt, WriteInt, ReadString, WriteString);
+		public void Visit(ref Dictionary<int, string> dictionary)
+			=> Visit(ref dictionary, ReadInt, WriteInt, ReadString, WriteString);
 
-		public void Serialize(ref Dictionary<Vector2Int, string> dictionary)
-			=> Serialize(ref dictionary, ReadVector2Int, WriteVector2Int, ReadString, WriteString);
+		public void Visit(ref Dictionary<Vector2Int, string> dictionary)
+			=> Visit(ref dictionary, ReadVector2Int, WriteVector2Int, ReadString, WriteString);
 
-		public void Serialize(ref Dictionary<string, string> dictionary)
-			=> Serialize(ref dictionary, ReadString, WriteString, ReadString, WriteString);
+		public void Visit(ref Dictionary<string, string> dictionary)
+			=> Visit(ref dictionary, ReadString, WriteString, ReadString, WriteString);
 
 		// * to Serializable
-		public void Serialize<T>(ref Dictionary<bool, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadBoolean, WriteBoolean, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<bool, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadBoolean, WriteBoolean, ReadSerializable<T>, WriteSerializable);
 
-		public void Serialize<T>(ref Dictionary<byte, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadByte, WriteByte, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<byte, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadByte, WriteByte, ReadSerializable<T>, WriteSerializable);
 
-		public void Serialize<T>(ref Dictionary<char, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadChar, WriteChar, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<char, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadChar, WriteChar, ReadSerializable<T>, WriteSerializable);
 
-		public void Serialize<T>(ref Dictionary<int, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadInt, WriteInt, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<int, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadInt, WriteInt, ReadSerializable<T>, WriteSerializable);
 
-		public void Serialize<T>(ref Dictionary<Vector2Int, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadVector2Int, WriteVector2Int, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<Vector2Int, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadVector2Int, WriteVector2Int, ReadSerializable<T>, WriteSerializable);
 
-		public void Serialize<T>(ref Dictionary<string, T> dictionary) where T : ISerializable, new()
-			=> Serialize(ref dictionary, ReadString, WriteString, ReadSerializable<T>, WriteSerializable);
+		public void Visit<T>(ref Dictionary<string, T> dictionary) where T : ISerializable, new()
+			=> Visit(ref dictionary, ReadString, WriteString, ReadSerializable<T>, WriteSerializable);
 
-		private void Serialize<TKey, TValue>(ref Dictionary<TKey, TValue> dictionary,
+		private void Visit<TKey, TValue>(ref Dictionary<TKey, TValue> dictionary,
 			Func<TKey> keyReadHandler, Action<TKey> keyWriteHandler,
 			Func<TValue> valueReadHandler, Action<TValue> valueWriteHandler)
 		{
@@ -198,7 +198,7 @@ namespace SaveGame
 			}
 		}
 
-		public void Serialize<T>(ref HashSet<T> set) where T : ISerializable, new()
+		public void Visit<T>(ref HashSet<T> set) where T : ISerializable, new()
 		{
 			if (_isWriteMode)
 			{
@@ -224,7 +224,7 @@ namespace SaveGame
 			}
 		}
 
-		public void Serialize<T>(ref Queue<T> queue) where T : ISerializable, new()
+		public void Visit<T>(ref Queue<T> queue) where T : ISerializable, new()
 		{
 			if (_isWriteMode)
 			{
