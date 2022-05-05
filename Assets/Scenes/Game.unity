@@ -2804,7 +2804,7 @@ GameObject:
   - component: {fileID: 619351926}
   - component: {fileID: 619351925}
   m_Layer: 5
-  m_Name: Light Sctreaks
+  m_Name: Light Streaks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12895,6 +12895,9 @@ MonoBehaviour:
   _lightStreaksToEnable: {fileID: 619351923}
   _useHintButton: {fileID: 1861901604}
   _hintCountText: {fileID: 285393167}
+  _backgroundColor: {r: 0.105882354, g: 0.4745098, b: 0.7254902, a: 1}
+  _foregroundColor1: {r: 0.9882353, g: 0.8666667, b: 0.9254902, a: 1}
+  _foregroundColor2: {r: 0.9607843, g: 0.4862745, b: 0.44313726, a: 1}
 --- !u!222 &1861901603
 CanvasRenderer:
   m_ObjectHideFlags: 0

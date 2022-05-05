@@ -13,7 +13,7 @@ namespace Components
 {
     public class GameController : MonoBehaviour
     {
-        public const int HintPointsRequiredPerHint = 5;
+        public const int HintPointsRequiredPerHint = 3;
 
         [SerializeField] private TextAsset _commonWordListAsset;
         [SerializeField] private TextAsset _bigWordListAsset;
@@ -234,6 +234,7 @@ namespace Components
         {
             if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
             {
+                _gameState.BonusHintPoints++;
                 PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
                 SaveGame();
             }
@@ -241,7 +242,7 @@ namespace Components
             {
                 if (!_gameState.RecentlyFoundWords.Contains(word))
                 {
-                    _gameState.BonusHintPoints++;
+                    _gameState.BonusHintPoints += 2;
                     MarkWordAsRecentlyFound(word);
                     SaveGame();
                 }
