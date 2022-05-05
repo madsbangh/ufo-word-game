@@ -30,6 +30,7 @@ namespace Components
         [SerializeField] private float _beforeHoistSeconds;
         [SerializeField] private float _afterHoistSeconds;
         [SerializeField] private int _recentlyFoundWordBufferLength;
+        [SerializeField] private CelebratoryText _celebratoryText;
 
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
@@ -104,11 +105,13 @@ namespace Components
             }
         }
 
-        private bool WordContainsTile(KeyValuePair<string, WordPlacement> wordPlacementPair, Vector2Int tilePosition)
+        private static bool WordContainsTile(
+            KeyValuePair<string, WordPlacement> wordPlacementPair,
+            Vector2Int tilePosition)
         {
             for (var i = 0; i < wordPlacementPair.Key.Length; i++)
             {
-                if (tilePosition == 
+                if (tilePosition ==
                     wordPlacementPair.Value.Position +
                     wordPlacementPair.Value.Direction.ToStride() * i)
                 {
@@ -126,10 +129,11 @@ namespace Components
                 var position =
                     wordPlacementPair.Value.Position +
                     wordPlacementPair.Value.Direction.ToStride() * i;
-                
+
                 if (!_wordBoard.HasLetterTile(position))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(wordPlacementPair), "The given word falls outside the existing board tiles.");
+                    throw new ArgumentOutOfRangeException(nameof(wordPlacementPair),
+                        "The given word falls outside the existing board tiles.");
                 }
 
                 if (_wordBoard.GetLetterTile(position).Progress != TileState.Revealed)
@@ -278,6 +282,10 @@ namespace Components
 
         private IEnumerator BoardCompletedCoroutine()
         {
+            _ufoAnimator.PlayHappy();
+            
+            yield return _celebratoryText.Celebrate();
+            
             _ufoAnimator.PlayWin();
             _cameraRig.SetCameraOverBoard(true);
             _ufoRig.SetUfoTargetOverBoard(true);
@@ -413,7 +421,7 @@ namespace Components
                 LetterRing_WordSubmitted(word);
             }
         }
-        
+
         [Button("Cheat: Hive a Hint", Mode = ButtonMode.EnabledInPlayMode)]
         private void DebugGiveHint()
         {

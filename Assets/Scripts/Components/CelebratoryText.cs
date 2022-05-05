@@ -23,7 +23,7 @@ namespace Components
         }
 
         [Button("Test", Mode = ButtonMode.EnabledInPlayMode)]
-        public void Celebrate()
+        public Coroutine Celebrate()
         {
             _text.text = _strings[Random.Range(0, _strings.Length)];
 
@@ -34,6 +34,8 @@ namespace Components
             
             _particles.Play();
             _currentAnimateCoroutine = StartCoroutine(AnimateCoroutine());
+
+            return _currentAnimateCoroutine;
         }
 
         private IEnumerator AnimateCoroutine()
