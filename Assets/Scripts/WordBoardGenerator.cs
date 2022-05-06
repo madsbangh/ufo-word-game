@@ -7,6 +7,7 @@ public class WordBoardGenerator
 {
 	public const int SectionSize = 9;
 	public const int SectionStride = 5;
+	public const int SectionsAheadAndBehind = 4;
 
 	private const int MinimumWordsPerSection = 4;
 	private const int MaximumWordsPerSection = 6;

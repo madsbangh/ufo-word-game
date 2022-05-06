@@ -26,7 +26,6 @@ namespace Components
         [SerializeField] private UfoLetterRing _letterRing;
         [SerializeField] private ScoreDisplay _scoreDisplay;
         [SerializeField] private HintDisplay _hintDisplay;
-        [SerializeField] private int _pastSectionCount, _futureSectionCount;
         [SerializeField] private float _beforeHoistSeconds;
         [SerializeField] private float _afterHoistSeconds;
         [SerializeField] private int _recentlyFoundWordBufferLength;
@@ -218,10 +217,9 @@ namespace Components
             _ufoRig.TeleportToTarget();
         }
 
-        private int CalculateScenerySpawnerWindowPadding()
+        private static int CalculateScenerySpawnerWindowPadding()
         {
-            var minPaddingSections = Mathf.Min(_pastSectionCount, _futureSectionCount);
-            return WordBoardGenerator.SectionStride * minPaddingSections - 1;
+            return WordBoardGenerator.SectionStride * (WordBoardGenerator.SectionsAheadAndBehind - 1);
         }
 
         private void GameEvents_NPCHoisted()
@@ -351,7 +349,8 @@ namespace Components
             do
             {
                 _gameState.CurrentSectionIndex++;
-                while (_gameState.NewestGeneratedSectionIndex < _gameState.CurrentSectionIndex + _futureSectionCount)
+                while (_gameState.NewestGeneratedSectionIndex < 
+                       _gameState.CurrentSectionIndex + WordBoardGenerator.SectionsAheadAndBehind)
                 {
                     GenerateAndEnqueueSection();
                 }
@@ -364,7 +363,7 @@ namespace Components
 
             UnlockCurrentSectionWords();
 
-            ClearTilesBelowSection(_gameState.CurrentSectionIndex - _pastSectionCount);
+            ClearTilesBelowSection(_gameState.CurrentSectionIndex - WordBoardGenerator.SectionsAheadAndBehind);
         }
 
         private void UnlockCurrentSectionWords()

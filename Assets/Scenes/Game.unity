@@ -1769,8 +1769,6 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _scoreDisplay: {fileID: 155545288}
   _hintDisplay: {fileID: 1861901602}
-  _pastSectionCount: 3
-  _futureSectionCount: 3
   _beforeHoistSeconds: 1
   _afterHoistSeconds: 1.4
   _recentlyFoundWordBufferLength: 50
