@@ -20,7 +20,6 @@ namespace Components
 
 
 		private WordBoard _wordBoard;
-		private int _previousWindowCoordinateMin;
 		private int _previousWindowCoordinateMax;
 		private int _windowPadding;
 
@@ -82,7 +81,6 @@ namespace Components
 				}
 			}
 
-			_previousWindowCoordinateMin = minimumCoordinate;
 			_previousWindowCoordinateMax = maximumCoordinate;
 		}
 
