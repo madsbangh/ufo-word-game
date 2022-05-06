@@ -1772,7 +1772,7 @@ MonoBehaviour:
   _hintDisplay: {fileID: 1861901602}
   _beforeHoistSeconds: 1
   _afterHoistSeconds: 1.4
-  _recentlyFoundWordBufferLength: 50
+  _recentlyFoundWordBufferLength: 100
   _celebratoryText: {fileID: 126382159}
 --- !u!1 &277296196
 GameObject:

@@ -23,14 +23,14 @@ public class WordBoardGenerator
 		_wordBoard = wordBoard;
 	}
 
-	public SectionWords GenerateSection(int sectionIndex, out string letters)
+	public SectionWords GenerateSection(int sectionIndex, Queue<string> alreadySeenWords, out string letters)
 	{
 		var result = new SectionWords();
 
 		var sectionStartCoordinate = sectionIndex * SectionStride;
 		var sectionEndCoordinate = sectionStartCoordinate + SectionSize;
 
-		var sortedUppercaseLetters = ChooseCandidateWordsAndLetters(out var candidateWords);
+		var sortedUppercaseLetters = ChooseCandidateWordsAndLetters(alreadySeenWords, out var candidateWords);
 
 		var tilesInSectionByLetter = GetExistingTilesInSectionByLetter(sortedUppercaseLetters, sectionStartCoordinate);
 
@@ -55,6 +55,12 @@ public class WordBoardGenerator
 		}
 
 		letters = WordUtility.GetSortedUppercaseLetters(spectrumEnvelope);
+
+		foreach (var word in result.Keys)
+		{
+			alreadySeenWords.Enqueue(word);
+		}
+		
 		return result;
 	}
 
@@ -82,7 +88,7 @@ public class WordBoardGenerator
 		}
 	}
 
-	private string ChooseCandidateWordsAndLetters(out Queue<string> resultSortedCandidateWords)
+	private string ChooseCandidateWordsAndLetters(Queue<string> alreadySeenWords, out Queue<string> resultSortedCandidateWords)
 	{
 		var resultCandidateWordsSet = new HashSet<string>();
 		string sortedUppercaseLetters;
@@ -97,6 +103,7 @@ public class WordBoardGenerator
 			resultCandidateWordsSet.Clear();
 
 			_possibleWordsFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, resultCandidateWordsSet);
+			resultCandidateWordsSet.ExceptWith(alreadySeenWords);
 		} while (resultCandidateWordsSet.Count < MinimumWordsPerSection);
 
 		resultSortedCandidateWords = new Queue<string>(resultCandidateWordsSet

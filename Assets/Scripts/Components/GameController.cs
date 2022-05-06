@@ -262,7 +262,6 @@ namespace Components
         {
             _wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
             _gameState.CurrentSectionWords.Remove(word);
-            MarkWordAsRecentlyFound(word);
 
             if (_gameState.CurrentSectionWords.Count == 0)
             {
@@ -391,7 +390,7 @@ namespace Components
             _gameState.NewestGeneratedSectionIndex++;
 
             var generatedSectionWords =
-                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex, out var letters);
+                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex, _gameState.RecentlyFoundWords, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
             _gameState.GeneratedFutureSections.Enqueue(new Section
                 { Letters = letters, Words = generatedSectionWords });
@@ -399,17 +398,7 @@ namespace Components
             _npcSpawner.SpawnNpcsForSection(_gameState.NewestGeneratedSectionIndex, _wordBoard);
         }
 
-        [Button("Cheat: Log Words", Mode = ButtonMode.EnabledInPlayMode)]
-        private void DebugLogWords()
-        {
-            foreach (var word in _gameState.CurrentSectionWords.Keys)
-            {
-                UnityEngine.Debug.Log(word);
-            }
-        }
-
-        [Button("Cheat: Complete One word", Mode = ButtonMode.EnabledInPlayMode)]
-        private void DebugCompleteOneWord()
+        public void DebugCompleteOneWord()
         {
             if (_gameState.CurrentSectionWords.Any())
             {
@@ -417,8 +406,7 @@ namespace Components
             }
         }
 
-        [Button("Cheat: Complete Section", Mode = ButtonMode.EnabledInPlayMode)]
-        private void DebugCompleteSection()
+        public void DebugCompleteSection()
         {
             foreach (var word in _gameState.CurrentSectionWords.Keys.ToArray())
             {
@@ -426,20 +414,13 @@ namespace Components
             }
         }
 
-        [Button("Cheat: Hive a Hint", Mode = ButtonMode.EnabledInPlayMode)]
-        private void DebugGiveHint()
+        public void DebugGiveHint()
         {
             _gameState.BonusHintPoints++;
             SaveGame();
             _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
         }
-
-        [ContextMenu("Delete Save File")]
-        private void DebugDeleteSaveFile()
-        {
-            SaveGameUtility.DeleteSaveFile();
-        }
-
+        
         private struct Section : ISerializable
         {
             public string Letters;
