@@ -235,6 +235,7 @@ namespace Components
             if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
             {
                 _gameState.BonusHintPoints++;
+                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
                 PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
                 SaveGame();
             }
@@ -243,12 +244,15 @@ namespace Components
                 if (!_gameState.RecentlyFoundWords.Contains(word))
                 {
                     _gameState.BonusHintPoints += 2;
+                    _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
+                    _ufoAnimator.PlayFoundBonusWord();
                     MarkWordAsRecentlyFound(word);
                     SaveGame();
                 }
-
-                _ufoAnimator.PlayHappy();
-                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
+                else
+                {
+                    _ufoAnimator.PlayAlreadyFoundWord();
+                }
             }
             else if (word.Length > 1)
             {
