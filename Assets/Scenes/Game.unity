@@ -678,7 +678,7 @@ MonoBehaviour:
   _circleTransform: {fileID: 525946191}
   _particleSystem: {fileID: 385204483}
   _text: {fileID: 2025598721}
-  _translationXCurve:
+  _toBoardTranslationXCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -702,7 +702,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _translationYZCurve:
+  _toBoardTranslationYZCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -714,6 +714,63 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _toHintTranslationXCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.4155045
+      outSlope: 3.4155045
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.030383091
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.1349555
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _toHintTranslationYZCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0013198853
+      value: 0.004211426
+      inSlope: -1.4300771
+      outSlope: -1.4300771
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.21818395
+    - serializedVersion: 3
+      time: 0.2914058
+      value: -0.07124472
+      inSlope: 1.2523128
+      outSlope: 1.2523128
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.22129
+      outWeight: 0.33065882
     - serializedVersion: 3
       time: 1
       value: 1
@@ -739,7 +796,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.56853414
+      time: 0.4787209
       value: 0
       inSlope: 0
       outSlope: 0
@@ -792,7 +849,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _duration: 0.75
+  _toBoardDuration: 0.8
+  _toHintDuration: 1.1
 --- !u!4 &73846725
 Transform:
   m_ObjectHideFlags: 0
@@ -1941,6 +1999,7 @@ MonoBehaviour:
   _recentlyFoundWordBufferLength: 100
   _celebratoryText: {fileID: 126382159}
   _flyingWordEffect: {fileID: 73846724}
+  _hintFlyingWordTarget: {fileID: 1040675534}
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0

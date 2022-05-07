@@ -31,6 +31,7 @@ namespace Components
         [SerializeField] private int _recentlyFoundWordBufferLength;
         [SerializeField] private CelebratoryText _celebratoryText;
         [SerializeField] private FlyingWordEffect _flyingWordEffect;
+        [SerializeField] private Transform _hintFlyingWordTarget;
         
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
@@ -245,6 +246,7 @@ namespace Components
                     _gameState.BonusHintPoints += 2;
                     _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
                     _ufoAnimator.PlayFoundBonusWord();
+                    _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true);
                     MarkWordAsRecentlyFound(word);
                     SaveGame();
                 }
@@ -259,13 +261,26 @@ namespace Components
             }
         }
 
+        private Vector3 GetHintIndicatorWorldSpacePosition()
+        {
+            var transformPosition = _hintFlyingWordTarget.position;
+            var ray = Camera.main!.ScreenPointToRay(transformPosition);
+            var plane = new Plane(Vector3.up, 1f);
+            plane.Raycast(ray, out var d);
+            return ray.GetPoint(d);
+        }
+
         private void PlaceWordAndCompleteSectionIfNeeded(string word, WordPlacement boardWordPlacement)
         {
             _wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
             _gameState.CurrentSectionWords.Remove(word);
 
-            _flyingWordEffect.PlayMoveToTransformEffect(boardWordPlacement.Position.ToWorldPosition(), word);
-            
+            var wordMiddlePosition =
+                (boardWordPlacement.Position +
+                 boardWordPlacement.Direction.ToStride() * word.Length / 2)
+                .ToWorldPosition();
+            _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false);
+
             if (_gameState.CurrentSectionWords.Count == 0)
             {
                 StartCoroutine(BoardCompletedCoroutine());
@@ -288,9 +303,9 @@ namespace Components
         private IEnumerator BoardCompletedCoroutine()
         {
             _ufoAnimator.PlayHappy();
-            
+
             yield return _celebratoryText.Celebrate();
-            
+
             _ufoAnimator.PlayWin();
             _cameraRig.SetCameraOverBoard(true);
             _ufoRig.SetUfoTargetOverBoard(true);
@@ -351,7 +366,7 @@ namespace Components
             do
             {
                 _gameState.CurrentSectionIndex++;
-                while (_gameState.NewestGeneratedSectionIndex < 
+                while (_gameState.NewestGeneratedSectionIndex <
                        _gameState.CurrentSectionIndex + WordBoardGenerator.SectionsAheadAndBehind)
                 {
                     GenerateAndEnqueueSection();
@@ -393,7 +408,8 @@ namespace Components
             _gameState.NewestGeneratedSectionIndex++;
 
             var generatedSectionWords =
-                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex, _gameState.RecentlyFoundWords, out var letters);
+                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex,
+                    _gameState.RecentlyFoundWords, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
             _gameState.GeneratedFutureSections.Enqueue(new Section
                 { Letters = letters, Words = generatedSectionWords });
@@ -423,7 +439,7 @@ namespace Components
             SaveGame();
             _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
         }
-        
+
         private struct Section : ISerializable
         {
             public string Letters;
