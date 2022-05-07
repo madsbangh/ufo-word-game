@@ -30,7 +30,8 @@ namespace Components
         [SerializeField] private float _afterHoistSeconds;
         [SerializeField] private int _recentlyFoundWordBufferLength;
         [SerializeField] private CelebratoryText _celebratoryText;
-
+        [SerializeField] private FlyingWordEffect _flyingWordEffect;
+        
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
         private GameState _gameState;
@@ -263,6 +264,8 @@ namespace Components
             _wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
             _gameState.CurrentSectionWords.Remove(word);
 
+            _flyingWordEffect.PlayMoveToTransformEffect(boardWordPlacement.Position.ToWorldPosition(), word);
+            
             if (_gameState.CurrentSectionWords.Count == 0)
             {
                 StartCoroutine(BoardCompletedCoroutine());
