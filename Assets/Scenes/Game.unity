@@ -8843,6 +8843,83 @@ Transform:
   m_Father: {fileID: 831032581}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 61.466, y: 0, z: 0}
+--- !u!1 &769815486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 769815487}
+  - component: {fileID: 769815488}
+  m_Layer: 0
+  m_Name: Audio Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &769815487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769815486}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &769815488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769815486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba78eeaebd25af42b8fd0386791f3c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _flyUp:
+    _clips:
+    - {fileID: 8300000, guid: 937e2d86263f29b4a9593c09d3b42574, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0
+    _volume: 1
+  _tractorBeam:
+    _clips:
+    - {fileID: 8300000, guid: 5cf6b6c1c3224d84e8d71b401b99d298, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0
+    _volume: 1
+  _flyDown:
+    _clips:
+    - {fileID: 8300000, guid: 883a0c107ad53eb48a3b33d92a16f43d, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0
+    _volume: 1
+  _laugh:
+    _clips:
+    - {fileID: 8300000, guid: 5ffb83e53d61fdd4cab585da7da0ebcb, type: 3}
+    - {fileID: 8300000, guid: c7b14786741d6c04d947976ba2a8e777, type: 3}
+    - {fileID: 8300000, guid: c10136d7f9f192e4daa4c9bc2ac1b8df, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.125
+    _volume: 1
+  _scream:
+    _clips:
+    - {fileID: 8300000, guid: 81b23b3d128afed43807ee0ead2e7431, type: 3}
+    - {fileID: 8300000, guid: 240c4d3cec616f64aaa7fb2dfeb1120a, type: 3}
+    - {fileID: 8300000, guid: 95adf6fc1724ec940ab4c0577582f1f3, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.18
+    _volume: 1
 --- !u!1 &787139561
 GameObject:
   m_ObjectHideFlags: 0
