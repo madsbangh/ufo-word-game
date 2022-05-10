@@ -327,6 +327,7 @@ namespace Components
             
             yield return new WaitForSeconds(1f);
 
+            _audioController.RandomPostSuctionSound();
             _cameraRig.SetCameraOverBoard(false);
             _ufoRig.SetUfoTargetOverBoard(false);
 

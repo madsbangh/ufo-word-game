@@ -389,6 +389,7 @@ MonoBehaviour:
   _lineBetweenLetters: {fileID: 1559378547}
   _lineBetweenActiveLetterAndPointer: {fileID: 134575645}
   _previewWord: {fileID: 1451661650}
+  _audioController: {fileID: 769815488}
 --- !u!1 &56613084
 GameObject:
   m_ObjectHideFlags: 0
@@ -8911,14 +8912,42 @@ MonoBehaviour:
     _meanPitch: 1
     _pitchVariance: 0.125
     _volume: 1
-  _scream:
+  _chainHoist:
     _clips:
-    - {fileID: 8300000, guid: 81b23b3d128afed43807ee0ead2e7431, type: 3}
-    - {fileID: 8300000, guid: 240c4d3cec616f64aaa7fb2dfeb1120a, type: 3}
-    - {fileID: 8300000, guid: 95adf6fc1724ec940ab4c0577582f1f3, type: 3}
+    - {fileID: 8300000, guid: a03efa71886c40843805e1eec25f4a42, type: 3}
     _meanPitch: 1
-    _pitchVariance: 0.18
+    _pitchVariance: 0.127
     _volume: 1
+  _drill:
+    _clips:
+    - {fileID: 8300000, guid: 9788302876f7dad429fcafb36b160412, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.213
+    _volume: 0.893
+  _burp:
+    _clips:
+    - {fileID: 8300000, guid: b25af62cf7e569a4097afbaa966ab0c9, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.234
+    _volume: 1
+  _spellUp:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.02
+    _volume: 0.566
+  _spellDown:
+    _clips:
+    - {fileID: 8300000, guid: ffc840674bfe7e049ad946b22bd3d7cb, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.02
+    _volume: 0.33
+  _tractorBeamChainSoundProbability: 0.12
+  _burpProbability: 0.06
+  _drillProbability: 0.1
+  _laughProbability: 0.2
+  _spellPitchScale: 0.06
+  _spellPitchOffset: 0.8
 --- !u!1 &787139561
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.EditorCoroutines.Editor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -47,34 +46,19 @@ namespace Audio
             }
         }
 
-        public void Play()
-        {
-            Play(_volume, _meanPitch);
-        }
-
-        public void Play(float volume)
-        {
-            Play(volume, _meanPitch);
-        }
-
-        public void PlayPitched(float pitch)
-        {
-            Play(_volume, pitch);
-        }
-
-        public void Play(float volume, float pitch)
+        public void Play(float volumeMultiplier = 1f, float pitchMultiplier = 1f)
         {
             var source = GetSource();
             s_activeAudioSources.Add(source);
-            ApplySettings(source, volume, pitch);
+            ApplySettings(source, volumeMultiplier, pitchMultiplier);
             source.Play();
         }
 
-        private void ApplySettings(AudioSource source, float volume, float pitch)
+        private void ApplySettings(AudioSource source, float volumeMultiplier, float pitchMultiplier)
         {
             source.clip = _clips.Length > 0 ? _clips[Random.Range(0, _clips.Length)] : null;
-            source.pitch = pitch + Random.Range(-_pitchVariance, _pitchVariance);
-            source.volume = volume;
+            source.pitch = _meanPitch * pitchMultiplier + Random.Range(-_pitchVariance, _pitchVariance);
+            source.volume = _volume * volumeMultiplier;
         }
 
         private static AudioSource GetSource() =>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Audio;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -27,6 +28,9 @@ namespace Components
         [SerializeField]
         private TMP_Text _previewWord;
 
+        [SerializeField]
+        private AudioController _audioController;
+        
         private readonly List<UfoLetter> _letterPool = new List<UfoLetter>();
         private readonly Stack<UfoLetter> _currentlyChosenLetters = new Stack<UfoLetter>();
 
@@ -176,6 +180,18 @@ namespace Components
                 .ToArray()
                 .ArrayToString();
 
+            var previousLetterCount = _previewWord.text.Length;
+            var newLetterCount = word.Length;
+
+            if (previousLetterCount < newLetterCount)
+            {
+                _audioController.AddLetter(newLetterCount);
+            }
+            else if (previousLetterCount > newLetterCount)
+            {
+                _audioController.RemoveLetter(newLetterCount);
+            }
+            
             _previewWord.text = word;
         }
 
