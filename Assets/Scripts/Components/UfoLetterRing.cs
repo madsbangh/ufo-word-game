@@ -113,6 +113,8 @@ namespace Components
                 _currentlyChosenLetters.Push(letter);
                 _activeLetterToDrawLineFrom = letter.transform;
                 UpdatePreviewWord();
+                
+                _audioController.AddLetter(1);
             }
         }
 
@@ -149,12 +151,16 @@ namespace Components
                     letter.Selected = true;
                     _currentlyChosenLetters.Push(letter);
                     _activeLetterToDrawLineFrom = letter.transform;
+                    
+                    _audioController.AddLetter(_currentlyChosenLetters.Count);
                 }
                 else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
                 {
                     // Deselect top letter if current was second in the stack
                     _currentlyChosenLetters.Pop().Selected = false;
                     _activeLetterToDrawLineFrom = letter.transform;
+                    
+                    _audioController.RemoveLetter(_currentlyChosenLetters.Count);
                 }
 
                 UpdateLineBetweenLetters();
@@ -180,18 +186,6 @@ namespace Components
                 .ToArray()
                 .ArrayToString();
 
-            var previousLetterCount = _previewWord.text.Length;
-            var newLetterCount = word.Length;
-
-            if (previousLetterCount < newLetterCount)
-            {
-                _audioController.AddLetter(newLetterCount);
-            }
-            else if (previousLetterCount > newLetterCount)
-            {
-                _audioController.RemoveLetter(newLetterCount);
-            }
-            
             _previewWord.text = word;
         }
 
