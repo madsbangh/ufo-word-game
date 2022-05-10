@@ -26,12 +26,11 @@ namespace Components
         [SerializeField] private UfoLetterRing _letterRing;
         [SerializeField] private ScoreDisplay _scoreDisplay;
         [SerializeField] private HintDisplay _hintDisplay;
-        [SerializeField] private float _beforeHoistSeconds;
-        [SerializeField] private float _afterHoistSeconds;
         [SerializeField] private int _recentlyFoundWordBufferLength;
         [SerializeField] private CelebratoryText _celebratoryText;
         [SerializeField] private FlyingWordEffect _flyingWordEffect;
         [SerializeField] private Transform _hintFlyingWordTarget;
+        [SerializeField] private AudioController _audioController;
         
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
@@ -306,18 +305,27 @@ namespace Components
 
             yield return _celebratoryText.Celebrate();
 
+            _audioController.FlyUp();
+            
+            yield return new WaitForSeconds(0.3f);
+            
             _ufoAnimator.PlayWin();
             _cameraRig.SetCameraOverBoard(true);
             _ufoRig.SetUfoTargetOverBoard(true);
 
-            yield return new WaitForSeconds(_beforeHoistSeconds);
+            yield return new WaitForSeconds(1f);
 
+            _audioController.TractorBeam();
             foreach (var npc in _npcSpawner.PopNpcsInSection(_gameState.CurrentSectionIndex))
             {
                 npc.Hoist(_ufoRig.TractorBeamOrigin);
             }
 
-            yield return new WaitForSeconds(_afterHoistSeconds);
+            yield return new WaitForSeconds(0.4f);
+            
+            _audioController.FlyDown();
+            
+            yield return new WaitForSeconds(1f);
 
             _cameraRig.SetCameraOverBoard(false);
             _ufoRig.SetUfoTargetOverBoard(false);

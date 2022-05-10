@@ -1994,12 +1994,11 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _scoreDisplay: {fileID: 155545288}
   _hintDisplay: {fileID: 1861901602}
-  _beforeHoistSeconds: 1
-  _afterHoistSeconds: 1.4
   _recentlyFoundWordBufferLength: 100
   _celebratoryText: {fileID: 126382159}
   _flyingWordEffect: {fileID: 73846724}
   _hintFlyingWordTarget: {fileID: 1040675534}
+  _audioController: {fileID: 769815488}
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0
@@ -8896,8 +8895,8 @@ MonoBehaviour:
     _clips:
     - {fileID: 8300000, guid: 5cf6b6c1c3224d84e8d71b401b99d298, type: 3}
     _meanPitch: 1
-    _pitchVariance: 0
-    _volume: 1
+    _pitchVariance: 0.059
+    _volume: 0.605
   _flyDown:
     _clips:
     - {fileID: 8300000, guid: 883a0c107ad53eb48a3b33d92a16f43d, type: 3}
