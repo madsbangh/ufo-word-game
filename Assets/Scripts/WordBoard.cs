@@ -59,6 +59,19 @@ public class WordBoard : ISerializable
 		}
 	}
 
+	public void RevealTile(Vector2Int position)
+	{
+		if (HasLetterTile(position))
+		{
+			var tile = GetLetterTile(position);
+			SetLetterTile(position, tile.Letter, TileState.Revealed);
+		}
+		else
+		{
+			throw new ArgumentOutOfRangeException(nameof(position), "No tile to reveal at the given position.");
+		}
+	}
+
 	public void FullyClearTile(Vector2Int position)
 	{
 		_blockerTiles.Remove(position);

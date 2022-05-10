@@ -20,6 +20,7 @@ according
 account
 accurate
 accuse
+ace
 achieve
 achievement
 acid
@@ -190,6 +191,7 @@ assume
 assumption
 assure
 at
+ate
 athlete
 athletic
 atmosphere
@@ -742,7 +744,9 @@ development
 device
 devote
 dialogue
+did
 die
+died
 diet
 differ
 difference
@@ -753,6 +757,9 @@ difficulty
 dig
 digital
 dimension
+dine
+dined
+ding
 dining
 dinner
 direct
@@ -820,6 +827,7 @@ drop
 drug
 dry
 due
+dug
 during
 dust
 duty
@@ -1020,15 +1028,18 @@ fault
 favor
 favorite
 fear
+feat
 feature
 federal
 fee
 feed
 feel
 feeling
+feet
 fellow
 female
 fence
+feta
 few
 fewer
 fiber
@@ -1161,6 +1172,7 @@ ghost
 giant
 gift
 gifted
+gin
 girl
 girlfriend
 give
@@ -1171,6 +1183,8 @@ glass
 global
 glove
 go
+got
+gotten
 goal
 God
 gold
@@ -1268,6 +1282,7 @@ historic
 historical
 history
 hit
+hog
 hold
 hole
 holiday
@@ -1284,6 +1299,7 @@ horse
 hospital
 host
 hot
+hotdog
 hotel
 hour
 house
@@ -1300,6 +1316,7 @@ hunter
 hunting
 hurt
 husband
+hut
 hypothesis
 ice
 idea
@@ -1415,6 +1432,7 @@ involve
 involved
 involvement
 Iraqi
+ire
 Irish
 iron
 island
@@ -1700,6 +1718,8 @@ my
 myself
 mystery
 myth
+nag
+nagging
 naked
 name
 narrative
@@ -1821,6 +1841,7 @@ or
 orange
 order
 ordinary
+ore
 organic
 organization
 organize
@@ -1972,6 +1993,7 @@ pop
 popular
 population
 porch
+pore
 port
 portion
 portrait
@@ -2709,6 +2731,7 @@ to
 tobacco
 today
 toe
+tofu
 together
 tomato
 tomorrow
@@ -2769,6 +2792,7 @@ trust
 truth
 try
 tube
+tug
 tunnel
 turn
 twelve
@@ -2817,6 +2841,7 @@ usual
 usually
 utility
 vacation
+vain
 valley
 valuable
 value
@@ -2835,6 +2860,7 @@ very
 vessel
 veteran
 via
+vice
 victim
 victory
 video
@@ -2933,12 +2959,14 @@ wire
 wisdom
 wise
 wish
+wit
 with
 withdraw
 within
 without
 witness
 woman
+won
 wonder
 wonderful
 wood

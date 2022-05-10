@@ -7,6 +7,7 @@ public class WordBoardGenerator
 {
 	public const int SectionSize = 9;
 	public const int SectionStride = 5;
+	public const int SectionsAheadAndBehind = 4;
 
 	private const int MinimumWordsPerSection = 4;
 	private const int MaximumWordsPerSection = 6;
@@ -16,21 +17,20 @@ public class WordBoardGenerator
 	private readonly PossibleWordsFinder _possibleWordsFinder;
 	private readonly WordBoard _wordBoard;
 
-	public WordBoardGenerator(TextAsset wordListAsset, WordBoard wordBoard)
+	public WordBoardGenerator(string[] words, WordBoard wordBoard)
 	{
-		var words = WordUtility.ParseFilterAndProcessWordList(wordListAsset.text);
 		_possibleWordsFinder = new PossibleWordsFinder(words);
 		_wordBoard = wordBoard;
 	}
 
-	public SectionWords GenerateSection(int sectionIndex, out string letters)
+	public SectionWords GenerateSection(int sectionIndex, Queue<string> alreadySeenWords, out string letters)
 	{
 		var result = new SectionWords();
 
 		var sectionStartCoordinate = sectionIndex * SectionStride;
 		var sectionEndCoordinate = sectionStartCoordinate + SectionSize;
 
-		var sortedUppercaseLetters = ChooseCandidateWordsAndLetters(out var candidateWords);
+		var sortedUppercaseLetters = ChooseCandidateWordsAndLetters(alreadySeenWords, out var candidateWords);
 
 		var tilesInSectionByLetter = GetExistingTilesInSectionByLetter(sortedUppercaseLetters, sectionStartCoordinate);
 
@@ -55,6 +55,12 @@ public class WordBoardGenerator
 		}
 
 		letters = WordUtility.GetSortedUppercaseLetters(spectrumEnvelope);
+
+		foreach (var word in result.Keys)
+		{
+			alreadySeenWords.Enqueue(word);
+		}
+		
 		return result;
 	}
 
@@ -82,7 +88,7 @@ public class WordBoardGenerator
 		}
 	}
 
-	private string ChooseCandidateWordsAndLetters(out Queue<string> resultSortedCandidateWords)
+	private string ChooseCandidateWordsAndLetters(Queue<string> alreadySeenWords, out Queue<string> resultSortedCandidateWords)
 	{
 		var resultCandidateWordsSet = new HashSet<string>();
 		string sortedUppercaseLetters;
@@ -97,6 +103,7 @@ public class WordBoardGenerator
 			resultCandidateWordsSet.Clear();
 
 			_possibleWordsFinder.GetPossibleWordsFromContainedLetters(sortedUppercaseLetters, resultCandidateWordsSet);
+			resultCandidateWordsSet.ExceptWith(alreadySeenWords);
 		} while (resultCandidateWordsSet.Count < MinimumWordsPerSection);
 
 		resultSortedCandidateWords = new Queue<string>(resultCandidateWordsSet

@@ -9,14 +9,13 @@ namespace Components
         [SerializeField]
         private Npc _npcPrefab;
 
-        [Range(0f, 1f)]
         [SerializeField]
-        private float _chance;
+        private int _minSpawnsPerSection, _maxSpawnsPerSection;
 
         [SerializeField]
         private Transform _npcsParent;
 
-		private readonly Dictionary<int, HashSet<Npc>> _npcsBySection = new Dictionary<int, HashSet<Npc>>();
+        private readonly Dictionary<int, HashSet<Npc>> _npcsBySection = new Dictionary<int, HashSet<Npc>>();
 
         public void SpawnNpcsForSection(int sectionIndex, WordBoard wordBoard)
         {
@@ -25,41 +24,43 @@ namespace Components
                 return;
             }
 
+            var count = Random.Range(_minSpawnsPerSection, _maxSpawnsPerSection + 1);
+
             var npcs = new HashSet<Npc>();
 
-            foreach (var tilePosition in wordBoard.AllLetterTilePositions
-                .Where(tilePosition => TileIsInSection(tilePosition, sectionIndex)))
+            foreach (var tile in wordBoard.AllLetterTilePositions
+                 .Where(tilePosition => TileIsInSection(tilePosition, sectionIndex))
+                 .OrderBy(_ => Random.value)
+                 .Take(count))
             {
-				if (Random.value < _chance)
-				{
-                    npcs.Add(
-                        Instantiate(_npcPrefab,
-                        tilePosition.ToWorldPosition() +
-                            new Vector3(Random.value - 0.5f, 0f, Random.value - 0.5f),
+                npcs.Add(
+                    Instantiate(_npcPrefab,
+                        tile.ToWorldPosition() +
+                        new Vector3(Random.value - 0.5f, 0f, Random.value - 0.5f),
                         Quaternion.identity,
                         _npcsParent));
-				}
             }
 
             _npcsBySection.Add(sectionIndex, npcs);
         }
 
         public HashSet<Npc> PopNpcsInSection(int sectionIndex)
-		{
+        {
             var npcs = _npcsBySection[sectionIndex];
             _npcsBySection.Remove(sectionIndex);
             return npcs;
-		}
+        }
 
         private static bool TileIsInSection(Vector2Int position, int sectionIndex)
         {
-            var minimumCoordinate = WordBoardGenerator.SectionStride * sectionIndex + WordBoardGenerator.SectionSize / 4;
+            var minimumCoordinate =
+                WordBoardGenerator.SectionStride * sectionIndex + WordBoardGenerator.SectionSize / 4;
             var maximumCoordinate = minimumCoordinate + WordBoardGenerator.SectionSize * 3 / 4;
 
             return position.x >= minimumCoordinate
-                && position.y >= minimumCoordinate
-                && position.x < maximumCoordinate
-                && position.y < maximumCoordinate;
+                   && position.y >= minimumCoordinate
+                   && position.x < maximumCoordinate
+                   && position.y < maximumCoordinate;
         }
     }
 }

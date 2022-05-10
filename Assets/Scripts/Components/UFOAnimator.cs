@@ -10,6 +10,8 @@ namespace Components
         private static readonly int HappyTriggerId = Animator.StringToHash("Happy");
         private static readonly int SadTriggerId = Animator.StringToHash("Sad");
         private static readonly int WinTriggerId = Animator.StringToHash("Win");
+        private static readonly int BonusWordFoundTriggerId = Animator.StringToHash("Bonus Word Found");
+        private static readonly int WordAlreadyFoundTriggerId = Animator.StringToHash("Word Already Found");
 
         private Animator _animator;
 
@@ -31,6 +33,16 @@ namespace Components
         public void PlayWin()
         {
             _animator.SetTrigger(WinTriggerId);
+        }
+
+        public void PlayFoundBonusWord()
+        {
+            _animator.SetTrigger(BonusWordFoundTriggerId);
+        }
+
+        public void PlayAlreadyFoundWord()
+        {
+            _animator.SetTrigger(WordAlreadyFoundTriggerId);
         }
     }
 }
