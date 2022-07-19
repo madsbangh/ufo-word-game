@@ -16,8 +16,10 @@ public class AudioController : MonoBehaviour
 
     [Space] [SerializeField] private AudioClipsPlayer _spellUp;
     [SerializeField] private AudioClipsPlayer _spellDown;
-    [SerializeField] private AudioClipsPlayer _letterImpact;
-
+    
+    [Space] [SerializeField] private AudioClipsPlayer _letterImpact;
+    [SerializeField] private AudioClipsPlayer _useHint;
+    
     [Space] [SerializeField] private float _tractorBeamChainSoundProbability;
     [SerializeField] private float _burpProbability;
     [SerializeField] private float _drillProbability;
@@ -70,5 +72,10 @@ public class AudioController : MonoBehaviour
     public void LetterImpact()
     {
         _letterImpact.Play();
+    }
+
+    public void UseHint()
+    {
+        _useHint.Play();
     }
 }

@@ -103,6 +103,8 @@ namespace Components
 
                 SaveGame();
             }
+
+            _audioController.UseHint();
         }
 
         private static bool WordContainsTile(
