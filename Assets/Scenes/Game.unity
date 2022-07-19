@@ -8936,13 +8936,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 58c95ee3e689fec4da08524cd58476ad, type: 3}
     _meanPitch: 1
     _pitchVariance: 0.02
-    _volume: 0.566
+    _volume: 0.739
   _spellDown:
     _clips:
     - {fileID: 8300000, guid: b45205bee08fc904e8356225293bea69, type: 3}
     _meanPitch: 1
     _pitchVariance: 0.02
-    _volume: 0.33
+    _volume: 0.663
   _letterImpact:
     _clips:
     - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
