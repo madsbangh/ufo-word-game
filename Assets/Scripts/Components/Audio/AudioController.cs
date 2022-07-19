@@ -16,6 +16,7 @@ public class AudioController : MonoBehaviour
 
     [Space] [SerializeField] private AudioClipsPlayer _spellUp;
     [SerializeField] private AudioClipsPlayer _spellDown;
+    [SerializeField] private AudioClipsPlayer _letterImpact;
 
     [Space] [SerializeField] private float _tractorBeamChainSoundProbability;
     [SerializeField] private float _burpProbability;
@@ -55,7 +56,7 @@ public class AudioController : MonoBehaviour
             _laugh.Play();
         }
     }
-
+    
     public void AddLetter(int newLetterCount)
     {
         _spellUp.Play(pitchMultiplier: _spellPitchOffset + _spellPitchScale * newLetterCount);
@@ -64,5 +65,10 @@ public class AudioController : MonoBehaviour
     public void RemoveLetter(int newLetterCount)
     {
         _spellDown.Play(pitchMultiplier: _spellPitchOffset + _spellPitchScale * newLetterCount);
+    }
+
+    public void LetterImpact()
+    {
+        _letterImpact.Play();
     }
 }

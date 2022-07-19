@@ -675,6 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startTransform: {fileID: 1451661649}
+  _audioController: {fileID: 769815488}
   _textTransform: {fileID: 2025598723}
   _circleTransform: {fileID: 525946191}
   _particleSystem: {fileID: 385204483}
@@ -8942,6 +8943,12 @@ MonoBehaviour:
     _meanPitch: 1
     _pitchVariance: 0.02
     _volume: 0.33
+  _letterImpact:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.075
+    _volume: 0.391
   _tractorBeamChainSoundProbability: 0.12
   _burpProbability: 0.06
   _drillProbability: 0.1

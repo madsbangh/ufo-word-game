@@ -11,6 +11,7 @@ namespace Components
     {
         [Header("Scene References")]
         [SerializeField] private Transform _startTransform;
+        [SerializeField] private AudioController _audioController;
 
         [Header("Self")]
         [SerializeField] private Transform _textTransform;
@@ -93,6 +94,7 @@ namespace Components
             _circleTransform.gameObject.SetActive(false);
             
             _particleSystem.Play();
+            _audioController.LetterImpact();
         }
     }
 }
