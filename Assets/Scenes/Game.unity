@@ -8961,6 +8961,12 @@ MonoBehaviour:
     _meanPitch: 0.67
     _pitchVariance: 0
     _volume: 1
+  _tilePing:
+    _clips:
+    - {fileID: 8300000, guid: b45205bee08fc904e8356225293bea69, type: 3}
+    _meanPitch: 1.48
+    _pitchVariance: 0.449
+    _volume: 0.323
   _tractorBeamChainSoundProbability: 0.12
   _burpProbability: 0.06
   _drillProbability: 0.1
@@ -17250,6 +17256,7 @@ MonoBehaviour:
   _boardParent: {fileID: 1558826993}
   _letterTilePrefab: {fileID: 4004514230679885594, guid: cfa7c9985dd25c34fa24c170dae89690, type: 3}
   _tileUpdateInterval: 0.025
+  _audioController: {fileID: 769815488}
 --- !u!4 &1558826993
 Transform:
   m_ObjectHideFlags: 0

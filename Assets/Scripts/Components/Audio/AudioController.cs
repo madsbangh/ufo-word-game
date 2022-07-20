@@ -20,6 +20,7 @@ public class AudioController : MonoBehaviour
     [Space] [SerializeField] private AudioClipsPlayer _letterImpact;
     [SerializeField] private AudioClipsPlayer _useHint;
     [SerializeField] private AudioClipsPlayer _celebrate;
+    [SerializeField] private AudioClipsPlayer _tilePing;
     
     [Space] [SerializeField] private float _tractorBeamChainSoundProbability;
     [SerializeField] private float _burpProbability;
@@ -29,7 +30,7 @@ public class AudioController : MonoBehaviour
     [Space] [SerializeField] private float _spellPitchScale;
     [SerializeField] private float _spellPitchOffset;
 
-    public void FlyUp() => _flyUp.Play();
+	public void FlyUp() => _flyUp.Play();
 
     public void TractorBeam()
     {
@@ -83,5 +84,10 @@ public class AudioController : MonoBehaviour
 	internal void Celebrate()
 	{
         _celebrate.Play();
+	}
+
+	internal void TilePing()
+	{
+        _tilePing.Play();
 	}
 }
