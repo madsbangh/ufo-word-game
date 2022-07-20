@@ -229,6 +229,7 @@ namespace Components
         {
             _gameState.Score++;
             _scoreDisplay.SetScore(_gameState.Score, true);
+            _audioController.Score();
         }
 
         private void LetterRing_WordSubmitted(string word)
@@ -289,6 +290,7 @@ namespace Components
             else
             {
                 _ufoAnimator.PlayHappy();
+                _audioController.SpellWord();
             }
         }
 

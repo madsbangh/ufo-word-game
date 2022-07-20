@@ -21,7 +21,9 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioClipsPlayer _useHint;
     [SerializeField] private AudioClipsPlayer _celebrate;
     [SerializeField] private AudioClipsPlayer _tilePing;
-    
+    [SerializeField] private AudioClipsPlayer _spellWord;
+    [SerializeField] private AudioClipsPlayer _score;
+
     [Space] [SerializeField] private float _tractorBeamChainSoundProbability;
     [SerializeField] private float _burpProbability;
     [SerializeField] private float _drillProbability;
@@ -89,5 +91,15 @@ public class AudioController : MonoBehaviour
 	internal void TilePing()
 	{
         _tilePing.Play();
+	}
+
+    internal void Score()
+	{
+        _score.Play();
+	}
+
+    internal void SpellWord()
+	{
+        _spellWord.Play();
 	}
 }

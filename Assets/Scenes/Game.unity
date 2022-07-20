@@ -8967,6 +8967,18 @@ MonoBehaviour:
     _meanPitch: 1.48
     _pitchVariance: 0.449
     _volume: 0.323
+  _spellWord:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 0.47
+    _pitchVariance: 0.036
+    _volume: 0.251
+  _score:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 1.79
+    _pitchVariance: 0.159
+    _volume: 0.569
   _tractorBeamChainSoundProbability: 0.12
   _burpProbability: 0.06
   _drillProbability: 0.1
