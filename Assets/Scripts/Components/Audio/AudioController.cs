@@ -19,6 +19,7 @@ public class AudioController : MonoBehaviour
     
     [Space] [SerializeField] private AudioClipsPlayer _letterImpact;
     [SerializeField] private AudioClipsPlayer _useHint;
+    [SerializeField] private AudioClipsPlayer _celebrate;
     
     [Space] [SerializeField] private float _tractorBeamChainSoundProbability;
     [SerializeField] private float _burpProbability;
@@ -78,4 +79,9 @@ public class AudioController : MonoBehaviour
     {
         _useHint.Play();
     }
+
+	internal void Celebrate()
+	{
+        _celebrate.Play();
+	}
 }

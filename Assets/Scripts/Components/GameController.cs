@@ -305,6 +305,7 @@ namespace Components
         {
             _ufoAnimator.PlayHappy();
 
+            _audioController.Celebrate();
             yield return _celebratoryText.Celebrate();
 
             _audioController.FlyUp();

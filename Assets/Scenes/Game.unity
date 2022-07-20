@@ -8955,6 +8955,12 @@ MonoBehaviour:
     _meanPitch: 1.29
     _pitchVariance: 0.07
     _volume: 0.636
+  _celebrate:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 0.67
+    _pitchVariance: 0
+    _volume: 1
   _tractorBeamChainSoundProbability: 0.12
   _burpProbability: 0.06
   _drillProbability: 0.1
