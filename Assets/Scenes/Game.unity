@@ -851,7 +851,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _toBoardDuration: 0.8
+  _toBoardDuration: 0.4
   _toHintDuration: 1.1
 --- !u!4 &73846725
 Transform:
