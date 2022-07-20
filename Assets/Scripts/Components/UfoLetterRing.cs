@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Audio;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -27,6 +28,9 @@ namespace Components
         [SerializeField]
         private TMP_Text _previewWord;
 
+        [SerializeField]
+        private AudioController _audioController;
+        
         private readonly List<UfoLetter> _letterPool = new List<UfoLetter>();
         private readonly Stack<UfoLetter> _currentlyChosenLetters = new Stack<UfoLetter>();
 
@@ -109,6 +113,8 @@ namespace Components
                 _currentlyChosenLetters.Push(letter);
                 _activeLetterToDrawLineFrom = letter.transform;
                 UpdatePreviewWord();
+                
+                _audioController.AddLetter(1);
             }
         }
 
@@ -145,12 +151,16 @@ namespace Components
                     letter.Selected = true;
                     _currentlyChosenLetters.Push(letter);
                     _activeLetterToDrawLineFrom = letter.transform;
+                    
+                    _audioController.AddLetter(_currentlyChosenLetters.Count);
                 }
                 else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
                 {
                     // Deselect top letter if current was second in the stack
                     _currentlyChosenLetters.Pop().Selected = false;
                     _activeLetterToDrawLineFrom = letter.transform;
+                    
+                    _audioController.RemoveLetter(_currentlyChosenLetters.Count);
                 }
 
                 UpdateLineBetweenLetters();

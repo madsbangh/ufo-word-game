@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Audio;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,8 +13,10 @@ namespace Components
         private static readonly int CycleOffsetParameterId = Animator.StringToHash("Cycle Offset");
 
         [SerializeField] private float _hoistTime;
+        [SerializeField] private AudioClipsPlayer _scream;
 
         private Animator _animator;
+        [SerializeField] private float _screamProbability;
 
         private float Speed
         {
@@ -72,6 +75,11 @@ namespace Components
         {
             yield return new WaitForSeconds(Random.value);
 
+            if (Random.value < _screamProbability)
+            {
+                _scream.Play();
+            }
+            
             _animator.SetTrigger(HoistTriggerId);
 
             var npcTransform = transform;

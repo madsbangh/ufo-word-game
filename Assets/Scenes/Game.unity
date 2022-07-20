@@ -389,6 +389,7 @@ MonoBehaviour:
   _lineBetweenLetters: {fileID: 1559378547}
   _lineBetweenActiveLetterAndPointer: {fileID: 134575645}
   _previewWord: {fileID: 1451661650}
+  _audioController: {fileID: 769815488}
 --- !u!1 &56613084
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,6 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startTransform: {fileID: 1451661649}
+  _audioController: {fileID: 769815488}
   _textTransform: {fileID: 2025598723}
   _circleTransform: {fileID: 525946191}
   _particleSystem: {fileID: 385204483}
@@ -849,7 +851,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _toBoardDuration: 0.8
+  _toBoardDuration: 0.4
   _toHintDuration: 1.1
 --- !u!4 &73846725
 Transform:
@@ -866,7 +868,7 @@ Transform:
   - {fileID: 525946191}
   - {fileID: 385204481}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &97864035
 GameObject:
@@ -1492,7 +1494,7 @@ Transform:
   - {fileID: 1378655211}
   - {fileID: 930698537}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &153164437
 MonoBehaviour:
@@ -1596,7 +1598,7 @@ Transform:
   - {fileID: 538495064}
   - {fileID: 558309373}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &173895520
 MonoBehaviour:
@@ -1938,7 +1940,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &265197042
 GameObject:
@@ -1994,12 +1996,11 @@ MonoBehaviour:
   _letterRing: {fileID: 27734312}
   _scoreDisplay: {fileID: 155545288}
   _hintDisplay: {fileID: 1861901602}
-  _beforeHoistSeconds: 1
-  _afterHoistSeconds: 1.4
   _recentlyFoundWordBufferLength: 100
   _celebratoryText: {fileID: 126382159}
   _flyingWordEffect: {fileID: 73846724}
   _hintFlyingWordTarget: {fileID: 1040675534}
+  _audioController: {fileID: 769815488}
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0
@@ -8142,7 +8143,7 @@ RectTransform:
   - {fileID: 1329756120}
   - {fileID: 2094206766}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8843,6 +8844,147 @@ Transform:
   m_Father: {fileID: 831032581}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 61.466, y: 0, z: 0}
+--- !u!1 &769815486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 769815487}
+  - component: {fileID: 769815488}
+  m_Layer: 0
+  m_Name: Audio Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &769815487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769815486}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &769815488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769815486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba78eeaebd25af42b8fd0386791f3c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _flyUp:
+    _clips:
+    - {fileID: 8300000, guid: 937e2d86263f29b4a9593c09d3b42574, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0
+    _volume: 1
+  _tractorBeam:
+    _clips:
+    - {fileID: 8300000, guid: 5cf6b6c1c3224d84e8d71b401b99d298, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.059
+    _volume: 0.605
+  _flyDown:
+    _clips:
+    - {fileID: 8300000, guid: 883a0c107ad53eb48a3b33d92a16f43d, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0
+    _volume: 1
+  _laugh:
+    _clips:
+    - {fileID: 8300000, guid: 5ffb83e53d61fdd4cab585da7da0ebcb, type: 3}
+    - {fileID: 8300000, guid: c7b14786741d6c04d947976ba2a8e777, type: 3}
+    - {fileID: 8300000, guid: c10136d7f9f192e4daa4c9bc2ac1b8df, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.125
+    _volume: 1
+  _chainHoist:
+    _clips:
+    - {fileID: 8300000, guid: a03efa71886c40843805e1eec25f4a42, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.127
+    _volume: 1
+  _drill:
+    _clips:
+    - {fileID: 8300000, guid: 9788302876f7dad429fcafb36b160412, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.213
+    _volume: 0.893
+  _burp:
+    _clips:
+    - {fileID: 8300000, guid: b25af62cf7e569a4097afbaa966ab0c9, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.234
+    _volume: 1
+  _spellUp:
+    _clips:
+    - {fileID: 8300000, guid: 58c95ee3e689fec4da08524cd58476ad, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.02
+    _volume: 0.739
+  _spellDown:
+    _clips:
+    - {fileID: 8300000, guid: b45205bee08fc904e8356225293bea69, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.02
+    _volume: 0.663
+  _letterImpact:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.075
+    _volume: 0.391
+  _useHint:
+    _clips:
+    - {fileID: 8300000, guid: 028c1bcef93613042913433a74ed79c1, type: 3}
+    _meanPitch: 1.79
+    _pitchVariance: 0.145
+    _volume: 0.315
+  _celebrate:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 0.67
+    _pitchVariance: 0
+    _volume: 1
+  _tilePing:
+    _clips:
+    - {fileID: 8300000, guid: b45205bee08fc904e8356225293bea69, type: 3}
+    _meanPitch: 1.48
+    _pitchVariance: 0.449
+    _volume: 0.323
+  _spellWord:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 0.47
+    _pitchVariance: 0.036
+    _volume: 0.251
+  _score:
+    _clips:
+    - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
+    _meanPitch: 1.79
+    _pitchVariance: 0.159
+    _volume: 0.569
+  _tractorBeamChainSoundProbability: 0.12
+  _burpProbability: 0.06
+  _drillProbability: 0.1
+  _laughProbability: 0.2
+  _spellPitchScale: 0.06
+  _spellPitchOffset: 0.8
 --- !u!1 &787139561
 GameObject:
   m_ObjectHideFlags: 0
@@ -10209,7 +10351,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1115024590
 GameObject:
@@ -17126,6 +17268,7 @@ MonoBehaviour:
   _boardParent: {fileID: 1558826993}
   _letterTilePrefab: {fileID: 4004514230679885594, guid: cfa7c9985dd25c34fa24c170dae89690, type: 3}
   _tileUpdateInterval: 0.025
+  _audioController: {fileID: 769815488}
 --- !u!4 &1558826993
 Transform:
   m_ObjectHideFlags: 0
@@ -17138,7 +17281,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1559378545
 GameObject:
@@ -17983,7 +18126,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1808018134
 MonoBehaviour:
