@@ -8952,9 +8952,9 @@ MonoBehaviour:
   _useHint:
     _clips:
     - {fileID: 8300000, guid: 028c1bcef93613042913433a74ed79c1, type: 3}
-    _meanPitch: 1.29
-    _pitchVariance: 0.07
-    _volume: 0.636
+    _meanPitch: 1.79
+    _pitchVariance: 0.145
+    _volume: 0.315
   _celebrate:
     _clips:
     - {fileID: 8300000, guid: ad7a836b602496549ad52cf3cd1b9fb9, type: 3}
