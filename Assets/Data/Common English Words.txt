@@ -2591,7 +2591,6 @@ sufficient
 sugar
 suggest
 suggestion
-suicide
 suit
 summer
 summit
