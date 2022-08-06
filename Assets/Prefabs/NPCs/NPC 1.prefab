@@ -46,7 +46,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc266d64ef7b52a4f80263facadc82d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hoistTime: 2
+  _hoistTime: 1
+  _scream:
+    _clips:
+    - {fileID: 8300000, guid: 81b23b3d128afed43807ee0ead2e7431, type: 3}
+    - {fileID: 8300000, guid: 240c4d3cec616f64aaa7fb2dfeb1120a, type: 3}
+    - {fileID: 8300000, guid: 95adf6fc1724ec940ab4c0577582f1f3, type: 3}
+    _meanPitch: 1
+    _pitchVariance: 0.18
+    _volume: 1
+  _screamProbability: 0.3
 --- !u!210 &4184176496179032856
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Components
@@ -11,10 +14,41 @@ namespace Components
         [SerializeField]
         private LetterTile _letterTilePrefab;
 
+        [SerializeField]
+        private float _tileUpdateInterval;
+        
+        [SerializeField]
+        private AudioController _audioController;
+
         private readonly Dictionary<Vector2Int, LetterTile> _spawnedLetterTiles
             = new Dictionary<Vector2Int, LetterTile>();
 
         private WordBoard _wordBoard;
+		private readonly SortedSet<Vector2Int> _tilesToUpdate = new SortedSet<Vector2Int>(new DiagonalComparer());
+
+        private class DiagonalComparer : IComparer<Vector2Int>
+        {
+            public int Compare(Vector2Int first, Vector2Int second)
+            {
+                var xComparison = (first.x + first.y).CompareTo(second.x + second.y);
+                return xComparison != 0 ? xComparison : first.y.CompareTo(second.y);
+            }
+        }
+
+        private IEnumerator Start()
+        {
+            var waitForInterval = new WaitForSeconds(_tileUpdateInterval);
+            var waitForTile = new WaitUntil(_tilesToUpdate.Any);
+            while (true)
+            {
+                yield return waitForInterval;
+                yield return waitForTile;
+
+                var position = _tilesToUpdate.Min;
+                _tilesToUpdate.Remove(position);
+                UpdateOrSpawnLetterTile(_wordBoard, position, true);
+            }
+        }
 
         public void Initialize(WordBoard wordBoard)
         {
@@ -27,7 +61,7 @@ namespace Components
             // Spawn associated prefabs for all items on the word board
             foreach (var positionToSpawnTileOn in wordBoard.AllLetterTilePositions)
             {
-                UpdateOrSpawnLetterTile(wordBoard, positionToSpawnTileOn);
+                UpdateOrSpawnLetterTile(wordBoard, positionToSpawnTileOn, false);
             }
         }
 
@@ -39,7 +73,7 @@ namespace Components
             return spawnedLetterTile;
         }
 
-        private void UpdateOrSpawnLetterTile(WordBoard wordBoard, Vector2Int position)
+        private void UpdateOrSpawnLetterTile(WordBoard wordBoard, Vector2Int position, bool playSounds)
         {
             if (_wordBoard.HasLetterTile(position) == false)
             {
@@ -57,6 +91,10 @@ namespace Components
                 var tileData = wordBoard.GetLetterTile(position);
                 spawnedLetterTile.Letter = tileData.Letter;
                 spawnedLetterTile.State = tileData.Progress;
+				if (playSounds && tileData.Progress == TileState.Revealed)
+				{
+					_audioController.TilePing();
+				}
             }
         }
 
@@ -82,7 +120,7 @@ namespace Components
 
         private void WordBoard_TileChanged(Vector2Int position)
         {
-            UpdateOrSpawnLetterTile(_wordBoard, position);
+            _tilesToUpdate.Add(position);
         }
     }
 }

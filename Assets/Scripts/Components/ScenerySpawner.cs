@@ -12,25 +12,23 @@ namespace Components
 		private Transform _sceneryParent;
 
 		[Header("Scenery Prefabs")]
-
 		[SerializeField]
 		private PrefabCategory[] _orderedPrefabCategories = Array.Empty<PrefabCategory>();
-
-		private int _minimumActiveCoordinate, _maximumActiveCoordinate;
 
 		private readonly Dictionary<Vector2Int, GameObject> _spawnedObjects
 			= new Dictionary<Vector2Int, GameObject>();
 
-		private WordBoard _wordBoard;
 
-		public void Initialize(WordBoard wordBoard, int initialMinimumCoordinate)
+		private WordBoard _wordBoard;
+		private int _previousWindowCoordinateMax;
+		private int _windowPadding;
+
+		public void Initialize(WordBoard wordBoard, int windowPadding)
 		{
 			_wordBoard = wordBoard;
-
+			_windowPadding = windowPadding;
+			
 			DestroySpawnedScenery();
-
-			_minimumActiveCoordinate = initialMinimumCoordinate;
-			_maximumActiveCoordinate = initialMinimumCoordinate;
 		}
 
 		private void DestroySpawnedScenery()
@@ -46,44 +44,31 @@ namespace Components
 			_spawnedObjects.Clear();
 		}
 
-		public void ExpandToSection(int sectionIndex)
+		public void SetSection(int sectionIndex)
 		{
-			var previousMaximumActiveCoordinate = _maximumActiveCoordinate;
+			var minimumCoordinate = WordBoardGenerator.SectionStride * sectionIndex -
+			                        _windowPadding;
+			var maximumCoordinate = WordBoardGenerator.SectionStride * sectionIndex +
+			                        WordBoardGenerator.SectionSize + _windowPadding;
 
-			_maximumActiveCoordinate =
-				WordBoardGenerator.SectionStride *
-				(sectionIndex) +
-				WordBoardGenerator.SectionSize;
-
-			// Expand area below previous active erea
-			for (int x = _minimumActiveCoordinate; x < previousMaximumActiveCoordinate; x++)
+			// Spawn new objects in new window excluding old window
+			for (var x = minimumCoordinate; x <= maximumCoordinate; x++)
 			{
-				for (int y = previousMaximumActiveCoordinate; y < _maximumActiveCoordinate; y++)
+				for (var y = minimumCoordinate; y <= maximumCoordinate; y++)
 				{
-					GenerateTile(new Vector2Int(x, y));
+					if (x > _previousWindowCoordinateMax ||
+					    y > _previousWindowCoordinateMax)
+					{
+						GenerateTile(new Vector2Int(x, y));
+					}
 				}
 			}
-
-			// Expand area to the right of previous and new active area
-			for (int x = previousMaximumActiveCoordinate; x < _maximumActiveCoordinate; x++)
-			{
-				for (int y = _minimumActiveCoordinate; y < _maximumActiveCoordinate; y++)
-				{
-					GenerateTile(new Vector2Int(x, y));
-				}
-			}
-		}
-
-		public void CleanupBeforeSection(int sectionIndex)
-		{
-			_minimumActiveCoordinate =
-				WordBoardGenerator.SectionStride *
-				(sectionIndex);
-
+			
+			// Cleanup objects outside of window
 			foreach (var position in _spawnedObjects.Keys.ToArray())
 			{
-				if (position.x < _minimumActiveCoordinate ||
-				    position.y < _minimumActiveCoordinate)
+				if (position.x < minimumCoordinate ||
+				    position.y < minimumCoordinate)
 				{
 					var objectToDestroy = _spawnedObjects[position];
 
@@ -95,6 +80,8 @@ namespace Components
 					_spawnedObjects.Remove(position);
 				}
 			}
+
+			_previousWindowCoordinateMax = maximumCoordinate;
 		}
 
 		private void GenerateTile(Vector2Int position)
@@ -134,13 +121,16 @@ namespace Components
 			wordBoard.HasLetterTile(position + Vector2Int.right) ||
 			wordBoard.HasLetterTile(position + Vector2Int.down);
 
-		[System.Serializable]
+
+		[Serializable]
 		private class PrefabCategory
 		{
 			public string Name = string.Empty;
-			public GameObject[] Prefabs = new GameObject[0];
+			public GameObject[] Prefabs = Array.Empty<GameObject>();
+
 			[Range(0f, 1f)]
 			public float Chance;
+
 			public bool MustBeNextToLetterTile;
 		}
 	}

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using SaveGame;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WordBoard
+public class WordBoard : ISerializable
 {
 	public event Action<Vector2Int> LetterTileChanged;
 
-	private readonly Dictionary<Vector2Int, LetterTile> _letterTiles = new Dictionary<Vector2Int, LetterTile>();
-	private readonly Dictionary<Vector2Int, TileBlockedInfo> _blockerTiles = new Dictionary<Vector2Int, TileBlockedInfo>();
+	private Dictionary<Vector2Int, LetterTile> _letterTiles = new Dictionary<Vector2Int, LetterTile>();
+	private Dictionary<Vector2Int, TileBlockedInfo> _blockerTiles = new Dictionary<Vector2Int, TileBlockedInfo>();
 
 	public IEnumerable<Vector2Int> AllLetterTilePositions => _letterTiles.Keys;
 	
@@ -30,20 +31,20 @@ public class WordBoard
 		return false;
 	}
 
-	public void SetWord(Vector2Int position, WordDirection direction, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
+	public void SetWord(WordPlacement placement, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
 	{
-		var stride = direction.ToStride();
+		var stride = placement.Direction.ToStride();
 		var sideOffset = new Vector2Int(stride.y, stride.x);
 		for (int i = 0; i < uppercaseLetters.Length; i++)
 		{
-			var tilePosition = position + i * stride;
+			var tilePosition = placement.Position + i * stride;
 			char letter = uppercaseLetters[i];
 			SetLetterTile(tilePosition, letter, state);
 			if (alsoSetBlockerTiles)
 			{
 				// Block same-direction words along this word and next to it
-				bool horizontal = direction == WordDirection.Horizontal;
-				bool vertical = direction == WordDirection.Vertical;
+				bool horizontal = placement.Direction == WordDirection.Horizontal;
+				bool vertical = placement.Direction == WordDirection.Vertical;
 				SetBlockerTile(tilePosition, horizontal, vertical);
 				SetBlockerTile(tilePosition - sideOffset, horizontal, vertical);
 				SetBlockerTile(tilePosition + sideOffset, horizontal, vertical);
@@ -53,8 +54,21 @@ public class WordBoard
 		if (alsoSetBlockerTiles)
 		{
 			// Block in both directions on the end-caps
-			SetBlockerTile(position - stride, true, true);
-			SetBlockerTile(position + stride * uppercaseLetters.Length, true, true);
+			SetBlockerTile(placement.Position - stride, true, true);
+			SetBlockerTile(placement.Position + stride * uppercaseLetters.Length, true, true);
+		}
+	}
+
+	public void RevealTile(Vector2Int position)
+	{
+		if (HasLetterTile(position))
+		{
+			var tile = GetLetterTile(position);
+			SetLetterTile(position, tile.Letter, TileState.Revealed);
+		}
+		else
+		{
+			throw new ArgumentOutOfRangeException(nameof(position), "No tile to reveal at the given position.");
 		}
 	}
 
@@ -102,16 +116,41 @@ public class WordBoard
 
 		_blockerTiles[postition] = blockedInfo;
 	}
-	
-	public struct LetterTile
+
+	public void Serialize(ReadOrWriteFileStream stream)
 	{
-		public char Letter;
-		public TileState Progress;
+		stream.Visit(ref _blockerTiles);
+		stream.Visit(ref _letterTiles);
 	}
 
-	private struct TileBlockedInfo
+	public struct LetterTile : ISerializable
+	{
+		public char Letter;
+
+		private int _progress;
+
+		public TileState Progress
+		{
+			get => (TileState)_progress;
+			set => _progress = (int)value;
+		}
+
+		public void Serialize(ReadOrWriteFileStream stream)
+		{
+			stream.Visit(ref Letter);
+			stream.Visit(ref _progress);
+		}
+	}
+
+	private struct TileBlockedInfo : ISerializable
 	{
 		public bool HorizontallyBlocked;
 		public bool VerticallyBlocked;
+
+		public void Serialize(ReadOrWriteFileStream stream)
+		{
+			stream.Visit(ref HorizontallyBlocked);
+			stream.Visit(ref VerticallyBlocked);
+		}
 	}
 }

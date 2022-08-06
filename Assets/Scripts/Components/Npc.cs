@@ -1,21 +1,22 @@
 ﻿using System.Collections;
+using Audio;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Components
 {
     [RequireComponent(typeof(Animator))]
     public class Npc : MonoBehaviour
     {
-        private const int WalkPositionsCount = 4;
-
         private static readonly int SpeedParameterId = Animator.StringToHash("Speed");
         private static readonly int HoistTriggerId = Animator.StringToHash("Hoist");
         private static readonly int CycleOffsetParameterId = Animator.StringToHash("Cycle Offset");
 
         [SerializeField] private float _hoistTime;
+        [SerializeField] private AudioClipsPlayer _scream;
 
         private Animator _animator;
-        private Vector2 _walkAreaCenter;
+        [SerializeField] private float _screamProbability;
 
         private float Speed
         {
@@ -31,12 +32,15 @@ namespace Components
         {
             _animator.SetFloat(CycleOffsetParameterId, Random.value);
 
-            _walkAreaCenter = transform.position.ToBoardPosition();
+            var walkAreaCenter = transform.position.ToBoardPosition();
+            walkAreaCenter.x = Mathf.Floor(walkAreaCenter.x);
 
             while (true)
             {
-                var randomTravelVector = new Vector2(Random.value - 0.5f, Random.value - 0.5f);
-                var walkPosition = _walkAreaCenter + randomTravelVector;
+                var randomMovementVector = new Vector2(Random.value - 0.7f, Random.value - 0.7f);
+                var walkPosition = walkAreaCenter + randomMovementVector;
+                // Avoid the horizontal center of tiles, se we don't obstruct the letters too much
+                walkPosition.x = Mathf.Round(walkPosition.x) + Random.Range(0.4f, 0.6f);
                 yield return StartCoroutine(WalkToPosition(walkPosition, Random.Range(0.25f, 1f)));
 
                 yield return new WaitForSeconds(Random.Range(1f, 5f));
@@ -71,6 +75,11 @@ namespace Components
         {
             yield return new WaitForSeconds(Random.value);
 
+            if (Random.value < _screamProbability)
+            {
+                _scream.Play();
+            }
+            
             _animator.SetTrigger(HoistTriggerId);
 
             var npcTransform = transform;
@@ -91,6 +100,8 @@ namespace Components
 
                 yield return null;
             }
+
+            GameEvents.NotifyNPCHoisted();
 
             Destroy(gameObject);
         }
