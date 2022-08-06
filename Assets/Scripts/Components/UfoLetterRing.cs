@@ -120,7 +120,7 @@ namespace Components
 
         private void UfoLetter_Released(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId == -1 || eventData.pointerId == 0)
+            if (eventData.pointerId is -1 or 0)
             {
                 WordSubmitted?.Invoke(_previewWord.text);
 
@@ -140,7 +140,7 @@ namespace Components
 
         private void UfoLetter_Entered(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId == -1 || eventData.pointerId == 0)
+            if (eventData.pointerId is -1 or 0)
             {
                 // Don't do anything if nothing is selected
                 if (_currentlyChosenLetters.Count == 0) return;
