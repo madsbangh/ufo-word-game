@@ -1953,8 +1953,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcPrefab: {fileID: 6700864009441572364, guid: 808752d17c651de4397f2aa3c05a4ffe, type: 3}
-  _minSpawnsPerSection: 1
-  _maxSpawnsPerSection: 3
+  _minSpawnsPerSection: 2
+  _maxSpawnsPerSection: 5
   _npcsParent: {fileID: 225341499}
 --- !u!4 &225341499
 Transform:
