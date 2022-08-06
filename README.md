@@ -12,3 +12,7 @@ This game is similar to many other word search games, but does away with adverti
 Check out the source code at https://github.com/madsbangh/ufo-word-game
 
 The app does not store or collect any personal data. See the privacy policy at https://madsbangh.dk/word-invader/privacy
+
+# Testing
+- Play Store listing: https://play.google.com/store/apps/details?id=com.madsbangh.ufowordgame
+- Open testing invite link: https://play.google.com/apps/testing/com.madsbangh.ufowordgame
