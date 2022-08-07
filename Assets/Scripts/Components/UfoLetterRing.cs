@@ -107,7 +107,7 @@ namespace Components
 
         private void UfoLetter_Pressed(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId == -1 || eventData.pointerId == 0)
+            if (eventData.pointerId is -1 or 0)
             {
                 letter.Selected = true;
                 _currentlyChosenLetters.Push(letter);

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EasyButtons;
 using SaveGame;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -14,7 +13,7 @@ namespace Components
     public class GameController : MonoBehaviour
     {
         public const int HintPointsRequiredPerHint = 3;
-
+        
         [SerializeField] private TextAsset _commonWordListAsset;
         [SerializeField] private TextAsset _bigWordListAsset;
         [SerializeField] private BoardSpawner _boardSpawner;
@@ -31,7 +30,8 @@ namespace Components
         [SerializeField] private FlyingWordEffect _flyingWordEffect;
         [SerializeField] private Transform _hintFlyingWordTarget;
         [SerializeField] private AudioController _audioController;
-        
+        [SerializeField] private PreviewWordAnimator _previewWordAnimator;
+
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
         private GameState _gameState;
@@ -96,9 +96,9 @@ namespace Components
                     .Where(word => WordContainsTile(word, tileToReveal.Value))
                     .Where(WordIsFullyRevealed);
 
-                foreach (var wordPlacementPair in wordsFullyRevealedByHint.ToArray())
+                foreach ((string word, var placement) in wordsFullyRevealedByHint.ToArray())
                 {
-                    PlaceWordAndCompleteSectionIfNeeded(wordPlacementPair.Key, wordPlacementPair.Value);
+                    PlaceWordAndCompleteSectionIfNeeded(word, placement);
                 }
 
                 SaveGame();
