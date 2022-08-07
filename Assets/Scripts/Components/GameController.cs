@@ -239,6 +239,7 @@ namespace Components
                 _gameState.BonusHintPoints++;
                 _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
                 PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
+                _previewWordAnimator.HideWord();
                 SaveGame();
             }
             else if (_allAllowedWords.Contains(word))
@@ -249,17 +250,24 @@ namespace Components
                     _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
                     _ufoAnimator.PlayFoundBonusWord();
                     _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true);
+                    _previewWordAnimator.HideWord();
                     MarkWordAsRecentlyFound(word);
                     SaveGame();
                 }
                 else
                 {
                     _ufoAnimator.PlayAlreadyFoundWord();
+                    _previewWordAnimator.FadeWord();
                 }
             }
             else if (word.Length > 1)
             {
                 _ufoAnimator.PlaySad();
+                _previewWordAnimator.ShakeWord();
+            }
+            else
+            {
+                _previewWordAnimator.HideWord();
             }
         }
 

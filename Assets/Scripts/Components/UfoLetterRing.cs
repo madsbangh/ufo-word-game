@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Audio;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -30,6 +28,9 @@ namespace Components
 
         [SerializeField]
         private AudioController _audioController;
+        
+        [SerializeField]
+        private PreviewWordAnimator _previewWordAnimator;
         
         private readonly List<UfoLetter> _letterPool = new List<UfoLetter>();
         private readonly Stack<UfoLetter> _currentlyChosenLetters = new Stack<UfoLetter>();
@@ -134,7 +135,6 @@ namespace Components
                 _activeLetterToDrawLineFrom = null;
 
                 UpdateLineBetweenLetters();
-                UpdatePreviewWord();
             }
         }
 
@@ -187,6 +187,8 @@ namespace Components
                 .ArrayToString();
 
             _previewWord.text = word;
+            
+            _previewWordAnimator.ResetWord();
         }
 
         private Vector3 CalculatePositionOnRing(int index, int count)
