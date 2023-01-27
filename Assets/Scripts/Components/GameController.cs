@@ -291,17 +291,20 @@ namespace Components
                 (boardWordPlacement.Position +
                  boardWordPlacement.Direction.ToStride() * word.Length / 2)
                 .ToWorldPosition();
-            _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, null);
-
+            
+            Action onEffectCompleted;
             if (_gameState.CurrentSectionWords.Count == 0)
             {
-                StartCoroutine(BoardCompletedCoroutine());
+                onEffectCompleted = () => StartCoroutine(BoardCompletedCoroutine());
             }
             else
             {
+                onEffectCompleted = null;
                 _ufoAnimator.PlayHappy();
                 _audioController.SpellWord();
             }
+            
+            _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, onEffectCompleted);
         }
 
         private void MarkWordAsRecentlyFound(string word)
