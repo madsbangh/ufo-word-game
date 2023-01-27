@@ -30,6 +30,7 @@ namespace Components
         [SerializeField] private float _toHintDuration;
 
         private Coroutine _currentCoroutine;
+        private Action _currentOnCompleteHandler;
 
         private void Start()
         {
@@ -37,7 +38,7 @@ namespace Components
             _circleTransform.gameObject.SetActive(false);
         }
 
-        public void PlayMoveToTransformEffect(Vector3 target, string word, bool isFlyingToHint)
+        public void PlayMoveToTransformEffect(Vector3 target, string word, bool isFlyingToHint, Action onComplete)
         {
             _text.text = word;
             
@@ -47,6 +48,9 @@ namespace Components
                 StopCoroutine(_currentCoroutine);
                 _currentCoroutine = null;
             }
+
+            _currentOnCompleteHandler?.Invoke();
+            _currentOnCompleteHandler = onComplete;
 
             _currentCoroutine = StartCoroutine(PlayMoveToTransformEffectCoroutine(target, isFlyingToHint));
         }
@@ -95,6 +99,9 @@ namespace Components
             
             _particleSystem.Play();
             _audioController.LetterImpact();
+            
+            _currentOnCompleteHandler?.Invoke();
+            _currentOnCompleteHandler = null;
         }
     }
 }

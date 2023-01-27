@@ -18,16 +18,19 @@ namespace Components
         public Button.ButtonClickedEvent OnHintButtonClicked => _useHintButton.onClick;
 
         private bool _alsoScaleText;
+        private int _shownPointsAmount;
         
-        public void SetHintPoints(int points, bool playEffects)
+        public void SetHintPoints(int points, bool playEffects, bool additive)
         {
-            _hintImageToFill.fillAmount = (float) points / GameController.HintPointsRequiredPerHint % 1f;
+            _shownPointsAmount = additive ? _shownPointsAmount + points : points;
 
-            _lightStreaksToEnable.SetActive(points >= GameController.HintPointsRequiredPerHint);
-            _hintImageToScale.color = points >= GameController.HintPointsRequiredPerHint
+            _hintImageToFill.fillAmount = (float) _shownPointsAmount / GameController.HintPointsRequiredPerHint % 1f;
+
+            _lightStreaksToEnable.SetActive(_shownPointsAmount >= GameController.HintPointsRequiredPerHint);
+            _hintImageToScale.color = _shownPointsAmount >= GameController.HintPointsRequiredPerHint
                 ? _foregroundColor1
                 : _backgroundColor;
-            _hintImageToFill.color = points >= GameController.HintPointsRequiredPerHint
+            _hintImageToFill.color = _shownPointsAmount >= GameController.HintPointsRequiredPerHint
                 ? _foregroundColor2
                 : _foregroundColor1;
             
@@ -36,11 +39,11 @@ namespace Components
                 BumpScale();
             }
 
-            _hintCountText.text = points >= GameController.HintPointsRequiredPerHint * 2
-                ? $"{points / GameController.HintPointsRequiredPerHint}x"
+            _hintCountText.text = _shownPointsAmount >= GameController.HintPointsRequiredPerHint * 2
+                ? $"{_shownPointsAmount / GameController.HintPointsRequiredPerHint}x"
                 : string.Empty;
 
-            _alsoScaleText = points % GameController.HintPointsRequiredPerHint == 0;
+            _alsoScaleText = _shownPointsAmount % GameController.HintPointsRequiredPerHint == 0;
         }
 
         protected override void Update()

@@ -89,7 +89,7 @@ namespace Components
             if (tileToReveal.HasValue)
             {
                 _gameState.BonusHintPoints -= HintPointsRequiredPerHint;
-                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
+                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true, false);
                 _wordBoard.RevealTile(tileToReveal.Value);
 
                 var wordsFullyRevealedByHint = _gameState.CurrentSectionWords
@@ -172,7 +172,7 @@ namespace Components
 
         private void StartGameFromScratch()
         {
-            _hintDisplay.SetHintPoints(0, false);
+            _hintDisplay.SetHintPoints(0, false, false);
             _scoreDisplay.SetScore(0, false);
             _gameState.GeneratedFutureSections = new Queue<Section>();
             _gameState.CurrentSectionWords = new SectionWords();
@@ -186,7 +186,7 @@ namespace Components
         {
             LoadGame();
             _scoreDisplay.SetScore(_gameState.Score, false);
-            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, false);
+            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, false, false);
             _letterRing.SetLetters(_gameState.CurrentSectionLetters);
             for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
             {
@@ -237,7 +237,7 @@ namespace Components
             if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
             {
                 _gameState.BonusHintPoints++;
-                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
+                _hintDisplay.SetHintPoints(1, true, true);
                 PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
                 _previewWordAnimator.HideWord();
                 SaveGame();
@@ -247,9 +247,11 @@ namespace Components
                 if (!_gameState.RecentlyFoundWords.Contains(word))
                 {
                     _gameState.BonusHintPoints += 2;
-                    _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
                     _ufoAnimator.PlayFoundBonusWord();
-                    _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true);
+                    _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true, () =>
+                    {
+                        _hintDisplay.SetHintPoints(2, true, true);
+                    });
                     _previewWordAnimator.HideWord();
                     MarkWordAsRecentlyFound(word);
                     SaveGame();
@@ -289,7 +291,7 @@ namespace Components
                 (boardWordPlacement.Position +
                  boardWordPlacement.Direction.ToStride() * word.Length / 2)
                 .ToWorldPosition();
-            _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false);
+            _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, null);
 
             if (_gameState.CurrentSectionWords.Count == 0)
             {
@@ -459,7 +461,7 @@ namespace Components
         {
             _gameState.BonusHintPoints++;
             SaveGame();
-            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true);
+            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true, false);
         }
 
         private struct Section : ISerializable
