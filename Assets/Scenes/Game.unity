@@ -18396,7 +18396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7c617ea9b548b292cf47cb89b149fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bumpStrength: 8
+  _bumpStrength: 24
   _smoothTime: 0.2
   _hintImageToFill: {fileID: 151012516}
   _hintImageToScale: {fileID: 1040675535}
