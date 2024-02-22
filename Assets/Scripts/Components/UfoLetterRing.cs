@@ -108,64 +108,70 @@ namespace Components
 
         private void UfoLetter_Pressed(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId is -1 or 0)
+            if (eventData.pointerId is not -1 and not 0)
             {
-                letter.Selected = true;
-                _currentlyChosenLetters.Push(letter);
-                _activeLetterToDrawLineFrom = letter.transform;
-                UpdatePreviewWord();
-                
-                _audioController.AddLetter(1);
+                return;
             }
+
+            letter.Selected = true;
+            _currentlyChosenLetters.Push(letter);
+            _activeLetterToDrawLineFrom = letter.transform;
+            UpdatePreviewWord();
+
+            _audioController.AddLetter(1);
         }
 
         private void UfoLetter_Released(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId is -1 or 0)
+            if (eventData.pointerId is not -1 and not 0)
             {
-                WordSubmitted?.Invoke(_previewWord.text);
-
-                // Deselect all letters
-                while (_currentlyChosenLetters.Count > 0)
-                {
-                    _currentlyChosenLetters.Pop().Selected = false;
-                }
-
-                // Unset active letter for line drawing
-                _activeLetterToDrawLineFrom = null;
-
-                UpdateLineBetweenLetters();
+                return;
             }
+
+            WordSubmitted?.Invoke(_previewWord.text);
+
+            // Deselect all letters
+            while (_currentlyChosenLetters.Count > 0)
+            {
+                _currentlyChosenLetters.Pop().Selected = false;
+            }
+
+            // Unset active letter for line drawing
+            _activeLetterToDrawLineFrom = null;
+
+            UpdateLineBetweenLetters();
         }
 
         private void UfoLetter_Entered(UfoLetter letter, PointerEventData eventData)
         {
-            if (eventData.pointerId is -1 or 0)
+            if (eventData.pointerId is not -1 and not 0)
             {
-                // Don't do anything if nothing is selected
-                if (_currentlyChosenLetters.Count == 0) return;
-
-                if (!_currentlyChosenLetters.Contains(letter))
-                {
-                    // Select current letter if it was not in the stack
-                    letter.Selected = true;
-                    _currentlyChosenLetters.Push(letter);
-                    _activeLetterToDrawLineFrom = letter.transform;
-                    
-                    _audioController.AddLetter(_currentlyChosenLetters.Count);
-                }
-                else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
-                {
-                    // Deselect top letter if current was second in the stack
-                    _currentlyChosenLetters.Pop().Selected = false;
-                    _activeLetterToDrawLineFrom = letter.transform;
-                    
-                    _audioController.RemoveLetter(_currentlyChosenLetters.Count);
-                }
-
-                UpdateLineBetweenLetters();
-                UpdatePreviewWord();
+                return;
             }
+
+            // Don't do anything if nothing is selected
+            if (_currentlyChosenLetters.Count == 0) return;
+
+            if (!_currentlyChosenLetters.Contains(letter))
+            {
+                // Select current letter if it was not in the stack
+                letter.Selected = true;
+                _currentlyChosenLetters.Push(letter);
+                _activeLetterToDrawLineFrom = letter.transform;
+
+                _audioController.AddLetter(_currentlyChosenLetters.Count);
+            }
+            else if (_currentlyChosenLetters.Skip(1).FirstOrDefault() == letter)
+            {
+                // Deselect top letter if current was second in the stack
+                _currentlyChosenLetters.Pop().Selected = false;
+                _activeLetterToDrawLineFrom = letter.transform;
+
+                _audioController.RemoveLetter(_currentlyChosenLetters.Count);
+            }
+
+            UpdateLineBetweenLetters();
+            UpdatePreviewWord();
         }
 
         private void UpdateLineBetweenLetters()
