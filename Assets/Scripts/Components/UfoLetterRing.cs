@@ -32,8 +32,8 @@ namespace Components
         [SerializeField]
         private PreviewWordAnimator _previewWordAnimator;
         
-        private readonly List<UfoLetter> _letterPool = new List<UfoLetter>();
-        private readonly Stack<UfoLetter> _currentlyChosenLetters = new Stack<UfoLetter>();
+        private readonly List<UfoLetter> _letterPool = new();
+        private readonly Stack<UfoLetter> _currentlyChosenLetters = new();
 
         private Transform _activeLetterToDrawLineFrom;
 
