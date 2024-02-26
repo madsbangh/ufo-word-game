@@ -2032,6 +2032,7 @@ MonoBehaviour:
   _hintFlyingWordTarget: {fileID: 1040675534}
   _audioController: {fileID: 769815488}
   _previewWordAnimator: {fileID: 1451661653}
+  _spellWordTutorial: {fileID: 1035901479}
 --- !u!1 &277296196
 GameObject:
   m_ObjectHideFlags: 0

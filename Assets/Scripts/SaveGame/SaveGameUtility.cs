@@ -40,6 +40,11 @@ namespace SaveGame
             {
                 File.Delete(SaveFilePath);
             }
+
+            if (File.Exists(LegacySaveFilePath))
+            {
+                File.Delete(LegacySaveFilePath);
+            }
         }
     }
 }

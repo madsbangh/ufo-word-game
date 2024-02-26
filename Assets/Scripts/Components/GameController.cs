@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Assets.Scripts.Components;
 using SaveGame;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,7 +14,7 @@ namespace Components
     public class GameController : MonoBehaviour
     {
         public const int HintPointsRequiredPerHint = 3;
-        
+
         [SerializeField] private TextAsset _commonWordListAsset;
         [SerializeField] private TextAsset _bigWordListAsset;
         [SerializeField] private BoardSpawner _boardSpawner;
@@ -31,6 +32,7 @@ namespace Components
         [SerializeField] private Transform _hintFlyingWordTarget;
         [SerializeField] private AudioController _audioController;
         [SerializeField] private PreviewWordAnimator _previewWordAnimator;
+        [SerializeField] private SpellWordTutorial _spellWordTutorial;
 
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
@@ -291,7 +293,7 @@ namespace Components
                 (boardWordPlacement.Position +
                  boardWordPlacement.Direction.ToStride() * word.Length / 2)
                 .ToWorldPosition();
-            
+
             Action onEffectCompleted;
             if (_gameState.CurrentSectionWords.Count == 0)
             {
@@ -303,9 +305,10 @@ namespace Components
                 _ufoAnimator.PlayHappy();
                 _audioController.SpellWord();
             }
-            
+
             _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, onEffectCompleted);
 
+            _gameState.FirstEverWordCompleted = true;
             GameEvents.NotifyBoardWordCompleted(word);
         }
 
@@ -326,9 +329,9 @@ namespace Components
             yield return _celebratoryText.Celebrate();
 
             _audioController.FlyUp();
-            
+
             yield return new WaitForSeconds(0.3f);
-            
+
             _ufoAnimator.PlayWin();
             _cameraRig.SetCameraOverBoard(true);
             _ufoRig.SetUfoTargetOverBoard(true);
@@ -342,9 +345,9 @@ namespace Components
             }
 
             yield return new WaitForSeconds(0.4f);
-            
+
             _audioController.FlyDown();
-            
+
             yield return new WaitForSeconds(1f);
 
             _audioController.RandomPostSuctionSound();
@@ -407,6 +410,17 @@ namespace Components
 
             _letterRing.SetLetters(_gameState.CurrentSectionLetters);
 
+            if (!_gameState.FirstEverWordCompleted)
+            {
+                string firstShortestWord = _gameState
+                    .CurrentSectionWords
+                    .Select(p => p.Key)
+                    .OrderBy(w => w.Length)
+                    .First();
+
+                _spellWordTutorial.Show(firstShortestWord);
+            }
+
             UnlockCurrentSectionWords();
 
             ClearTilesBelowSection(_gameState.CurrentSectionIndex - WordBoardGenerator.SectionsAheadAndBehind);
@@ -441,7 +455,7 @@ namespace Components
                     _gameState.RecentlyFoundWords, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
             _gameState.GeneratedFutureSections.Enqueue(new Section
-                { Letters = letters, Words = generatedSectionWords });
+            { Letters = letters, Words = generatedSectionWords });
 
             _npcSpawner.SpawnNpcsForSection(_gameState.NewestGeneratedSectionIndex, _wordBoard);
         }
@@ -491,7 +505,7 @@ namespace Components
             public int Score;
             public Queue<string> RecentlyFoundWords;
             public int BonusHintPoints;
-            public bool SpellWordTutorialPlayed;
+            public bool FirstEverWordCompleted;
 
             public void Serialize(ReadOrWriteFileStream stream)
             {
@@ -510,7 +524,7 @@ namespace Components
                     return;
                 }
 
-                stream.Visit(ref SpellWordTutorialPlayed);
+                stream.Visit(ref FirstEverWordCompleted);
             }
         }
     }

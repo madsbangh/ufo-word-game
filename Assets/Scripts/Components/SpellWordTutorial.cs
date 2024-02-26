@@ -71,8 +71,8 @@ namespace Assets.Scripts.Components
             var wait = new WaitForSeconds(_delayBetweenPlaysSeconds);
             while (true)
             {
-                yield return SpellWordCoroutine(word);
                 yield return wait;
+                yield return SpellWordCoroutine(word);
             }
         }
 
