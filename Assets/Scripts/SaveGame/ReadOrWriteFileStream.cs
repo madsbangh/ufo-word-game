@@ -12,10 +12,12 @@ namespace SaveGame
 		private readonly BinaryReader _reader;
 		private readonly BinaryWriter _writer;
 		private readonly bool _isWriteMode;
+		private readonly int _fileFormatVersion;
 
-		public ReadOrWriteFileStream(string path, bool isWriteMode)
+		public ReadOrWriteFileStream(string path, bool isWriteMode, int fileFormatVersion)
 		{
 			_isWriteMode = isWriteMode;
+			_fileFormatVersion = fileFormatVersion;
 
 			_stream = File.Open(path, FileMode.OpenOrCreate, _isWriteMode ? FileAccess.Write : FileAccess.Read);
 
@@ -34,6 +36,8 @@ namespace SaveGame
 			(_isWriteMode ? (IDisposable)_writer : _reader).Dispose();
 			_stream.Dispose();
 		}
+
+		public int FileFormatVersion => _fileFormatVersion;
 
 		public void Visit(ref bool value)
 		{

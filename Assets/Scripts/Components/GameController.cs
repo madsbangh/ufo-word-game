@@ -491,6 +491,7 @@ namespace Components
             public int Score;
             public Queue<string> RecentlyFoundWords;
             public int BonusHintPoints;
+            public bool SpellWordTutorialPlayed;
 
             public void Serialize(ReadOrWriteFileStream stream)
             {
@@ -502,6 +503,14 @@ namespace Components
                 stream.Visit(ref Score);
                 stream.Visit(ref RecentlyFoundWords);
                 stream.Visit(ref BonusHintPoints);
+
+                // Version 1.1.1 and below
+                if (stream.FileFormatVersion < 1)
+                {
+                    return;
+                }
+
+                stream.Visit(ref SpellWordTutorialPlayed);
             }
         }
     }
