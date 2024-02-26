@@ -17605,7 +17605,7 @@ GameObject:
   - component: {fileID: 1559378546}
   - component: {fileID: 1559378547}
   m_Layer: 0
-  m_Name: Line (Between Letter)
+  m_Name: Line (Between Letters)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
