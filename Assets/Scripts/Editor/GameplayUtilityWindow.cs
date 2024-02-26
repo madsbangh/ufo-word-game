@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Assets.Scripts.Components;
 using Components;
 using SaveGame;
 using UnityEditor;
@@ -13,6 +14,7 @@ namespace Editor
     public class GameplayUtilityWindow : EditorWindow
     {
         private Vector2 _scrollPosition;
+        private string _tutorialWord;
 
         [MenuItem("Word Invader/Gameplay Utilities...")]
         public static void ShowWindow()
@@ -38,6 +40,16 @@ namespace Editor
             {
                 FindObjectOfType<GameController>().DebugGiveHint();
             }
+
+            if (GUILayout.Button("Hide Tutorial"))
+            {
+                FindObjectOfType<SpellWordTutorial>().Hide();
+            }
+            if (GUILayout.Button($"Play Tutorial for \"{_tutorialWord}\""))
+            {
+                FindObjectOfType<SpellWordTutorial>().Show(_tutorialWord);
+            }
+            _tutorialWord = EditorGUILayout.TextField(_tutorialWord)?.ToUpper();
 
             GUI.enabled = true;
 

@@ -37,6 +37,8 @@ namespace Components
 
         private Transform _activeLetterToDrawLineFrom;
 
+        public IEnumerable<UfoLetter> ActiveLetters => _letterPool.Where(l => l.gameObject.activeSelf);
+
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;

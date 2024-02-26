@@ -10012,6 +10012,56 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 32
   m_MaxRayIntersections: 0
+--- !u!1 &1035901478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1035901480}
+  - component: {fileID: 1035901479}
+  m_Layer: 0
+  m_Name: Spell Word Tutorial
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1035901479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035901478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3542203ba43cd48b8ef634f44f11cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hand: {fileID: 1430035700}
+  _letterRing: {fileID: 27734312}
+  _animationStepDurationSeconds: 0.6
+  _scaleDurationSeconds: 0.3
+  _delayBetweenPlaysSeconds: 1
+--- !u!4 &1035901480
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035901478}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1430035700}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1040675533
 GameObject:
   m_ObjectHideFlags: 0
@@ -16509,6 +16559,68 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &1430035699
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1035901480}
+    m_Modifications:
+    - target: {fileID: 111499270237981207, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_Name
+      value: Hand Icon
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+--- !u!4 &1430035700 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3581098859298578321, guid: d1c48c63e4ec1fa4b96636f8ba04a156, type: 3}
+  m_PrefabInstance: {fileID: 1430035699}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1438794277
 GameObject:
   m_ObjectHideFlags: 0
@@ -25111,3 +25223,4 @@ SceneRoots:
   - {fileID: 1808018133}
   - {fileID: 225341499}
   - {fileID: 73846725}
+  - {fileID: 1035901480}

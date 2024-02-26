@@ -305,6 +305,8 @@ namespace Components
             }
             
             _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, onEffectCompleted);
+
+            GameEvents.NotifyBoardWordCompleted(word);
         }
 
         private void MarkWordAsRecentlyFound(string word)
