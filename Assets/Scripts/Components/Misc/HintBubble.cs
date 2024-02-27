@@ -19,11 +19,19 @@ namespace Assets.Scripts.Components.Misc
         private void Start()
         {
             _initialLocalPosition = transform.localPosition;
+            transform.localScale = Vector3.zero;
         }
 
         private void Update()
         {
-            transform.localPosition = _initialLocalPosition + _bobAmplitude * Mathf.Sin(Time.time * _bobFrequency) * Vector3.up;
+            if (Mathf.Approximately(transform.localScale.x, 0f))
+            {
+                return;
+            }
+
+            transform.localPosition =
+                _initialLocalPosition +
+                _bobAmplitude * Mathf.Sin(Time.time * _bobFrequency) * Vector3.up;
         }
 
         [ContextMenu("Show")]
