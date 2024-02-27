@@ -394,6 +394,7 @@ MonoBehaviour:
   _previewWord: {fileID: 1451661650}
   _audioController: {fileID: 769815488}
   _previewWordAnimator: {fileID: 1451661653}
+  _tutorialHand: {fileID: 1430035700}
 --- !u!1 &56613084
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,14 +28,19 @@ namespace Components
 
         [SerializeField]
         private AudioController _audioController;
-        
+
         [SerializeField]
         private PreviewWordAnimator _previewWordAnimator;
-        
+
+        [SerializeField]
+        private Transform _tutorialHand;
+
         private readonly List<UfoLetter> _letterPool = new();
         private readonly Stack<UfoLetter> _currentlyChosenLetters = new();
 
         private Transform _activeLetterToDrawLineFrom;
+
+        private bool _isControlledByTutorial;
 
         public IEnumerable<UfoLetter> ActiveLetters => _letterPool.Where(l => l.gameObject.activeSelf);
 
@@ -56,28 +61,98 @@ namespace Components
         {
             if (_activeLetterToDrawLineFrom != null)
             {
-                var ray = Camera.main!.ScreenPointToRay(
-                    Input.touchCount > 0
-                    ? (Vector3)Input.GetTouch(0).position
-                    : Input.mousePosition);
-                var t = transform;
-                var plane = new Plane(t.up, t.position);
-
-                if (plane.Raycast(ray, out var distance))
+                if (_isControlledByTutorial)
                 {
-                    var hitLocalPosition = transform.InverseTransformPoint(ray.GetPoint(distance));
-                    _lineBetweenActiveLetterAndPointer.positionCount = 2;
-                    _lineBetweenActiveLetterAndPointer.SetPositions(new[]
-                    {
-                        _activeLetterToDrawLineFrom.localPosition,
-                        hitLocalPosition
-                    });
+                    UpdateLineFromLetterToTutorialPointer();
+                }
+                else
+                {
+                    UpdateLineFromLetterToCursor();
                 }
             }
             else
             {
                 _lineBetweenActiveLetterAndPointer.positionCount = 0;
             }
+        }
+
+        private void UpdateLineFromLetterToCursor()
+        {
+            var ray = Camera.main!.ScreenPointToRay(
+                Input.touchCount > 0
+                ? (Vector3)Input.GetTouch(0).position
+                : Input.mousePosition);
+
+            var t = transform;
+            var plane = new Plane(t.up, t.position);
+
+            if (plane.Raycast(ray, out var distance))
+            {
+                var hitLocalPosition = transform.InverseTransformPoint(ray.GetPoint(distance));
+                _lineBetweenActiveLetterAndPointer.positionCount = 2;
+                _lineBetweenActiveLetterAndPointer.SetPositions(new[]
+                {
+                    _activeLetterToDrawLineFrom.localPosition,
+                    hitLocalPosition
+                });
+            }
+        }
+
+        private void UpdateLineFromLetterToTutorialPointer()
+        {
+            var localPosition = transform.InverseTransformPoint(_tutorialHand.position);
+            _lineBetweenActiveLetterAndPointer.positionCount = 2;
+            _lineBetweenActiveLetterAndPointer.SetPositions(new[]
+            {
+                _activeLetterToDrawLineFrom.localPosition,
+                localPosition
+            });
+        }
+
+        public bool TryStartTutorialLine(UfoLetter letter)
+        {
+            if (_currentlyChosenLetters.Any())
+            {
+                return false;
+            }
+
+            _isControlledByTutorial = true;
+            _currentlyChosenLetters.Push(letter);
+            _activeLetterToDrawLineFrom = letter.transform;
+            letter.Selected = true;
+            return true;
+        }
+
+        public bool TryAddTutorialLineSegment(UfoLetter letter)
+        {
+            if (!_isControlledByTutorial)
+            {
+                return false;
+            }
+
+            _currentlyChosenLetters.Push(letter);
+            _activeLetterToDrawLineFrom = letter.transform;
+            letter.Selected = true;
+            UpdateLineBetweenLetters();
+            return true;
+        }
+
+        public void EndTutorialLineIfAny()
+        {
+            if (!_isControlledByTutorial)
+            {
+                return;
+            }
+
+            foreach (var letter in _currentlyChosenLetters)
+            {
+                letter.Selected = false;
+            }
+
+            _currentlyChosenLetters.Clear();
+            _activeLetterToDrawLineFrom = null;
+            _isControlledByTutorial = false;
+            UpdateLineBetweenLetters();
         }
 
         public void SetLetters(string letters)
@@ -110,6 +185,8 @@ namespace Components
 
         private void UfoLetter_Pressed(UfoLetter letter, PointerEventData eventData)
         {
+            EndTutorialLineIfAny();
+
             if (eventData.pointerId is not -1 and not 0)
             {
                 return;
@@ -125,6 +202,8 @@ namespace Components
 
         private void UfoLetter_Released(UfoLetter letter, PointerEventData eventData)
         {
+            if (_isControlledByTutorial) return;
+
             if (eventData.pointerId is not -1 and not 0)
             {
                 return;
@@ -146,6 +225,8 @@ namespace Components
 
         private void UfoLetter_Entered(UfoLetter letter, PointerEventData eventData)
         {
+            if (_isControlledByTutorial) return;
+
             if (eventData.pointerId is not -1 and not 0)
             {
                 return;
@@ -195,7 +276,7 @@ namespace Components
                 .ArrayToString();
 
             _previewWord.text = word;
-            
+
             _previewWordAnimator.ResetWord();
         }
 

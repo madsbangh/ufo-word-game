@@ -87,6 +87,11 @@ namespace Assets.Scripts.Components
 
             if (letters.MoveNext())
             {
+                if (!_letterRing.TryStartTutorialLine(letters.Current))
+                {
+                    yield break;
+                }
+
                 var startPos = letters.Current.transform.position;
                 yield return AnimateHandCoroutline(_scaleDurationSeconds, startPos, startPos, 0f, 1f);
 
@@ -95,10 +100,17 @@ namespace Assets.Scripts.Components
                     var fromPos = _hand.position;
                     var toPos = letters.Current.transform.position;
                     yield return AnimateHandCoroutline(_animationStepDurationSeconds, fromPos, toPos, 1f, 1f);
+
+                    if (!_letterRing.TryAddTutorialLineSegment(letters.Current))
+                    {
+                        break;
+                    }
                 }
 
                 var endPos = _hand.position;
                 yield return AnimateHandCoroutline(_scaleDurationSeconds, endPos, endPos, 1f, 0f);
+
+                _letterRing.EndTutorialLineIfAny();
             }
         }
 
