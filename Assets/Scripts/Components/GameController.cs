@@ -35,11 +35,14 @@ namespace Components
         [SerializeField] private PreviewWordAnimator _previewWordAnimator;
         [SerializeField] private SpellWordTutorial _spellWordTutorial;
         [SerializeField] private HintBubble _useAHintHint;
+        [SerializeField] private float _showUseAHintHintDelay;
 
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
         private GameState _gameState;
         private HashSet<string> _allAllowedWords;
+        private float _showUseAHintHintTimer;
+        private bool _useAHintHintShown;
 
         private void Start()
         {
@@ -79,6 +82,21 @@ namespace Components
             _hintDisplay.OnHintButtonClicked.RemoveListener(HintDisplay_OnHintButtonClicked);
         }
 
+        private void Update()
+        {
+            if (!_useAHintHintShown &&
+                !_gameState.FirstEverHintUsed &&
+                _gameState.BonusHintPoints >= HintPointsRequiredPerHint)
+            {
+                _showUseAHintHintTimer += Time.deltaTime;
+                if (_showUseAHintHintTimer >= _showUseAHintHintDelay)
+                {
+                    _useAHintHint.Show();
+                    _useAHintHintShown = true;
+                }
+            }
+        }
+
         private void HintDisplay_OnHintButtonClicked()
         {
             if (_gameState.BonusHintPoints >= HintPointsRequiredPerHint)
@@ -89,6 +107,19 @@ namespace Components
 
         private void UseHint()
         {
+            bool dismissedHint;
+
+            if (!_gameState.FirstEverHintUsed)
+            {
+                _useAHintHint.Dismiss();
+                _gameState.FirstEverHintUsed = true;
+                dismissedHint = true;
+            }
+            else
+            {
+                dismissedHint = false;
+            }
+
             var tileToReveal = GetRandomHiddenTile();
             if (tileToReveal.HasValue)
             {
@@ -104,7 +135,10 @@ namespace Components
                 {
                     PlaceWordAndCompleteSectionIfNeeded(word, placement);
                 }
+            }
 
+            if (dismissedHint || tileToReveal.HasValue)
+            {
                 SaveGame();
             }
 
@@ -238,6 +272,7 @@ namespace Components
 
         private void LetterRing_WordSubmitted(string word)
         {
+            _showUseAHintHintTimer = 0f;
             if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
             {
                 _gameState.BonusHintPoints++;

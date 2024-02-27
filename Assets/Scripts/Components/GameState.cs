@@ -17,6 +17,7 @@ namespace Components
             public Queue<string> RecentlyFoundWords;
             public int BonusHintPoints;
             public bool FirstEverWordCompleted;
+            public bool FirstEverHintUsed;
 
             public void Serialize(ReadOrWriteFileStream stream)
             {
@@ -36,6 +37,7 @@ namespace Components
                 }
 
                 stream.Visit(ref FirstEverWordCompleted);
+                stream.Visit(ref FirstEverHintUsed);
             }
         }
     }
