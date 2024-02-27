@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Scripts.Components;
+using Assets.Scripts.Components.Misc;
 using SaveGame;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -33,6 +34,7 @@ namespace Components
         [SerializeField] private AudioController _audioController;
         [SerializeField] private PreviewWordAnimator _previewWordAnimator;
         [SerializeField] private SpellWordTutorial _spellWordTutorial;
+        [SerializeField] private HintBubble _useAHintHint;
 
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
