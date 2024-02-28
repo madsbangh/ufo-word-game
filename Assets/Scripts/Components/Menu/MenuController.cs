@@ -15,7 +15,9 @@ namespace Components.Menu
         [Header("In Scene")]
         [SerializeField] private MenuButton _menuButton;
         [SerializeField] private Animator _animator;
-        
+        [SerializeField] private Button _upgradesMenuButton;
+        [SerializeField] private Animator _upgradesMenuAnimator;
+
         [Header("Main Menu")]
         [SerializeField] private GameObject _mainMenu;
         [SerializeField] private Button _aboutButton, _privacyButton, _settingsButton;
@@ -42,6 +44,7 @@ namespace Components.Menu
             About,
             Privacy,
             Settings,
+            Upgrades,
         }
 
         private void Awake()
@@ -61,6 +64,7 @@ namespace Components.Menu
             _privacyMenu.SetActive(false);
             _settingsMenu.SetActive(false);
             _menuButton.OnClick.AddListener(MenuButton_Clicked);
+            _upgradesMenuButton.onClick.AddListener(UpgradesMenuButton_Clicked);
             _aboutButton.onClick.AddListener(AboutButton_Clicked);
             _privacyButton.onClick.AddListener(PrivacyButton_Clicked);
             _gitHubButton.onClick.AddListener(GitHubButton_Clicked);
@@ -73,6 +77,7 @@ namespace Components.Menu
         private void OnDisable()
         {
             _menuButton.OnClick.RemoveListener(MenuButton_Clicked);
+            _upgradesMenuButton.onClick.RemoveListener(UpgradesMenuButton_Clicked);
             _aboutButton.onClick.RemoveListener(AboutButton_Clicked);
             _privacyButton.onClick.RemoveListener(PrivacyButton_Clicked);
             _gitHubButton.onClick.RemoveListener(GitHubButton_Clicked);
@@ -107,10 +112,24 @@ namespace Components.Menu
                     _mainMenu.SetActive(true);
                     break;
                 case State.MainMenu:
-                default:
                     _state = State.NoMenu;
                     _animator.SetBool(ShowPropertyId, false);
                     _menuButton.IsX = false;
+                    break;
+            }
+        }
+
+        private void UpgradesMenuButton_Clicked()
+        {
+            switch (_state)
+            {
+                case State.NoMenu:
+                    _state = State.Upgrades;
+                    _upgradesMenuAnimator.SetBool(ShowPropertyId, true);
+                    break;
+                case State.Upgrades:
+                    _state = State.NoMenu;
+                    _upgradesMenuAnimator.SetBool(ShowPropertyId, false);
                     break;
             }
         }
