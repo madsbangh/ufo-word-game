@@ -65,6 +65,7 @@ namespace Components
             SetupSceneObjects();
 
             GameEvents.NPCHoisted += GameEvents_NPCHoisted;
+            _letterRing.WordSubmitted += LetterRing_WordSubmitted;
         }
 
         private void OnDestroy()
@@ -245,7 +246,6 @@ namespace Components
         {
             _boardSpawner.Initialize(_wordBoard);
             _scenerySpawner.Initialize(_wordBoard, CalculateScenerySpawnerWindowPadding());
-            _letterRing.WordSubmitted += LetterRing_WordSubmitted;
 
             _scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
 
