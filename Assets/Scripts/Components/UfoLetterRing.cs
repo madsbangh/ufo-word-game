@@ -211,6 +211,8 @@ namespace Components
 
             WordSubmitted?.Invoke(_previewWord.text);
 
+            _audioController.RemoveLetter(_currentlyChosenLetters.Count - 1);
+
             // Deselect all letters
             while (_currentlyChosenLetters.Count > 0)
             {
