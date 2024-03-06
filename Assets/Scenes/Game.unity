@@ -9326,7 +9326,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrades
+  m_text: UFO Garage
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ef0e60053d7fe46429631f405ecfadeb, type: 2}
   m_sharedMaterial: {fileID: -1374337521161066815, guid: ef0e60053d7fe46429631f405ecfadeb, type: 2}
