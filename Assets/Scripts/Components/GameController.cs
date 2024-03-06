@@ -39,7 +39,7 @@ namespace Components
 
         private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
-        private GameState _gameState;
+        private GameState _gameState = new GameState();
         private HashSet<string> _allAllowedWords;
         private float _showUseAHintHintTimer;
         private bool _useAHintHintShown;
@@ -224,6 +224,7 @@ namespace Components
         private void StartGameFromSaveFile()
         {
             LoadGame();
+            _gameState.NotifyLoaded();
             _scoreDisplay.SetScore(_gameState.Score, false);
             _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, false, false);
             _letterRing.SetLetters(_gameState.CurrentSectionLetters);
