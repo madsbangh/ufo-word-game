@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d68290558a443224ea41f36a7c6b4f11, type: 3}
+  m_Name: Ufo Skins Data
+  m_EditorClassIdentifier: 
+  _skins:
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 2ccd8e32d88e16b43a702c4ff54ef3c6, type: 3}
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 07ba55bf42d628a4fa23f57452259e64, type: 3}

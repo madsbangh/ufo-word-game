@@ -10180,6 +10180,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scoreLabel: {fileID: 1414716436}
   _gameController: {fileID: 265197044}
+  _previousButton: {fileID: 680206092}
+  _nextButton: {fileID: 1947163471}
+  _ufo: {fileID: 1447468869}
+  _ufoParent: {fileID: 434766192}
+  _ufoSkins: {fileID: 11400000, guid: b077de48fe8f2d841b80769b139f3715, type: 2}
+  _animationSpeed: 20
+  _edgeNudgeDistance: 30
 --- !u!1 &820370469
 GameObject:
   m_ObjectHideFlags: 0
