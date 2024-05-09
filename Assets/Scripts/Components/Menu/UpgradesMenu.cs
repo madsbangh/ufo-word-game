@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -21,6 +22,7 @@ namespace Components.Menu
         [Header("Settings")]
         [SerializeField] private float _animationSpeed;
         [SerializeField] private float _edgeNudgeDistance;
+        [SerializeField] private float _selectedScaleFactor;
 
         private int _selectedUfoSkinIndex;
 
@@ -99,6 +101,22 @@ namespace Components.Menu
             _nextButton.interactable = true;
         }
 
+        private IEnumerator AnimateUfoSelectedCoroutine(float scaleFactor)
+        {
+            _previousButton.interactable = false;
+            _nextButton.interactable = false;
+            for (float t = 0f; t < Mathf.PI * 2f; t += Time.deltaTime * _animationSpeed)
+            {
+                var scale = (0.5f - 0.5f * Mathf.Cos(t)) * scaleFactor;
+                _ufo.localScale = Vector2.one * scale;
+                yield return null;
+            }
+            _ufo.localScale = Vector2.one;
+
+            _previousButton.interactable = true;
+            _nextButton.interactable = true;
+        }
+
         private IEnumerator AnimateToAdjacentUfoCoroutine(float horizontalDistance)
         {
             _previousButton.interactable = false;
@@ -114,6 +132,7 @@ namespace Components.Menu
             Destroy(_ufo.gameObject);
             GameObject ufoIconPrefab = _ufoSkins.Skins[_selectedUfoSkinIndex].UfoIconPrefab;
             _ufo = Instantiate(ufoIconPrefab, _ufoParent).GetComponent<RectTransform>();
+            SetupSelectableUfo(_ufo, _selectedUfoSkinIndex);
             
             for (float t = 0f; t < Mathf.PI * 2f; t += Time.deltaTime * _animationSpeed)
             {
@@ -126,6 +145,22 @@ namespace Components.Menu
 
             _previousButton.interactable = true;
             _nextButton.interactable = true;
+        }
+
+        private void SetupSelectableUfo(RectTransform ufo, int index)
+        {
+            var button = ufo.GetComponent<Button>();
+            if (!button)
+            {
+                button = ufo.gameObject.AddComponent<Button>();
+            }
+
+            button.onClick.AddListener(() => SelectUfo(ufo, index));
+        }
+
+        private void SelectUfo(RectTransform ufo, int index)
+        {
+            StartCoroutine(AnimateUfoSelectedCoroutine(_selectedScaleFactor));
         }
     }
 }
