@@ -12,8 +12,12 @@ namespace Components.Menu
         {
             [SerializeField]
             private GameObject _ufoIconPrefab;
+            [SerializeField]
+            private string _description;
 
             public GameObject UfoIconPrefab => _ufoIconPrefab;
+
+            public string Description => _description;
         }
 
         [SerializeField] private List<UfoSkinData> _skins;

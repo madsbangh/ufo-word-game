@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _skins:
   - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 2ccd8e32d88e16b43a702c4ff54ef3c6, type: 3}
+    _description: A very normal UFO
   - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 07ba55bf42d628a4fa23f57452259e64, type: 3}
+    _description: A minimalist UFO for the trendy alien

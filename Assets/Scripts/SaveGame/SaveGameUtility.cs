@@ -6,12 +6,14 @@ namespace SaveGame
 {
     public static class SaveGameUtility
     {
-        private static readonly string LegacySaveFilePath = Path.Combine(Application.persistentDataPath, "savegame_v0");
-        private static readonly string SaveFilePath = Path.Combine(Application.persistentDataPath, "savegame_v1");
-        private const int LegacyFileFormatVersion = 0;
-        private const int FileFormatVersion = 1;
+        private static readonly string LegacySaveFilePath0 = Path.Combine(Application.persistentDataPath, "savegame_v0");
+        private static readonly string LegacySaveFilePath1 = Path.Combine(Application.persistentDataPath, "savegame_v1");
+        private static readonly string SaveFilePath = Path.Combine(Application.persistentDataPath, "savegame_v2");
+        private const int LegacyFileFormatVersion0 = 0;
+        private const int LegacyFileFormatVersion1 = 1;
+        public const int FileFormatVersion = 2;
 
-        public static bool SaveFileExists => File.Exists(SaveFilePath) || File.Exists(LegacySaveFilePath);
+        public static bool SaveFileExists => File.Exists(SaveFilePath) || File.Exists(LegacySaveFilePath1) || File.Exists(LegacySaveFilePath0);
 
         public static ReadOrWriteFileStream MakeSaveContext()
         {
@@ -24,9 +26,13 @@ namespace SaveGame
             {
                 return new ReadOrWriteFileStream(SaveFilePath, false, FileFormatVersion);
             }
-            else if (File.Exists(LegacySaveFilePath))
+            else if (File.Exists(LegacySaveFilePath1))
             {
-                return new ReadOrWriteFileStream(LegacySaveFilePath, false, LegacyFileFormatVersion);
+                return new ReadOrWriteFileStream(LegacySaveFilePath1, false, LegacyFileFormatVersion1);
+            }
+            else if (File.Exists(LegacySaveFilePath0))
+            {
+                return new ReadOrWriteFileStream(LegacySaveFilePath0, false, LegacyFileFormatVersion0);
             }
             else
             {
@@ -41,9 +47,14 @@ namespace SaveGame
                 File.Delete(SaveFilePath);
             }
 
-            if (File.Exists(LegacySaveFilePath))
+            if (File.Exists(LegacySaveFilePath0))
             {
-                File.Delete(LegacySaveFilePath);
+                File.Delete(LegacySaveFilePath0);
+            }
+
+            if (File.Exists(LegacySaveFilePath1))
+            {
+                File.Delete(LegacySaveFilePath1);
             }
         }
     }

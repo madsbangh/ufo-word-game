@@ -44,7 +44,7 @@ namespace Components
         private float _showUseAHintHintTimer;
         private bool _useAHintHintShown;
 
-        private void Start()
+        private void Awake()
         {
             var allWords = WordUtility.ParseFilterAndProcessWordList(_bigWordListAsset.text);
             _allAllowedWords = new HashSet<string>(allWords);
@@ -218,6 +218,8 @@ namespace Components
             _gameState.RecentlyFoundWords = new Queue<string>();
             _gameState.CurrentSectionIndex = -1;
             _gameState.NewestGeneratedSectionIndex = -1;
+            _gameState.SelectedUfo = 0;
+            _gameState.UnlockedUfosInternal = new() { 0 };
             ProgressToNextSection();
         }
 
@@ -519,6 +521,18 @@ namespace Components
             _gameState.BonusHintPoints++;
             SaveGame();
             _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true, false);
+        }
+
+        internal void SelectUfoSkin(int index)
+        {
+            _gameState.SelectedUfo = index;
+            SaveGame();
+        }
+
+        internal void UnlockUfoSkin(int index)
+        {
+            _gameState.UnlockedUfosInternal.Add(index);
+            SaveGame();
         }
 
         private struct Section : ISerializable

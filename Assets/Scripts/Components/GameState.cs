@@ -8,6 +8,8 @@ namespace Components
     public interface IReadOnlyGameState
     {
         int Score { get; }
+        IReadOnlySet<int> UnlockedUfos { get; }
+        int SelectedUfo { get; }
 
         event Action<int> ScoreChanged;
     }
@@ -40,6 +42,12 @@ namespace Components
                 }
             }
 
+            private int _selectedUfo;
+            public int SelectedUfo { get => _selectedUfo; set => _selectedUfo = value; }
+            public HashSet<int> UnlockedUfosInternal;
+
+            public IReadOnlySet<int> UnlockedUfos => new ReadOnlyHashSet<int>(UnlockedUfosInternal);
+
             public event Action<int> ScoreChanged;
 
             public void Serialize(ReadOrWriteFileStream stream)
@@ -61,6 +69,15 @@ namespace Components
 
                 stream.Visit(ref FirstEverWordCompleted);
                 stream.Visit(ref FirstEverHintUsed);
+
+                // Version 1.1.2 and below
+                if (stream.FileFormatVersion < 2)
+                {
+                    return;
+                }
+
+                stream.Visit(ref _selectedUfo);
+                stream.Visit(ref UnlockedUfosInternal);
             }
 
             internal void NotifyLoaded()
@@ -68,6 +85,26 @@ namespace Components
                 // Notify all listeners
                 ScoreChanged?.Invoke(_score);
             }
+        }
+    }
+
+    public interface IReadOnlySet<T>
+    {
+        bool Contains(T item);
+    }
+
+    public class ReadOnlyHashSet<T> : IReadOnlySet<T>
+    {
+        private readonly HashSet<T> _hashSet;
+
+        public ReadOnlyHashSet(HashSet<T> hashSet)
+        {
+            _hashSet = hashSet;
+        }
+
+        public bool Contains(T item)
+        {
+            return _hashSet.Contains(item);
         }
     }
 }
