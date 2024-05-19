@@ -1,156 +1,164 @@
-﻿using SaveGame;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameStateAndData;
 using UnityEngine;
 
-public class WordBoard : ISerializable
+namespace GameStateAndData
 {
-	public event Action<Vector2Int> LetterTileChanged;
+    public partial interface ISaveDataVisitor
+    {
+        void Visit(WordBoard wordBoard);
+    }
+}
 
-	private Dictionary<Vector2Int, LetterTile> _letterTiles = new Dictionary<Vector2Int, LetterTile>();
-	private Dictionary<Vector2Int, TileBlockedInfo> _blockerTiles = new Dictionary<Vector2Int, TileBlockedInfo>();
+public interface IObservableWordBoard
+{
+    event LetterTileChangedHandler LetterTileChanged;
+}
 
-	public IEnumerable<Vector2Int> AllLetterTilePositions => _letterTiles.Keys;
-	
-	public IEnumerable<Vector2Int> AllLetterAndBlockerTilePositions => _blockerTiles.Keys.Union(_letterTiles.Keys);
+public delegate void LetterTileChangedHandler(Vector2Int position);
 
-	public bool HasLetterTile(Vector2Int position) => _letterTiles.ContainsKey(position);
+public class WordBoard : IObservableWordBoard, ISaveDataVisitable
+{
+    public event LetterTileChangedHandler LetterTileChanged;
 
-	public LetterTile GetLetterTile(Vector2Int position) => _letterTiles[position];
+    private readonly GameDataDictionaryField<Vector2Int, LetterTile> _letterTiles;
+    private readonly GameDataDictionaryField<Vector2Int, TileBlockedInfo> _blockerTiles;
 
-	public bool IsTileBlocked(Vector2Int position, WordDirection direction)
-	{
-		if (_blockerTiles.ContainsKey(position))
-		{
-			return direction == WordDirection.Horizontal
-				? _blockerTiles[position].HorizontallyBlocked
-				: _blockerTiles[position].VerticallyBlocked;
-		}
+    public IEnumerable<Vector2Int> AllLetterTilePositions => _letterTiles.Keys;
 
-		return false;
-	}
+    public IEnumerable<Vector2Int> AllLetterAndBlockerTilePositions => _blockerTiles.Keys.Union(_letterTiles.Keys);
 
-	public void SetWord(WordPlacement placement, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
-	{
-		var stride = placement.Direction.ToStride();
-		var sideOffset = new Vector2Int(stride.y, stride.x);
-		for (int i = 0; i < uppercaseLetters.Length; i++)
-		{
-			var tilePosition = placement.Position + i * stride;
-			char letter = uppercaseLetters[i];
-			SetLetterTile(tilePosition, letter, state);
-			if (alsoSetBlockerTiles)
-			{
-				// Block same-direction words along this word and next to it
-				bool horizontal = placement.Direction == WordDirection.Horizontal;
-				bool vertical = placement.Direction == WordDirection.Vertical;
-				SetBlockerTile(tilePosition, horizontal, vertical);
-				SetBlockerTile(tilePosition - sideOffset, horizontal, vertical);
-				SetBlockerTile(tilePosition + sideOffset, horizontal, vertical);
-			}
-		}
+    public bool HasLetterTile(Vector2Int position) => _letterTiles.ContainsKey(position);
 
-		if (alsoSetBlockerTiles)
-		{
-			// Block in both directions on the end-caps
-			SetBlockerTile(placement.Position - stride, true, true);
-			SetBlockerTile(placement.Position + stride * uppercaseLetters.Length, true, true);
-		}
-	}
+    public LetterTile GetLetterTile(Vector2Int position) => _letterTiles[position];
 
-	public void RevealTile(Vector2Int position)
-	{
-		if (HasLetterTile(position))
-		{
-			var tile = GetLetterTile(position);
-			SetLetterTile(position, tile.Letter, TileState.Revealed);
-		}
-		else
-		{
-			throw new ArgumentOutOfRangeException(nameof(position), "No tile to reveal at the given position.");
-		}
-	}
+    public WordBoard(IDirtiable dirtyWhenChanged)
+    {
+        _letterTiles = new LetterTilesGameDataField(dirtyWhenChanged);
+        _blockerTiles = new BlockerTilesGameDataField(dirtyWhenChanged);
+    }
 
-	public void FullyClearTile(Vector2Int position)
-	{
-		_blockerTiles.Remove(position);
-		if (_letterTiles.Remove(position))
-		{
-			LetterTileChanged?.Invoke(position);
-		}
-	}
+    public bool IsTileBlocked(Vector2Int position, WordDirection direction)
+    {
+        if (_blockerTiles.ContainsKey(position))
+        {
+            return direction == WordDirection.Horizontal
+                ? _blockerTiles[position].HorizontallyBlocked
+                : _blockerTiles[position].VerticallyBlocked;
+        }
 
-	private void SetLetterTile(Vector2Int position, char letter, TileState progress)
-	{
-		if (HasLetterTile(position))
-		{
-			var tile = GetLetterTile(position);
-			if ((int)tile.Progress < (int)progress)
-			{
-				tile.Progress = progress;
-				_letterTiles[position] = tile;
-				LetterTileChanged?.Invoke(position);
-			}
-		}
-		else
-		{
-			_letterTiles[position] = new LetterTile
-			{
-				Letter = letter,
-				Progress = progress,
-			};
-			LetterTileChanged?.Invoke(position);
-		}
-	}
+        return false;
+    }
 
-	private void SetBlockerTile(Vector2Int postition, bool horizontal, bool vertical)
-	{
-		if (_blockerTiles.TryGetValue(postition, out var blockedInfo) == false)
-		{
-			blockedInfo = new TileBlockedInfo();
-		}
+    public void SetWord(WordPlacement placement, string uppercaseLetters, TileState state, bool alsoSetBlockerTiles)
+    {
+        var stride = placement.Direction.ToStride();
+        var sideOffset = new Vector2Int(stride.y, stride.x);
+        for (int i = 0; i < uppercaseLetters.Length; i++)
+        {
+            var tilePosition = placement.Position + i * stride;
+            char letter = uppercaseLetters[i];
+            SetLetterTile(tilePosition, letter, state);
+            if (alsoSetBlockerTiles)
+            {
+                // Block same-direction words along this word and next to it
+                bool horizontal = placement.Direction == WordDirection.Horizontal;
+                bool vertical = placement.Direction == WordDirection.Vertical;
+                SetBlockerTile(tilePosition, horizontal, vertical);
+                SetBlockerTile(tilePosition - sideOffset, horizontal, vertical);
+                SetBlockerTile(tilePosition + sideOffset, horizontal, vertical);
+            }
+        }
 
-		blockedInfo.HorizontallyBlocked |= horizontal;
-		blockedInfo.VerticallyBlocked |= vertical;
+        if (alsoSetBlockerTiles)
+        {
+            // Block in both directions on the end-caps
+            SetBlockerTile(placement.Position - stride, true, true);
+            SetBlockerTile(placement.Position + stride * uppercaseLetters.Length, true, true);
+        }
+    }
 
-		_blockerTiles[postition] = blockedInfo;
-	}
+    public void RevealTile(Vector2Int position)
+    {
+        if (HasLetterTile(position))
+        {
+            var tile = GetLetterTile(position);
+            SetLetterTile(position, tile.Letter, TileState.Revealed);
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(position), "No tile to reveal at the given position.");
+        }
+    }
 
-	public void Serialize(ReadOrWriteFileStream stream)
-	{
-		stream.Visit(ref _blockerTiles);
-		stream.Visit(ref _letterTiles);
-	}
+    public void FullyClearTile(Vector2Int position)
+    {
+        _blockerTiles.Remove(position);
+        if (_letterTiles.Remove(position))
+        {
+            LetterTileChanged?.Invoke(position);
+        }
+    }
 
-	public struct LetterTile : ISerializable
-	{
-		public char Letter;
+    private void SetLetterTile(Vector2Int position, char letter, TileState progress)
+    {
+        if (HasLetterTile(position))
+        {
+            var tile = GetLetterTile(position);
+            if ((int)tile.Progress < (int)progress)
+            {
+                tile.Progress = progress;
+                _letterTiles[position] = tile;
+                LetterTileChanged?.Invoke(position);
+            }
+        }
+        else
+        {
+            _letterTiles[position] = new LetterTile
+            {
+                Letter = letter,
+                Progress = progress,
+            };
+            LetterTileChanged?.Invoke(position);
+        }
+    }
 
-		private int _progress;
+    private void SetBlockerTile(Vector2Int postition, bool horizontal, bool vertical)
+    {
+        if (_blockerTiles.TryGetValue(postition, out var blockedInfo) == false)
+        {
+            blockedInfo = new TileBlockedInfo();
+        }
 
-		public TileState Progress
-		{
-			get => (TileState)_progress;
-			set => _progress = (int)value;
-		}
+        blockedInfo.HorizontallyBlocked |= horizontal;
+        blockedInfo.VerticallyBlocked |= vertical;
 
-		public void Serialize(ReadOrWriteFileStream stream)
-		{
-			stream.Visit(ref Letter);
-			stream.Visit(ref _progress);
-		}
-	}
+        _blockerTiles[postition] = blockedInfo;
+    }
 
-	private struct TileBlockedInfo : ISerializable
-	{
-		public bool HorizontallyBlocked;
-		public bool VerticallyBlocked;
+    // public void Accept(Visitor stream)
+    // {
+    // 	stream.Visit(ref _blockerTiles);
+    // 	stream.Visit(ref _letterTiles);
+    // }
 
-		public void Serialize(ReadOrWriteFileStream stream)
-		{
-			stream.Visit(ref HorizontallyBlocked);
-			stream.Visit(ref VerticallyBlocked);
-		}
-	}
+    public struct LetterTile
+    {
+        public char Letter;
+        public TileState Progress;
+    }
+
+    public struct TileBlockedInfo
+    {
+        public bool HorizontallyBlocked;
+        public bool VerticallyBlocked;
+    }
+
+    public void Accept(ISaveDataVisitor visitor)
+    {
+        visitor.Visit(_letterTiles);
+        visitor.Visit(_blockerTiles);
+    }
 }

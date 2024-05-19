@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Assets.Scripts.Components;
 using Components;
+using GameStateAndData;
 using SaveGame;
 using UnityEditor;
 using UnityEngine;
@@ -69,16 +70,16 @@ namespace Editor
                     typeof(GameController).GetField("_gameState", BindingFlags.Instance | BindingFlags.NonPublic);
                 var gameState = gameStateField?.GetValue(FindObjectOfType<GameController>());
                 var recentlyFoundWordsField = gameState?.GetType().GetField("RecentlyFoundWords");
-                var recentlyFoundWords = (Queue<string>) recentlyFoundWordsField?.GetValue(gameState);
+                var recentlyFoundWords = (StringQueueGameDataField) recentlyFoundWordsField?.GetValue(gameState);
 
                 if (recentlyFoundWords != null)
                 {
-                    var duplicateWords = new HashSet<string>(recentlyFoundWords
+                    var duplicateWords = new HashSet<string>(recentlyFoundWords.Items
                         .GroupBy(word => word)
                         .Where(group => group.Count() > 1)
                         .Select(group => group.Key));
 
-                    foreach (var text in recentlyFoundWords
+                    foreach (var text in recentlyFoundWords.Items
                         .Select(word =>
                             duplicateWords.Contains(word)
                                 ? $"{word} (duplicate)"

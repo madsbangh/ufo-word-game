@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Assets.Scripts.Components;
 using Assets.Scripts.Components.Misc;
+using GameStateAndData;
 using SaveGame;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using SectionWords = System.Collections.Generic.Dictionary<string, WordPlacement>;
 
 namespace Components
 {
-    public partial class GameController : MonoBehaviour
+    public class GameController : MonoBehaviour
     {
         public const int HintPointsRequiredPerHint = 3;
 
@@ -37,57 +36,45 @@ namespace Components
         [SerializeField] private HintBubble _useAHintHint;
         [SerializeField] private float _showUseAHintHintDelay;
 
-        private WordBoard _wordBoard;
         private WordBoardGenerator _wordBoardGenerator;
-        private GameState _gameState = new GameState();
+        private GameState _gameState;
         private HashSet<string> _allAllowedWords;
         private float _showUseAHintHintTimer;
         private bool _useAHintHintShown;
 
+        public ReadOnlyGameState ReadOnlyGameState => _gameState.Readonly;
+        
         private void Awake()
         {
             var allWords = WordUtility.ParseFilterAndProcessWordList(_bigWordListAsset.text);
             _allAllowedWords = new HashSet<string>(allWords);
 
             var commonWords = WordUtility.ParseFilterAndProcessWordList(_commonWordListAsset.text);
-            _wordBoard = new WordBoard();
-            _wordBoardGenerator = new WordBoardGenerator(commonWords, _wordBoard);
 
-            if (SaveGameUtility.SaveFileExists)
+            if (!TryStartGameFromSaveFile(commonWords))
             {
-                StartGameFromSaveFile();
+                StartGameFromScratch(commonWords);
             }
-            else
-            {
-                StartGameFromScratch();
-            }
-
+            
             SetupSceneObjects();
 
-            GameEvents.NPCHoisted += GameEvents_NPCHoisted;
+            GameEvents.NpcHoisted += GameEvents_NPCHoisted;
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
+            _hintDisplay.OnHintButtonClicked.AddListener(HintDisplay_OnHintButtonClicked);
         }
 
         private void OnDestroy()
         {
+            GameEvents.NpcHoisted -= GameEvents_NPCHoisted;
             _letterRing.WordSubmitted -= LetterRing_WordSubmitted;
-        }
-
-        private void OnEnable()
-        {
-            _hintDisplay.OnHintButtonClicked.AddListener(HintDisplay_OnHintButtonClicked);
-        }
-
-        private void OnDisable()
-        {
             _hintDisplay.OnHintButtonClicked.RemoveListener(HintDisplay_OnHintButtonClicked);
         }
 
         private void Update()
         {
             if (!_useAHintHintShown &&
-                !_gameState.FirstEverHintUsed &&
-                _gameState.BonusHintPoints >= HintPointsRequiredPerHint)
+                !_gameState.FirstEverHintUsed.Value &&
+                _gameState.BonusHintPoints.Value >= HintPointsRequiredPerHint)
             {
                 _showUseAHintHintTimer += Time.deltaTime;
                 if (_showUseAHintHintTimer >= _showUseAHintHintDelay)
@@ -98,9 +85,16 @@ namespace Components
             }
         }
 
+        private void LateUpdate()
+        {
+            if (!_gameState.Dirty) return;
+            SaveGameUtility.SaveGame(_gameState);
+            _gameState.Dirty = false;
+        }
+
         private void HintDisplay_OnHintButtonClicked()
         {
-            if (_gameState.BonusHintPoints >= HintPointsRequiredPerHint)
+            if (_gameState.BonusHintPoints.Value >= HintPointsRequiredPerHint)
             {
                 UseHint();
             }
@@ -108,39 +102,27 @@ namespace Components
 
         private void UseHint()
         {
-            bool dismissedHint;
-
-            if (!_gameState.FirstEverHintUsed)
+            if (!_gameState.FirstEverHintUsed.Value)
             {
                 _useAHintHint.Dismiss();
-                _gameState.FirstEverHintUsed = true;
-                dismissedHint = true;
-            }
-            else
-            {
-                dismissedHint = false;
+                _gameState.FirstEverHintUsed.Value = true;
             }
 
             var tileToReveal = GetRandomHiddenTile();
             if (tileToReveal.HasValue)
             {
-                _gameState.BonusHintPoints -= HintPointsRequiredPerHint;
-                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true, false);
-                _wordBoard.RevealTile(tileToReveal.Value);
+                _gameState.BonusHintPoints.Value -= HintPointsRequiredPerHint;
+                _hintDisplay.SetHintPoints(_gameState.BonusHintPoints.Value, true, false);
+                _gameState.WordBoard.RevealTile(tileToReveal.Value);
 
-                var wordsFullyRevealedByHint = _gameState.CurrentSectionWords
+                var wordsFullyRevealedByHint = _gameState.CurrentSectionWords.Items
                     .Where(word => WordContainsTile(word, tileToReveal.Value))
                     .Where(WordIsFullyRevealed);
 
-                foreach ((string word, var placement) in wordsFullyRevealedByHint.ToArray())
+                foreach (var (word, placement) in wordsFullyRevealedByHint.ToArray())
                 {
                     PlaceWordAndCompleteSectionIfNeeded(word, placement);
                 }
-            }
-
-            if (dismissedHint || tileToReveal.HasValue)
-            {
-                SaveGame();
             }
 
             _audioController.UseHint();
@@ -171,13 +153,13 @@ namespace Components
                     wordPlacementPair.Value.Position +
                     wordPlacementPair.Value.Direction.ToStride() * i;
 
-                if (!_wordBoard.HasLetterTile(position))
+                if (!_gameState.WordBoard.HasLetterTile(position))
                 {
                     throw new ArgumentOutOfRangeException(nameof(wordPlacementPair),
                         "The given word falls outside the existing board tiles.");
                 }
 
-                if (_wordBoard.GetLetterTile(position).Progress != TileState.Revealed)
+                if (_gameState.WordBoard.GetLetterTile(position).Progress != TileState.Revealed)
                 {
                     return false;
                 }
@@ -188,7 +170,7 @@ namespace Components
 
         private Vector2Int? GetRandomHiddenTile()
         {
-            foreach (var wordPlacementPair in _gameState.CurrentSectionWords)
+            foreach (var wordPlacementPair in _gameState.CurrentSectionWords.Items)
             {
                 var wordLength = wordPlacementPair.Key.Length;
                 var randomStartIndex = Random.Range(0, wordLength - 1);
@@ -199,7 +181,7 @@ namespace Components
                         wordPlacementPair.Value.Direction.ToStride() *
                         ((i + randomStartIndex) % wordLength);
 
-                    if (_wordBoard.GetLetterTile(candidatePosition).Progress == TileState.Hidden)
+                    if (_gameState.WordBoard.GetLetterTile(candidatePosition).Progress == TileState.Hidden)
                     {
                         return candidatePosition;
                     }
@@ -209,54 +191,63 @@ namespace Components
             return null;
         }
 
-        private void StartGameFromScratch()
+        private void StartGameFromScratch(string[] commonWords)
         {
-            _hintDisplay.SetHintPoints(0, false, false);
-            _scoreDisplay.SetScore(0, false);
-            _gameState.GeneratedFutureSections = new Queue<Section>();
-            _gameState.CurrentSectionWords = new SectionWords();
-            _gameState.RecentlyFoundWords = new Queue<string>();
-            _gameState.CurrentSectionIndex = -1;
-            _gameState.NewestGeneratedSectionIndex = -1;
-            _gameState.SelectedUfo = 0;
-            _gameState.UnlockedUfosInternal = new() { 0 };
+            _gameState = SaveGameUtility.CreateNewGameState();
+            _wordBoardGenerator = new WordBoardGenerator(commonWords, _gameState.WordBoard);
             ProgressToNextSection();
         }
 
-        private void StartGameFromSaveFile()
+
+        private bool TryStartGameFromSaveFile(string[] commonWords)
         {
-            LoadGame();
-            _gameState.NotifyLoaded();
-            _scoreDisplay.SetScore(_gameState.Score, false);
-            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, false, false);
-            _letterRing.SetLetters(_gameState.CurrentSectionLetters);
-            for (int i = _gameState.CurrentSectionIndex; i <= _gameState.NewestGeneratedSectionIndex; i++)
+            try
             {
-                _npcSpawner.SpawnNpcsForSection(i, _wordBoard);
+                if (!SaveGameUtility.TryLoadGame(out _gameState))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                UnityEngine.Debug.LogError("Failed to load save file because it seems to be corrupted");
+                ShowCorruptedSaveGameErrorDialog();
+                return false;
+            }
+            
+            _wordBoardGenerator = new WordBoardGenerator(commonWords, _gameState.WordBoard);
+
+            _letterRing.SetLetters(_gameState.CurrentSectionLetters.Value);
+            for (var i = _gameState.CurrentSectionIndex.Value; i <= _gameState.NewestGeneratedSectionIndex.Value; i++)
+            {
+                _npcSpawner.SpawnNpcsForSection(i, _gameState.WordBoard);
             }
 
+            if (_gameState.CurrentSectionWords.Keys.Count != 0) return true;
+            
             // If we loaded into a completed board
-            if (_gameState.CurrentSectionWords.Count == 0)
-            {
-                // Immediately progress to next section
-                ProgressToNextSection();
-                _ufoRig.TeleportToTarget();
-                _cameraRig.TeleportToTarget();
-            }
+            // Immediately progress to next section
+            ProgressToNextSection();
+            _ufoRig.TeleportToTarget();
+            _cameraRig.TeleportToTarget();
+            return true;
         }
 
         private void SetupSceneObjects()
         {
-            _boardSpawner.Initialize(_wordBoard);
-            _scenerySpawner.Initialize(_wordBoard, CalculateScenerySpawnerWindowPadding());
+            _scoreDisplay.SetScore(_gameState.Score.Value, false);
+            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints.Value, false, false);
 
-            _scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
+            _boardSpawner.Initialize(_gameState.WordBoard);
+            _scenerySpawner.Initialize(_gameState.WordBoard, CalculateScenerySpawnerWindowPadding());
 
-            _cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
+            _scenerySpawner.SetSection(_gameState.CurrentSectionIndex.Value);
+
+            _cameraRig.SetTargetSection(_gameState.CurrentSectionIndex.Value);
             _cameraRig.SetCameraOverBoard(false);
             _cameraRig.TeleportToTarget();
 
-            _ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
+            _ufoRig.SetTargetSection(_gameState.CurrentSectionIndex.Value);
             _ufoRig.SetUfoTargetOverBoard(false);
             _ufoRig.TeleportToTarget();
         }
@@ -268,8 +259,8 @@ namespace Components
 
         private void GameEvents_NPCHoisted()
         {
-            _gameState.Score++;
-            _scoreDisplay.SetScore(_gameState.Score, true);
+            _gameState.Score.Value++;
+            _scoreDisplay.SetScore(_gameState.Score.Value, true);
             _audioController.Score();
         }
 
@@ -278,17 +269,16 @@ namespace Components
             _showUseAHintHintTimer = 0f;
             if (_gameState.CurrentSectionWords.TryGetValue(word, out var boardWordPlacement))
             {
-                _gameState.BonusHintPoints++;
+                _gameState.BonusHintPoints.Value++;
                 _hintDisplay.SetHintPoints(1, true, true);
                 PlaceWordAndCompleteSectionIfNeeded(word, boardWordPlacement);
                 _previewWordAnimator.HideWord();
-                SaveGame();
             }
             else if (_allAllowedWords.Contains(word))
             {
                 if (!_gameState.RecentlyFoundWords.Contains(word))
                 {
-                    _gameState.BonusHintPoints += 2;
+                    _gameState.BonusHintPoints.Value += 2;
                     _ufoAnimator.PlayFoundBonusWord();
                     _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true, () =>
                     {
@@ -296,7 +286,6 @@ namespace Components
                     });
                     _previewWordAnimator.HideWord();
                     MarkWordAsRecentlyFound(word);
-                    SaveGame();
                 }
                 else
                 {
@@ -326,7 +315,7 @@ namespace Components
 
         private void PlaceWordAndCompleteSectionIfNeeded(string word, WordPlacement boardWordPlacement)
         {
-            _wordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
+            _gameState.WordBoard.SetWord(boardWordPlacement, word, TileState.Revealed, false);
             _gameState.CurrentSectionWords.Remove(word);
 
             var wordMiddlePosition =
@@ -335,7 +324,7 @@ namespace Components
                 .ToWorldPosition();
 
             Action onEffectCompleted;
-            if (_gameState.CurrentSectionWords.Count == 0)
+            if (_gameState.CurrentSectionWords.Keys.Count == 0)
             {
                 onEffectCompleted = () => StartCoroutine(BoardCompletedCoroutine());
             }
@@ -348,14 +337,14 @@ namespace Components
 
             _flyingWordEffect.PlayMoveToTransformEffect(wordMiddlePosition, word, false, onEffectCompleted);
 
-            _gameState.FirstEverWordCompleted = true;
+            _gameState.FirstEverWordCompleted.Value = true;
             GameEvents.NotifyBoardWordCompleted(word);
         }
 
         private void MarkWordAsRecentlyFound(string word)
         {
             _gameState.RecentlyFoundWords.Enqueue(word);
-            if (_gameState.RecentlyFoundWords.Count > _recentlyFoundWordBufferLength)
+            if (_gameState.RecentlyFoundWords.Items.Count > _recentlyFoundWordBufferLength)
             {
                 _gameState.RecentlyFoundWords.Dequeue();
             }
@@ -379,7 +368,7 @@ namespace Components
             yield return new WaitForSeconds(1f);
 
             _audioController.TractorBeam();
-            foreach (var npc in _npcSpawner.PopNpcsInSection(_gameState.CurrentSectionIndex))
+            foreach (var npc in _npcSpawner.PopNpcsInSection(_gameState.CurrentSectionIndex.Value))
             {
                 npc.Hoist(_ufoRig.TractorBeamOrigin);
             }
@@ -396,40 +385,10 @@ namespace Components
 
             ProgressToNextSection();
 
-            _scenerySpawner.SetSection(_gameState.CurrentSectionIndex);
+            _scenerySpawner.SetSection(_gameState.CurrentSectionIndex.Value);
 
-            _cameraRig.SetTargetSection(_gameState.CurrentSectionIndex);
-            _ufoRig.SetTargetSection(_gameState.CurrentSectionIndex);
-
-            SaveGame();
-        }
-
-        private void SaveGame()
-        {
-            using var context = SaveGameUtility.MakeSaveContext();
-            Serialize(context);
-        }
-
-        private void LoadGame()
-        {
-            using var context = SaveGameUtility.MakeLoadContext();
-            try
-            {
-                Serialize(context);
-            }
-            catch (EndOfStreamException)
-            {
-                // Incompatible save file. Just reset game for now...
-                UnityEngine.Debug.LogWarning("Recreated save file due to incompatibility!");
-                SaveGameUtility.DeleteSaveFile();
-                StartGameFromScratch();
-            }
-        }
-
-        private void Serialize(ReadOrWriteFileStream context)
-        {
-            _gameState.Serialize(context);
-            _wordBoard.Serialize(context);
+            _cameraRig.SetTargetSection(_gameState.CurrentSectionIndex.Value);
+            _ufoRig.SetTargetSection(_gameState.CurrentSectionIndex.Value);
         }
 
         private void ProgressToNextSection()
@@ -437,24 +396,28 @@ namespace Components
             // Dequeue and generate sections
             do
             {
-                _gameState.CurrentSectionIndex++;
-                while (_gameState.NewestGeneratedSectionIndex <
-                       _gameState.CurrentSectionIndex + WordBoardGenerator.SectionsAheadAndBehind)
+                _gameState.CurrentSectionIndex.Value++;
+                while (_gameState.NewestGeneratedSectionIndex.Value <
+                       _gameState.CurrentSectionIndex.Value + WordBoardGenerator.SectionsAheadAndBehind)
                 {
                     GenerateAndEnqueueSection();
                 }
 
                 var section = _gameState.GeneratedFutureSections.Dequeue();
-                (_gameState.CurrentSectionLetters, _gameState.CurrentSectionWords) = (section.Letters, section.Words);
-            } while (!_gameState.CurrentSectionLetters.Any());
+                _gameState.CurrentSectionLetters.Value = section.Letters;
+                _gameState.CurrentSectionWords.Clear();
+                foreach (var (word, placement) in section.Words)
+                {
+                    _gameState.CurrentSectionWords.Add(word, placement);
+                }
+            } while (!_gameState.CurrentSectionLetters.Value.Any());
 
-            _letterRing.SetLetters(_gameState.CurrentSectionLetters);
+            _letterRing.SetLetters(_gameState.CurrentSectionLetters.Value);
 
-            if (!_gameState.FirstEverWordCompleted)
+            if (!_gameState.FirstEverWordCompleted.Value)
             {
-                string firstShortestWord = _gameState
-                    .CurrentSectionWords
-                    .Select(p => p.Key)
+                var firstShortestWord = _gameState
+                    .CurrentSectionWords.Keys
                     .OrderBy(w => w.Length)
                     .First();
 
@@ -463,46 +426,45 @@ namespace Components
 
             UnlockCurrentSectionWords();
 
-            ClearTilesBelowSection(_gameState.CurrentSectionIndex - WordBoardGenerator.SectionsAheadAndBehind);
+            ClearTilesBelowSection(_gameState.CurrentSectionIndex.Value - WordBoardGenerator.SectionsAheadAndBehind);
         }
 
         private void UnlockCurrentSectionWords()
         {
             foreach (var word in _gameState.CurrentSectionWords.Keys)
             {
-                _wordBoard.SetWord(_gameState.CurrentSectionWords[word], word, TileState.Hidden, false);
+                _gameState.WordBoard.SetWord(_gameState.CurrentSectionWords[word], word, TileState.Hidden, false);
             }
         }
 
         private void ClearTilesBelowSection(int sectionIndex)
         {
-            foreach (var position in _wordBoard.AllLetterAndBlockerTilePositions.ToArray())
+            foreach (var position in _gameState.WordBoard.AllLetterAndBlockerTilePositions.ToArray())
             {
                 var minPosition = sectionIndex * WordBoardGenerator.SectionStride;
                 if (position.x < minPosition || position.y < minPosition)
                 {
-                    _wordBoard.FullyClearTile(position);
+                    _gameState.WordBoard.FullyClearTile(position);
                 }
             }
         }
 
         private void GenerateAndEnqueueSection()
         {
-            _gameState.NewestGeneratedSectionIndex++;
+            _gameState.NewestGeneratedSectionIndex.Value++;
 
             var generatedSectionWords =
-                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex,
+                _wordBoardGenerator.GenerateSection(_gameState.NewestGeneratedSectionIndex.Value,
                     _gameState.RecentlyFoundWords, out var letters);
             letters = WordUtility.ShuffleLetters(letters);
-            _gameState.GeneratedFutureSections.Enqueue(new Section
-            { Letters = letters, Words = generatedSectionWords });
+            _gameState.GeneratedFutureSections.Enqueue(new GameState.Section(generatedSectionWords, letters));
 
-            _npcSpawner.SpawnNpcsForSection(_gameState.NewestGeneratedSectionIndex, _wordBoard);
+            _npcSpawner.SpawnNpcsForSection(_gameState.NewestGeneratedSectionIndex.Value, _gameState.WordBoard);
         }
 
         public void DebugCompleteOneWord()
         {
-            if (_gameState.CurrentSectionWords.Any())
+            if (_gameState.CurrentSectionWords.Keys.Any())
             {
                 LetterRing_WordSubmitted(_gameState.CurrentSectionWords.Keys.First());
             }
@@ -518,33 +480,18 @@ namespace Components
 
         public void DebugGiveHint()
         {
-            _gameState.BonusHintPoints++;
-            SaveGame();
-            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints, true, false);
+            _gameState.BonusHintPoints.Value++;
+            _hintDisplay.SetHintPoints(_gameState.BonusHintPoints.Value, true, false);
         }
 
         internal void SelectUfoSkin(int index)
         {
-            _gameState.SelectedUfo = index;
-            SaveGame();
+            _gameState.SelectedUfoIndex.Value = index;
         }
 
         internal void UnlockUfoSkin(int index)
         {
-            _gameState.UnlockedUfosInternal.Add(index);
-            SaveGame();
-        }
-
-        private struct Section : ISerializable
-        {
-            public string Letters;
-            public SectionWords Words;
-
-            public void Serialize(ReadOrWriteFileStream stream)
-            {
-                stream.Visit(ref Letters);
-                stream.Visit(ref Words);
-            }
+            _gameState.UnlockedUfoIndices.Add(index);
         }
     }
 }

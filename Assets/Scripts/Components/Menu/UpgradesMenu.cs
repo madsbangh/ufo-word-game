@@ -41,7 +41,7 @@ namespace Components.Menu
             Assert.AreNotEqual(_animationSpeed, 0f);
 
             _scoreLabel.text = _gameController.ReadOnlyGameState.Score.ToString();
-            _gameController.ReadOnlyGameState.ScoreChanged += ReadOnlyGameState_BonusHintPointsChanged;
+            _gameController.ReadOnlyGameState.Score.Changed += ReadOnlyGameState_ScoreChanged;
             _previousButton.onClick.AddListener(Previous_Clicked);
             _nextButton.onClick.AddListener(Next_Clicked);
             _selectButton.onClick.AddListener(Select_Clicked);
@@ -55,16 +55,16 @@ namespace Components.Menu
 
         private void OnDisable()
         {
-            _gameController.ReadOnlyGameState.ScoreChanged -= ReadOnlyGameState_BonusHintPointsChanged;
+            _gameController.ReadOnlyGameState.Score.Changed -= ReadOnlyGameState_ScoreChanged;
             _previousButton.onClick.RemoveListener(Previous_Clicked);
             _nextButton.onClick.RemoveListener(Next_Clicked);
             _selectButton.onClick.RemoveListener(Select_Clicked);
             _unlockButton.onClick.RemoveListener(Unlock_Clicked);
         }
 
-        private void ReadOnlyGameState_BonusHintPointsChanged(int hintPointCount)
+        private void ReadOnlyGameState_ScoreChanged(int previousScore, int newScore)
         {
-            _scoreLabel.text = hintPointCount.ToString();
+            _scoreLabel.text = newScore.ToString();
         }
 
         private void Previous_Clicked()
@@ -155,10 +155,10 @@ namespace Components.Menu
             var ufoIconPrefab = _ufoSkins.Skins[_selectedUfoSkinIndex].UfoIconPrefab;
             _ufo = Instantiate(ufoIconPrefab, _ufoParent).GetComponent<RectTransform>();
             _description.text = _ufoSkins.Skins[_selectedUfoSkinIndex].Description;
-            bool isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfos.Contains(_selectedUfoSkinIndex);
+            bool isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_selectedUfoSkinIndex);
             _unlockButton.gameObject.SetActive(!isSelectedUfoUnlocked);
             _selectButton.gameObject.SetActive(isSelectedUfoUnlocked);
-            _selectButton.interactable = _selectedUfoSkinIndex != _gameController.ReadOnlyGameState.SelectedUfo;
+            _selectButton.interactable = _selectedUfoSkinIndex != _gameController.ReadOnlyGameState.SelectedUfoIndex.Value;
         }
     }
 }

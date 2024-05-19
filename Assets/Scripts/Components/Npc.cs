@@ -101,7 +101,7 @@ namespace Components
                 yield return null;
             }
 
-            GameEvents.NotifyNPCHoisted();
+            GameEvents.NotifyNpcHoisted();
 
             Destroy(gameObject);
         }

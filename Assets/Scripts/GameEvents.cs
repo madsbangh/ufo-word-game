@@ -2,12 +2,12 @@ using System;
 
 public static class GameEvents
 {
-    public static event Action NPCHoisted;
+    public static event Action NpcHoisted;
     public static event Action<string> BoardWordCompleted;
 
-    public static void NotifyNPCHoisted()
+    public static void NotifyNpcHoisted()
     {
-        NPCHoisted?.Invoke();
+        NpcHoisted?.Invoke();
     }
 
     public static void NotifyBoardWordCompleted(string word)
