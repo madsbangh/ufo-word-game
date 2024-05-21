@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7952632205274457960}
   m_Layer: 5
-  m_Name: UFO Skin Icon 2
+  m_Name: Minimalist UFO Skin Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

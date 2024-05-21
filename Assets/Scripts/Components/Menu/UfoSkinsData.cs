@@ -13,9 +13,13 @@ namespace Components.Menu
             [SerializeField]
             private GameObject _ufoIconPrefab;
             [SerializeField]
+            private GameObject _ufoBodyPrefab;
+            [SerializeField]
             private string _description;
 
             public GameObject UfoIconPrefab => _ufoIconPrefab;
+            
+            public GameObject UfoBodyPrefab => _ufoBodyPrefab;
 
             public string Description => _description;
         }
