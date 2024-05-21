@@ -1,5 +1,7 @@
+using SaveGame;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Components.Menu
@@ -32,8 +34,8 @@ namespace Components.Menu
 
         [Header("Settings Menu")]
         [SerializeField] private GameObject _settingsMenu;
-        [SerializeField] private GameObject _resetGameConfirmationDialog;
-        [SerializeField] private Button _resetGameButton, _yesButton, _cancelButton;
+        [SerializeField] private DialogPopup _dialogPopup;
+        [SerializeField] private Button _resetGameButton;
 
         private State _state;
 
@@ -70,8 +72,6 @@ namespace Components.Menu
             _gitHubButton.onClick.AddListener(GitHubButton_Clicked);
             _settingsButton.onClick.AddListener(SettingsButton_Clicked);
             _resetGameButton.onClick.AddListener(ResetGameButton_Clicked);
-            _yesButton.onClick.AddListener(YesButton_Clicked);
-            _cancelButton.onClick.AddListener(CancelButton_Clicked);
         }
 
         private void OnDisable()
@@ -83,8 +83,6 @@ namespace Components.Menu
             _gitHubButton.onClick.RemoveListener(GitHubButton_Clicked);
             _settingsButton.onClick.RemoveListener(SettingsButton_Clicked);
             _resetGameButton.onClick.RemoveListener(ResetGameButton_Clicked);
-            _yesButton.onClick.RemoveListener(YesButton_Clicked);
-            _cancelButton.onClick.RemoveListener(CancelButton_Clicked);
         }
 
         private void MenuButton_Clicked()
@@ -158,23 +156,21 @@ namespace Components.Menu
             _state = State.Settings;
             _mainMenu.SetActive(false);
             _settingsMenu.SetActive(true);
-            _resetGameConfirmationDialog.SetActive(false);
         }
 
         private void ResetGameButton_Clicked()
         {
-            _resetGameConfirmationDialog.SetActive(true);
+            _dialogPopup.Show(
+                "Reset Game?",
+                "All your progress will be lost.",
+                ("Yes", ResetGame),
+                ("Cancel", null));
         }
 
-        private void YesButton_Clicked()
+        private static void ResetGame()
         {
-            SaveGame.SaveGameUtility.DeleteSaveFile();
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-		}
-
-        private void CancelButton_Clicked()
-        {
-            _resetGameConfirmationDialog.SetActive(false);
+            SaveGameUtility.DeleteSaveFile();
+            SceneManager.LoadScene(0);
         }
     }
 }

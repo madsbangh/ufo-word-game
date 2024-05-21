@@ -35,6 +35,7 @@ namespace Components
         [SerializeField] private SpellWordTutorial _spellWordTutorial;
         [SerializeField] private HintBubble _useAHintHint;
         [SerializeField] private float _showUseAHintHintDelay;
+        [SerializeField] private DialogPopup _dialogPopup;
 
         private WordBoardGenerator _wordBoardGenerator;
         private GameState _gameState;
@@ -43,7 +44,7 @@ namespace Components
         private bool _useAHintHintShown;
 
         public ReadOnlyGameState ReadOnlyGameState => _gameState.Readonly;
-        
+
         private void Awake()
         {
             var allWords = WordUtility.ParseFilterAndProcessWordList(_bigWordListAsset.text);
@@ -55,7 +56,7 @@ namespace Components
             {
                 StartGameFromScratch(commonWords);
             }
-            
+
             SetupSceneObjects();
 
             GameEvents.NpcHoisted += GameEvents_NPCHoisted;
@@ -210,11 +211,11 @@ namespace Components
             }
             catch (Exception)
             {
-                UnityEngine.Debug.LogError("Failed to load save file because it seems to be corrupted");
+                UnityEngine.Debug.LogWarning("Failed to load save file because it seems to be corrupted");
                 ShowCorruptedSaveGameErrorDialog();
                 return false;
             }
-            
+
             _wordBoardGenerator = new WordBoardGenerator(commonWords, _gameState.WordBoard);
 
             _letterRing.SetLetters(_gameState.CurrentSectionLetters.Value);
@@ -224,13 +225,21 @@ namespace Components
             }
 
             if (_gameState.CurrentSectionWords.Keys.Count != 0) return true;
-            
+
             // If we loaded into a completed board
             // Immediately progress to next section
             ProgressToNextSection();
             _ufoRig.TeleportToTarget();
             _cameraRig.TeleportToTarget();
             return true;
+        }
+
+        private void ShowCorruptedSaveGameErrorDialog()
+        {
+            _dialogPopup.Show(
+                "Error",
+                "Could not load the save file. It seems to be corrupted. The game will restart from scratch.",
+                ("OK", null));
         }
 
         private void SetupSceneObjects()
@@ -280,10 +289,8 @@ namespace Components
                 {
                     _gameState.BonusHintPoints.Value += 2;
                     _ufoAnimator.PlayFoundBonusWord();
-                    _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true, () =>
-                    {
-                        _hintDisplay.SetHintPoints(2, true, true);
-                    });
+                    _flyingWordEffect.PlayMoveToTransformEffect(GetHintIndicatorWorldSpacePosition(), word, true,
+                        () => { _hintDisplay.SetHintPoints(2, true, true); });
                     _previewWordAnimator.HideWord();
                     MarkWordAsRecentlyFound(word);
                 }
