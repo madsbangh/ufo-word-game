@@ -21,3 +21,7 @@ MonoBehaviour:
     _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 99c70f4b66c9bf74aab7aed2fb4a2d3c, type: 3}
     _description: A minimalist UFO for the trendy alien
     _price: 10
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: d70af8fe7c83ea844acbe9052434aaa0, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 45bce244cd6117644a95709975eb36e9, type: 3}
+    _description: A rainbow colored party boat for the happy alien
+    _price: 30
