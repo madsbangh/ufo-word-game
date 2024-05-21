@@ -155,7 +155,7 @@ namespace Components.Menu
             var ufoIconPrefab = _ufoSkins.Skins[_selectedUfoSkinIndex].UfoIconPrefab;
             _ufo = Instantiate(ufoIconPrefab, _ufoParent).GetComponent<RectTransform>();
             _description.text = _ufoSkins.Skins[_selectedUfoSkinIndex].Description;
-            bool isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_selectedUfoSkinIndex);
+            var isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_selectedUfoSkinIndex);
             _unlockButton.gameObject.SetActive(!isSelectedUfoUnlocked);
             _selectButton.gameObject.SetActive(isSelectedUfoUnlocked);
             _selectButton.interactable = _selectedUfoSkinIndex != _gameController.ReadOnlyGameState.SelectedUfoIndex.Value;

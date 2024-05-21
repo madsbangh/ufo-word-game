@@ -4,21 +4,12 @@ namespace Components
 {
     public class UfoRig : MonoBehaviour
     {
-        [SerializeField]
-        private float _rigSmoothTime, _ufoSmoothTime;
+        [SerializeField] private float _rigSmoothTime, _ufoSmoothTime;
+        [SerializeField] private Transform _ufo;
+        [SerializeField] private Transform _positionBelowBoard;
+        [SerializeField] private Transform _positionOverBoard;
+        [SerializeField] private Transform _tractorBeamOrigin;
 
-        [SerializeField]
-        private Transform _ufo;
-
-        [SerializeField]
-        private Transform _positionBelowBoard;
-
-        [SerializeField]
-        private Transform _positionOverBoard;
-
-        [SerializeField]
-        private Transform _tractorBeamOrigin;
-        
         private Vector3 _rigWorldTarget;
         private Vector3 _rigWorldVelocity;
 
@@ -29,8 +20,10 @@ namespace Components
 
         private void Update()
         {
-            transform.position = Vector3.SmoothDamp(transform.position, _rigWorldTarget, ref _rigWorldVelocity, _rigSmoothTime);
-            _ufo.transform.localPosition = Vector3.SmoothDamp(_ufo.transform.localPosition, _ufoLocalTarget, ref _ufoLocalVelocity, _rigSmoothTime);
+            transform.position =
+                Vector3.SmoothDamp(transform.position, _rigWorldTarget, ref _rigWorldVelocity, _rigSmoothTime);
+            _ufo.transform.localPosition = Vector3.SmoothDamp(_ufo.transform.localPosition, _ufoLocalTarget,
+                ref _ufoLocalVelocity, _rigSmoothTime);
         }
 
         public void TeleportToTarget()
@@ -53,7 +46,7 @@ namespace Components
 
         public void SetUfoTargetOverBoard(bool ufoIsOverBoard)
         {
-            _ufoLocalTarget = ufoIsOverBoard ? _positionOverBoard.localPosition :  _positionBelowBoard.localPosition;
+            _ufoLocalTarget = ufoIsOverBoard ? _positionOverBoard.localPosition : _positionBelowBoard.localPosition;
         }
     }
 }
