@@ -56,6 +56,11 @@ namespace GameStateAndData
         }
 
         public abstract void Accept(ISaveDataVisitor visitor);
+
+        public override string ToString()
+        {
+            return _value.ToString();
+        }
     }
 
     public abstract class GameDataQueueField<T> : IObservableCollection<T>, ISaveDataVisitable
