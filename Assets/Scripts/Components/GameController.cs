@@ -496,9 +496,10 @@ namespace Components
             _gameState.SelectedUfoIndex.Value = index;
         }
 
-        internal void UnlockUfoSkin(int index)
+        internal void UnlockUfoSkin(int index, int price)
         {
             _gameState.UnlockedUfoIndices.Add(index);
+            _gameState.Score.Value -= price;
         }
     }
 }

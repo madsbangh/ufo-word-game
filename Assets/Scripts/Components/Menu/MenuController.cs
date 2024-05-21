@@ -19,6 +19,7 @@ namespace Components.Menu
         [SerializeField] private Animator _animator;
         [SerializeField] private Button _upgradesMenuButton;
         [SerializeField] private Animator _upgradesMenuAnimator;
+        [SerializeField] private UpgradesMenu _upgradesMenu;
 
         [Header("Main Menu")]
         [SerializeField] private GameObject _mainMenu;
@@ -128,6 +129,7 @@ namespace Components.Menu
                 case State.Upgrades:
                     _state = State.NoMenu;
                     _upgradesMenuAnimator.SetBool(ShowPropertyId, false);
+                    _upgradesMenu.Refresh();
                     break;
             }
         }

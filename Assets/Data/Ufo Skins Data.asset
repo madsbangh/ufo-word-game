@@ -16,6 +16,8 @@ MonoBehaviour:
   - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 2ccd8e32d88e16b43a702c4ff54ef3c6, type: 3}
     _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 054b88b02676fc94588e21b24c58ffd9, type: 3}
     _description: A very normal UFO
+    _price: 0
   - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 07ba55bf42d628a4fa23f57452259e64, type: 3}
     _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 99c70f4b66c9bf74aab7aed2fb4a2d3c, type: 3}
     _description: A minimalist UFO for the trendy alien
+    _price: 10

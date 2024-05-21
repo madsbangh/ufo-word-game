@@ -16,12 +16,16 @@ namespace Components.Menu
             private GameObject _ufoBodyPrefab;
             [SerializeField]
             private string _description;
+            [SerializeField]
+            private int _price;
 
             public GameObject UfoIconPrefab => _ufoIconPrefab;
             
             public GameObject UfoBodyPrefab => _ufoBodyPrefab;
 
             public string Description => _description;
+            
+            public int Price => _price;
         }
 
         [SerializeField] private List<UfoSkinData> _skins;

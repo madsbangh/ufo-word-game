@@ -1680,7 +1680,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -400}
+  m_AnchoredPosition: {x: 0, y: -500}
   m_SizeDelta: {x: -200, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &253982792
@@ -1738,7 +1738,7 @@ MonoBehaviour:
   m_fontSizeMax: 90
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -8029,6 +8029,7 @@ MonoBehaviour:
   _animator: {fileID: 1329756121}
   _upgradesMenuButton: {fileID: 1117728910}
   _upgradesMenuAnimator: {fileID: 814567289}
+  _upgradesMenu: {fileID: 814567290}
   _mainMenu: {fileID: 1608398980}
   _aboutButton: {fileID: 2053993994}
   _privacyButton: {fileID: 2097453584}
@@ -9369,6 +9370,7 @@ MonoBehaviour:
   _unlockButton: {fileID: 2059706323}
   _ufo: {fileID: 1447468869}
   _ufoParent: {fileID: 434766192}
+  _ufoPriceTagPrefab: {fileID: 1123665667282231137, guid: 04bfce8811500bc42a34629d9883611c, type: 3}
   _description: {fileID: 253982792}
   _ufoSkins: {fileID: 11400000, guid: b077de48fe8f2d841b80769b139f3715, type: 2}
   _animationSpeed: 20

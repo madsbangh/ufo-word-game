@@ -19,6 +19,7 @@ namespace Components.Menu
         [SerializeField] private Button _unlockButton;
         [SerializeField] private RectTransform _ufo;
         [SerializeField] private RectTransform _ufoParent;
+        [SerializeField] private GameObject _ufoPriceTagPrefab;
         [SerializeField] private TMP_Text _description;
         [SerializeField] private UfoSkinsData _ufoSkins;
 
@@ -37,6 +38,7 @@ namespace Components.Menu
             Assert.IsNotNull(_nextButton);
             Assert.IsNotNull(_ufo);
             Assert.IsNotNull(_ufoParent);
+            Assert.IsNotNull(_ufoPriceTagPrefab);
             Assert.IsNotNull(_ufoSkins);
             Assert.AreNotEqual(_animationSpeed, 0f);
 
@@ -95,9 +97,10 @@ namespace Components.Menu
 
         private void Unlock_Clicked()
         {
-            _gameController.UnlockUfoSkin(_selectedUfoSkinIndex);
+            _gameController.UnlockUfoSkin(_selectedUfoSkinIndex, _ufoSkins.Skins[_selectedUfoSkinIndex].Price);
             _selectButton.gameObject.SetActive(true);
             _unlockButton.gameObject.SetActive(false);
+            SetUfoIconButtonsAndDescription();
         }
 
         private void Select_Clicked()
@@ -152,13 +155,29 @@ namespace Components.Menu
         private void SetUfoIconButtonsAndDescription()
         {
             Destroy(_ufo.gameObject);
-            var ufoIconPrefab = _ufoSkins.Skins[_selectedUfoSkinIndex].UfoIconPrefab;
+            var skin = _ufoSkins.Skins[_selectedUfoSkinIndex];
+            var ufoIconPrefab = skin.UfoIconPrefab;
             _ufo = Instantiate(ufoIconPrefab, _ufoParent).GetComponent<RectTransform>();
-            _description.text = _ufoSkins.Skins[_selectedUfoSkinIndex].Description;
+            _description.text = skin.Description;
+
+            var score = _gameController.ReadOnlyGameState.Score.Value;
             var isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_selectedUfoSkinIndex);
             _unlockButton.gameObject.SetActive(!isSelectedUfoUnlocked);
+            _unlockButton.interactable = score >= skin.Price;
             _selectButton.gameObject.SetActive(isSelectedUfoUnlocked);
             _selectButton.interactable = _selectedUfoSkinIndex != _gameController.ReadOnlyGameState.SelectedUfoIndex.Value;
+            
+            if (!isSelectedUfoUnlocked)
+            {
+                var priceTag = Instantiate(_ufoPriceTagPrefab, _ufo);
+                var priceText = priceTag.GetComponentInChildren<TMP_Text>();
+                priceText.text = skin.Price.ToString();
+            }
+        }
+
+        public void Refresh()
+        {
+            SetUfoIconButtonsAndDescription();
         }
     }
 }
