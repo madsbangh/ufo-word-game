@@ -15,6 +15,7 @@ namespace Components
     public class GameController : MonoBehaviour
     {
         public const int HintPointsRequiredPerHint = 3;
+        private const int ScoreToShowUpgradesMenuHint = 10;
 
         [SerializeField] private TextAsset _commonWordListAsset;
         [SerializeField] private TextAsset _bigWordListAsset;
@@ -35,6 +36,7 @@ namespace Components
         [SerializeField] private PreviewWordAnimator _previewWordAnimator;
         [SerializeField] private SpellWordTutorial _spellWordTutorial;
         [SerializeField] private HintBubble _useAHintHint;
+        [SerializeField] private HintBubble _useScoreHint;
         [SerializeField] private float _showUseAHintHintDelay;
         [SerializeField] private DialogPopup _dialogPopup;
 
@@ -45,6 +47,7 @@ namespace Components
         private bool _useAHintHintShown;
 
         public ReadOnlyGameState ReadOnlyGameState => _gameState.Readonly;
+
 
         private void Awake()
         {
@@ -61,15 +64,19 @@ namespace Components
             SetupSceneObjects();
 
             GameEvents.NpcHoisted += GameEvents_NPCHoisted;
+            GameEvents.UpgradesMenuOpened += _useScoreHint.Dismiss;
             _letterRing.WordSubmitted += LetterRing_WordSubmitted;
             _hintDisplay.OnHintButtonClicked.AddListener(HintDisplay_OnHintButtonClicked);
+            _gameState.Score.Changed += ScoreChanged;
         }
 
         private void OnDestroy()
         {
             GameEvents.NpcHoisted -= GameEvents_NPCHoisted;
+            GameEvents.UpgradesMenuOpened -= _useScoreHint.Dismiss;
             _letterRing.WordSubmitted -= LetterRing_WordSubmitted;
             _hintDisplay.OnHintButtonClicked.RemoveListener(HintDisplay_OnHintButtonClicked);
+            _gameState.Score.Changed -= ScoreChanged;
         }
 
         private void Update()
@@ -92,6 +99,15 @@ namespace Components
             if (!_gameState.Dirty) return;
             SaveGameUtility.SaveGame(_gameState);
             _gameState.Dirty = false;
+        }
+
+        private void ScoreChanged(int _, int newScore)
+        {
+            if (newScore >= ScoreToShowUpgradesMenuHint && !_gameState.UpgradesMenuHintShown.Value)
+            {
+                _gameState.UpgradesMenuHintShown.Value = true;
+                _useScoreHint.Show();
+            }
         }
 
         private void HintDisplay_OnHintButtonClicked()

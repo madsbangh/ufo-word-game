@@ -65,6 +65,7 @@ namespace SaveGame
         {
             visitor.Visit(gameState.SelectedUfoIndex);
             visitor.Visit(gameState.UnlockedUfoIndices);
+            visitor.Visit(gameState.UpgradesMenuHintShown);
         }
 
         internal static void ApplyVisitorToWordBoard(ISaveDataVisitor visitor, GameState gameState)

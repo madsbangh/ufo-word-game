@@ -1,3 +1,5 @@
+using System;
+using Assets.Scripts.Components.Misc;
 using SaveGame;
 using TMPro;
 using UnityEngine;
@@ -125,11 +127,12 @@ namespace Components.Menu
                 case State.NoMenu:
                     _state = State.Upgrades;
                     _upgradesMenuAnimator.SetBool(ShowPropertyId, true);
+                    _upgradesMenu.Refresh();
+                    GameEvents.NotifyUpgradesMenuOpened();
                     break;
                 case State.Upgrades:
                     _state = State.NoMenu;
                     _upgradesMenuAnimator.SetBool(ShowPropertyId, false);
-                    _upgradesMenu.Refresh();
                     break;
             }
         }

@@ -112,6 +112,7 @@ namespace Components.Menu
         {
             _gameController.SelectUfoSkin(_viewedUfoSkinIndex);
             _selectButton.interactable = false;
+            SetUfoIconButtonsAndDescription();
         }
 
         private IEnumerator AnimateEdgeNudgeCoroutine(float horizontalDistance)

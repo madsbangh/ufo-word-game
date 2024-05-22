@@ -21,6 +21,7 @@ namespace GameStateAndData
         public IObservable<int> BonusHintPoints => _gameState.BonusHintPoints;
         public IObservable<bool> FirstEverWordCompleted => _gameState.FirstEverWordCompleted;
         public IObservable<bool> FirstEverHintUsed => _gameState.FirstEverHintUsed;
+        public IObservable<bool> UpgradesMenuHintShown => _gameState.UpgradesMenuHintShown;
         public IObservable<int> SelectedUfoIndex => _gameState.SelectedUfoIndex;
         public IObservableCollection<int> UnlockedUfoIndices => _gameState.UnlockedUfoIndices;
     }
@@ -39,6 +40,7 @@ namespace GameStateAndData
         public readonly GameDataField<int> BonusHintPoints;
         public readonly GameDataField<bool> FirstEverWordCompleted;
         public readonly GameDataField<bool> FirstEverHintUsed;
+        public readonly GameDataField<bool> UpgradesMenuHintShown;
         public readonly GameDataField<int> SelectedUfoIndex;
         public readonly GameDataHashSetField<int> UnlockedUfoIndices;
 
@@ -60,6 +62,7 @@ namespace GameStateAndData
             BonusHintPoints = new IntGameDataField(this);
             FirstEverWordCompleted = new BoolGameDataField(this);
             FirstEverHintUsed = new BoolGameDataField(this);
+            UpgradesMenuHintShown = new BoolGameDataField(this);
             SelectedUfoIndex = new IntGameDataField(this);
             UnlockedUfoIndices = new IntHashSetGameDataField(this);
 
