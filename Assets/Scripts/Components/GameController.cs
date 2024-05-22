@@ -108,6 +108,8 @@ namespace Components
                 _gameState.UpgradesMenuHintShown.Value = true;
                 _useScoreHint.Show();
             }
+            
+            _scoreDisplay.SetScore(newScore, true);
         }
 
         private void HintDisplay_OnHintButtonClicked()
@@ -287,7 +289,6 @@ namespace Components
         private void GameEvents_NPCHoisted()
         {
             _gameState.Score.Value++;
-            _scoreDisplay.SetScore(_gameState.Score.Value, true);
             _audioController.Score();
         }
 
@@ -512,7 +513,6 @@ namespace Components
         public void DebugGiveScore()
         {
             _gameState.Score.Value++;
-            _scoreDisplay.SetScore(_gameState.Score.Value, true);
         }
 
         internal void SelectUfoSkin(int index)
