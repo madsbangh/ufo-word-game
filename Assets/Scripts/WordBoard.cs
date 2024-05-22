@@ -158,7 +158,7 @@ public class WordBoard : IObservableWordBoard, ISaveDataVisitable
 
     public void Accept(ISaveDataVisitor visitor)
     {
-        visitor.Visit(_letterTiles);
         visitor.Visit(_blockerTiles);
+        visitor.Visit(_letterTiles);
     }
 }
