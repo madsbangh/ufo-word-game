@@ -492,6 +492,12 @@ namespace Components
             _hintDisplay.SetHintPoints(_gameState.BonusHintPoints.Value, true, false);
         }
 
+        public void DebugGiveScore()
+        {
+            _gameState.Score.Value++;
+            _scoreDisplay.SetScore(_gameState.Score.Value, true);
+        }
+
         internal void SelectUfoSkin(int index)
         {
             _gameState.SelectedUfoIndex.Value = index;

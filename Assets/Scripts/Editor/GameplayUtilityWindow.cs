@@ -41,6 +41,11 @@ namespace Editor
             {
                 FindObjectOfType<GameController>().DebugGiveHint();
             }
+            
+            if (GUILayout.Button("Give a Score Point"))
+            {
+                FindObjectOfType<GameController>().DebugGiveScore();
+            }
 
             if (GUILayout.Button("Hide Tutorial"))
             {
