@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Common;
 
 public class PossibleWordsTrie
 {
