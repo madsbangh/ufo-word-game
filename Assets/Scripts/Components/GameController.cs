@@ -212,7 +212,7 @@ namespace Components
             catch (Exception)
             {
                 UnityEngine.Debug.LogWarning("Failed to load save file because it seems to be corrupted");
-                ShowCorruptedSaveGameErrorDialog();
+                StartCoroutine(ShowCorruptedSaveGameErrorDialogAfterOneFrame());
                 return false;
             }
 
@@ -234,8 +234,9 @@ namespace Components
             return true;
         }
 
-        private void ShowCorruptedSaveGameErrorDialog()
+        private IEnumerator ShowCorruptedSaveGameErrorDialogAfterOneFrame()
         {
+            yield return null;
             _dialogPopup.Show(
                 "Error",
                 "Could not load the save file. It seems to be corrupted. The game will restart from scratch.",
