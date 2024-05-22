@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -20,6 +19,8 @@ namespace Components.Menu
         [SerializeField] private RectTransform _ufo;
         [SerializeField] private RectTransform _ufoParent;
         [SerializeField] private GameObject _ufoPriceTagPrefab;
+        [SerializeField] private GameObject _ufoPadLockPrefab;
+        [SerializeField] private GameObject _ufoCheckMarkPrefab;
         [SerializeField] private TMP_Text _description;
         [SerializeField] private UfoSkinsData _ufoSkins;
 
@@ -39,6 +40,8 @@ namespace Components.Menu
             Assert.IsNotNull(_ufo);
             Assert.IsNotNull(_ufoParent);
             Assert.IsNotNull(_ufoPriceTagPrefab);
+            Assert.IsNotNull(_ufoPadLockPrefab);
+            Assert.IsNotNull(_ufoCheckMarkPrefab);
             Assert.IsNotNull(_ufoSkins);
             Assert.AreNotEqual(_animationSpeed, 0f);
             
@@ -163,17 +166,23 @@ namespace Components.Menu
             _description.text = skin.Description;
 
             var score = _gameController.ReadOnlyGameState.Score.Value;
-            var isSelectedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_viewedUfoSkinIndex);
-            _unlockButton.gameObject.SetActive(!isSelectedUfoUnlocked);
+            var isViewedUfoUnlocked = _gameController.ReadOnlyGameState.UnlockedUfoIndices.Contains(_viewedUfoSkinIndex);
+            _unlockButton.gameObject.SetActive(!isViewedUfoUnlocked);
             _unlockButton.interactable = score >= skin.Price;
-            _selectButton.gameObject.SetActive(isSelectedUfoUnlocked);
+            _selectButton.gameObject.SetActive(isViewedUfoUnlocked);
             _selectButton.interactable = _viewedUfoSkinIndex != _gameController.ReadOnlyGameState.SelectedUfoIndex.Value;
             
-            if (!isSelectedUfoUnlocked)
+            if (!isViewedUfoUnlocked)
             {
                 var priceTag = Instantiate(_ufoPriceTagPrefab, _ufo);
                 var priceText = priceTag.GetComponentInChildren<TMP_Text>();
                 priceText.text = skin.Price.ToString();
+
+                Instantiate(_ufoPadLockPrefab, _ufo);
+            }
+            else if (_viewedUfoSkinIndex == _gameController.ReadOnlyGameState.SelectedUfoIndex.Value)
+            {
+                Instantiate(_ufoCheckMarkPrefab, _ufo);
             }
         }
 

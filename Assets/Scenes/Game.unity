@@ -9371,6 +9371,8 @@ MonoBehaviour:
   _ufo: {fileID: 1447468869}
   _ufoParent: {fileID: 434766192}
   _ufoPriceTagPrefab: {fileID: 1123665667282231137, guid: 04bfce8811500bc42a34629d9883611c, type: 3}
+  _ufoPadLockPrefab: {fileID: 1123665667282231137, guid: 91d6bfe2cc505244fbae49ea85f1c841, type: 3}
+  _ufoCheckMarkPrefab: {fileID: 1123665667282231137, guid: b29e4dad5ad66834ea83c3bd65a69540, type: 3}
   _description: {fileID: 253982792}
   _ufoSkins: {fileID: 11400000, guid: b077de48fe8f2d841b80769b139f3715, type: 2}
   _animationSpeed: 20
