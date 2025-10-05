@@ -29,31 +29,31 @@ namespace Editor
 
             if (GUILayout.Button("Complete One Word"))
             {
-                FindObjectOfType<GameController>().DebugCompleteOneWord();
+                FindAnyObjectByType<GameController>().DebugCompleteOneWord();
             }
 
             if (GUILayout.Button("Complete Section"))
             {
-                FindObjectOfType<GameController>().DebugCompleteSection();
+                FindAnyObjectByType<GameController>().DebugCompleteSection();
             }
 
             if (GUILayout.Button("Give a Hint Point"))
             {
-                FindObjectOfType<GameController>().DebugGiveHint();
+                FindAnyObjectByType<GameController>().DebugGiveHint();
             }
             
             if (GUILayout.Button("Give a Score Point"))
             {
-                FindObjectOfType<GameController>().DebugGiveScore();
+                FindAnyObjectByType<GameController>().DebugGiveScore();
             }
 
             if (GUILayout.Button("Hide Tutorial"))
             {
-                FindObjectOfType<SpellWordTutorial>().Hide();
+                FindAnyObjectByType<SpellWordTutorial>().Hide();
             }
             if (GUILayout.Button($"Play Tutorial for \"{_tutorialWord}\""))
             {
-                FindObjectOfType<SpellWordTutorial>().Show(_tutorialWord);
+                FindAnyObjectByType<SpellWordTutorial>().Show(_tutorialWord);
             }
             _tutorialWord = EditorGUILayout.TextField(_tutorialWord)?.ToUpper();
 
@@ -73,7 +73,7 @@ namespace Editor
             {
                 var gameStateField =
                     typeof(GameController).GetField("_gameState", BindingFlags.Instance | BindingFlags.NonPublic);
-                var gameState = gameStateField?.GetValue(FindObjectOfType<GameController>());
+                var gameState = gameStateField?.GetValue(FindAnyObjectByType<GameController>());
                 var recentlyFoundWordsField = gameState?.GetType().GetField("RecentlyFoundWords");
                 var recentlyFoundWords = (StringQueueGameDataField) recentlyFoundWordsField?.GetValue(gameState);
 
