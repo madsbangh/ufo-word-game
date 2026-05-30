@@ -25,3 +25,31 @@ MonoBehaviour:
     _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 45bce244cd6117644a95709975eb36e9, type: 3}
     _description: A rainbow colored party boat for the happy alien
     _price: 30
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: d11400214bb3e46c9838f578668cb957, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 34a6a9b5a31d841338b4bced1aa81f09, type: 3}
+    _description: A red UFO for the tomato lovers out there
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 817fa456ec7984d6db8d4d6a07ec9492, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 57c930bd171d64a9f8d11e9d106d4ba9, type: 3}
+    _description: A green UFO with a reduced carbon footprint
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: f57529c0d04e64ab8989543ff8615383, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: bf4a64d40fedf4082817d49408cfabb2, type: 3}
+    _description: A blue UFO that blends in with the sky
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 42ed6f81da6c44535909f1f17c1513a0, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: ea1275ce27c3e48d29b0e90748aee74c, type: 3}
+    _description: A purple UFO for aliens who like the color purple
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 5bb58bb97c4e741a983fc5554771beb4, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 435fc33d797fe40c58fb45b4d749691d, type: 3}
+    _description: A pink UFO for the fashionable alien
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 1b589efa8952a42ce808092e9bb468d5, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 326bdbb0a37fb4ba48ca31a2466865c5, type: 3}
+    _description: A yellow UFO that almost looks like gold if you squint
+    _price: 15
+  - _ufoIconPrefab: {fileID: 3366721385956883441, guid: 7900d82811ce1419cb2f80ff6be55844, type: 3}
+    _ufoBodyPrefab: {fileID: 2096567415944829733, guid: 8e04bb7b6411e4701898152074de3d2b, type: 3}
+    _description: A cyan UFO because aliens like cyan
+    _price: 15
